@@ -9,14 +9,96 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ASCEND 2026">
-<meta name="description" content="La Quinta Inn Lynnwood — details for the St. Juan Diego YAG retreat stay.">
-<title>Hotel · St. Juan Diego YAG × ASCEND 2026</title>
+<meta name="description" content="Admin dashboard for managing the Pilgrim Hub.">
+<title>Admin Panel · St. Juan Diego YAG × ASCEND 2026</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script>try{const t=JSON.parse(localStorage.getItem("user:theme"));document.documentElement.setAttribute("data-theme",t||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
 <link rel="stylesheet" href="style.css">
+<style>
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4, 1rem);
+    margin-bottom: var(--space-6, 2rem);
+  }
+  .admin-stat-card {
+    padding: var(--space-4, 1rem);
+    border-radius: 12px;
+    background: var(--card-bg, rgba(255,255,255,0.06));
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    text-align: center;
+  }
+  .admin-stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .admin-stat-card .stat-label {
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+  }
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
+    white-space: nowrap;
+  }
+  .admin-table th {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .admin-table tbody tr:hover {
+    background: var(--card-bg, rgba(255,255,255,0.03));
+  }
+  .admin-search {
+    display: flex;
+    gap: var(--space-3, 0.75rem);
+    margin-bottom: var(--space-4, 1rem);
+    flex-wrap: wrap;
+  }
+  .admin-search input {
+    flex: 1;
+    min-width: 200px;
+  }
+  .admin-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+  .admin-filter-row {
+    display: flex;
+    gap: var(--space-3, 0.75rem);
+    margin-bottom: var(--space-4, 1rem);
+    flex-wrap: wrap;
+  }
+  .admin-denied {
+    text-align: center;
+    padding: var(--space-8, 4rem) var(--space-4, 1rem);
+  }
+  .admin-denied h2 {
+    font-size: 2rem;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+  .admin-loading {
+    text-align: center;
+    padding: var(--space-6, 2rem);
+  }
+</style>
 </head>
 <body>
 
@@ -47,168 +129,146 @@
 </nav>
 <div class="mnav-chip countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
 
-<main class="bg-ink bg-grain">
-  <section style="padding-top: var(--space-8);">
-    <div class="container-narrow">
-      <div class="section-header center" data-reveal>
-        <span class="eyebrow">Where we'll rest Saturday night</span>
-        <h1>The Hotel</h1>
-        <div class="gold-rule center"></div>
-      </div>
-    </div>
-  </section>
+<main class="bg-ink bg-grain" data-admin>
 
-  <section style="padding-top: 0;">
-    <div class="container-narrow">
-      <div class="hero-card" data-reveal>
-        <span class="eyebrow">Saturday, May 16 · Check-in ~8:15 PM</span>
-        <h2>La Quinta Inn by Wyndham Lynnwood</h2>
-        <div class="stars" aria-label="4 out of 5 stars">★ ★ ★ ★ ☆</div>
-        <p class="addr">4300 Alderwood Mall Blvd, Lynnwood, WA 98036</p>
-        <p class="phone">(425) 775-7447</p>
-        <div class="btn-row">
-          <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd" target="_blank" rel="noopener">Open in Google Maps</a>
-          <a class="btn btn-outline" href="https://www.wyndhamhotels.com/laquinta/lynnwood-washington/la-quinta-inn-lynnwood/overview" target="_blank" rel="noopener">Hotel website →</a>
+  <!-- Access denied state (shown by JS if not admin) -->
+  <div class="admin-denied" data-admin-denied style="display:none;">
+    <h2>Access Denied</h2>
+    <p class="text-dim">This page is restricted to administrators.</p>
+    <a href="hub.html" class="btn btn-primary" style="margin-top:var(--space-4);">Back to Hub</a>
+  </div>
+
+  <!-- Loading state -->
+  <div class="admin-loading" data-admin-loading>
+    <p class="text-dim">Verifying admin access...</p>
+  </div>
+
+  <!-- Admin content (shown by JS if admin) -->
+  <div data-admin-content style="display:none;">
+
+    <!-- Header -->
+    <section style="padding-top: var(--space-8);">
+      <div class="container-narrow">
+        <div class="section-header center" data-reveal>
+          <span class="eyebrow">Restricted</span>
+          <h1>Admin Panel</h1>
+          <p class="lede">Dashboard for managing the Pilgrim Hub.</p>
+          <div class="gold-rule center"></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section style="padding-top: 0;">
-    <div class="container">
-      <div class="two-col">
-        <div data-reveal>
-          <h2>Why this hotel</h2>
-          <ul class="list-gold">
-            <li>Recently renovated — very clean, well maintained</li>
-            <li>Free hot breakfast (eggs, sausage, waffles, biscuits &amp; gravy, fruit, yogurt)</li>
-            <li>Free parking on site</li>
-            <li>Indoor pool, hot tub, and gym</li>
-            <li>Close to I-5 and Lynnwood light rail</li>
-            <li>Reviewed for friendly staff and clean rooms</li>
-          </ul>
+    <!-- Activity Dashboard -->
+    <section style="padding-top: 0;">
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Activity Dashboard</h2>
+          <p class="text-dim">Real-time stats from the Pilgrim Hub.</p>
         </div>
-
-        <div data-reveal>
-          <h2>Strategically located</h2>
-          <p class="text-dim">Between all three of our destinations:</p>
-          <ul class="list-gold">
-            <li><strong class="text-gold">~20 min</strong> to Meydenbauer Center (Bellevue)</li>
-            <li><strong class="text-gold">~15 min</strong> to North American Martyrs (Edmonds)</li>
-            <li><strong class="text-gold">~20 min</strong> to St. James Cathedral (Seattle)</li>
-          </ul>
-          <div class="note-box" style="margin-top: var(--space-5);">
-            Chosen because it's affordable, comfortable, and right in the center of our weekend loop — less drive time means more rest and more retreat.
+        <div class="admin-stats-grid" data-reveal>
+          <div class="admin-stat-card">
+            <div class="stat-value text-gold"><span data-admin-stat="total-users">—</span></div>
+            <div class="stat-label text-dim">Total users</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-value text-gold"><span data-admin-stat="active-24h">—</span></div>
+            <div class="stat-label text-dim">Active last 24h</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-value text-gold"><span data-admin-stat="new-week">—</span></div>
+            <div class="stat-label text-dim">New this week</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-value text-gold"><span data-admin-stat="failed-logins">—</span></div>
+            <div class="stat-label text-dim">Failed logins</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-value text-gold"><span data-admin-stat="pending-deletions">—</span></div>
+            <div class="stat-label text-dim">Pending deletions</div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section style="padding-top: 0;">
-    <div class="container">
-      <div class="section-header" data-reveal>
-        <h2>Check-in &amp; check-out</h2>
-      </div>
-
-      <div class="grid grid-2" data-reveal-stagger>
-        <div class="info-card">
-          <h3>Check-in</h3>
-          <dl>
-            <div class="label-row"><dt>When</dt><dd>Saturday, May 16 · ~8:15 PM</dd></div>
-            <div class="label-row"><dt>Where</dt><dd>Lobby, La Quinta Lynnwood</dd></div>
-            <div class="label-row"><dt>Confirmation #</dt><dd><span class="placeholder">[PLACEHOLDER: confirmation number]</span></dd></div>
-            <div class="label-row"><dt>Booked under</dt><dd><span class="placeholder">[PLACEHOLDER: name on reservation]</span></dd></div>
-          </dl>
+    <!-- User Management -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>User Management</h2>
+          <p class="text-dim">View and manage all registered users.</p>
         </div>
-        <div class="info-card">
-          <h3>Check-out</h3>
-          <dl>
-            <div class="label-row"><dt>Official</dt><dd>Sunday, May 17 · by 11:00 AM</dd></div>
-            <div class="label-row"><dt>Practical</dt><dd>Leave earlier — we depart at 7:45 AM for Latin Mass</dd></div>
-            <div class="label-row"><dt>Before leaving</dt><dd>Strip bed linens if requested, return key cards at front desk</dd></div>
-          </dl>
+        <div class="admin-search" data-reveal>
+          <input type="text" class="field" placeholder="Search by username or display name..." data-admin-user-search>
+          <button type="button" class="btn btn-ghost btn-sm" data-admin-user-refresh>Refresh</button>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section style="padding-top: 0;">
-    <div class="container">
-      <div class="section-header" data-reveal>
-        <h2>Room assignments</h2>
-        <p class="text-dim">Guys and girls in separate rooms — no exceptions.</p>
-      </div>
-
-      <div class="info-card" data-reveal>
-        <p>
-          <span class="placeholder">[PLACEHOLDER: room list — who's in each, guys/girls separate, room numbers when assigned at check-in]</span>
-        </p>
-        <p class="help">Alex will confirm room pairings the week before departure.</p>
-      </div>
-    </div>
-  </section>
-
-  <section style="padding-top: 0;">
-    <div class="container-narrow">
-      <div class="section-header" data-reveal>
-        <h2>House rules</h2>
-        <p class="text-dim">Simple and non-negotiable.</p>
-      </div>
-      <div class="info-card" data-reveal>
-        <ul class="list-gold list-check">
-          <li>Guys and girls in separate rooms, <strong>no exceptions</strong></li>
-          <li>Curfew: <strong class="text-gold">11:00 PM lights out</strong> — Latin Mass is early Sunday</li>
-          <li>No guests in rooms</li>
-          <li>Respect hotel quiet hours</li>
-          <li>Damages are the responsibility of the person who caused them</li>
-          <li>Any issues, text Alex immediately</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section style="padding-top: 0;">
-    <div class="container">
-      <div class="section-header" data-reveal>
-        <h2>Backup hotel</h2>
-        <p class="text-dim">If La Quinta is booked up, our fallback is right next door.</p>
-      </div>
-
-      <div class="info-card" data-reveal>
-        <h3>Best Western Alderwood</h3>
-        <div class="stars" style="color: var(--gold-bright); margin: var(--space-2) 0;">★ ★ ★ ★ ☆</div>
-        <p class="text-dim">19332 36th Ave W, Lynnwood, WA 98036 · (425) 775-7600</p>
-        <p class="text-dim">About 1 minute from La Quinta.</p>
-        <div class="btn-row" style="margin-top: var(--space-4);">
-          <a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&query=Best+Western+Alderwood+Lynnwood" target="_blank" rel="noopener">Open in Google Maps</a>
+        <div class="admin-table-wrap" data-reveal>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Display Name</th>
+                <th>Created</th>
+                <th>Last Seen</th>
+                <th>Admin</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody data-admin-users>
+              <tr><td colspan="6" class="text-dim" style="text-align:center;padding:var(--space-6);">Loading users...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section style="padding-top: 0;">
-    <div class="container">
-      <div class="section-header" data-reveal>
-        <h2>Where it is</h2>
+    <!-- Moderation -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Moderation</h2>
+          <p class="text-dim">Review and remove group photos.</p>
+        </div>
+        <div data-admin-photos class="admin-photos-grid" data-reveal>
+          <p class="text-dim">Loading photos...</p>
+        </div>
       </div>
-      <div class="map-embed" data-reveal>
-        <iframe
-          loading="lazy"
-          title="La Quinta Inn Lynnwood map"
-          src="https://www.google.com/maps?q=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd&output=embed"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+    </section>
+
+    <!-- Audit Log -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Audit Log</h2>
+          <p class="text-dim">Full admin access log.</p>
+        </div>
+        <div class="admin-filter-row" data-reveal>
+          <select class="field" data-admin-audit-action>
+            <option value="">All actions</option>
+            <option value="login">Login</option>
+            <option value="password_reset">Password reset</option>
+            <option value="lock">Lock/Unlock</option>
+            <option value="toggle_admin">Toggle admin</option>
+            <option value="delete">Delete</option>
+            <option value="photo_remove">Photo remove</option>
+          </select>
+          <input type="text" class="field" placeholder="Filter by admin..." data-admin-audit-admin>
+          <input type="text" class="field" placeholder="Filter by target user..." data-admin-audit-target>
+          <button type="button" class="btn btn-ghost btn-sm" data-admin-audit-refresh>Apply</button>
+        </div>
+        <div data-admin-audit data-reveal>
+          <p class="text-dim">Loading audit log...</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+  </div><!-- /data-admin-content -->
 </main>
 
 <footer class="footer">
   <div class="footer-inner">
     <div>
       <p class="footer-brand">St. Juan Diego Young Adult Group</p>
-      <p class="footer-tag">“In Him, We Rise — Together.”</p>
+      <p class="footer-tag">"In Him, We Rise — Together."</p>
       <p class="text-mute" style="font-size: 0.8125rem;">A retreat for the ASCEND Eucharistic Revival · May 16–17, 2026</p>
     </div>
     <div>

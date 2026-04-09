@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ec">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="public/images/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ASCEND 2026">
+<meta name="description" content="Pray the Holy Rosary — guided step-by-step experience for the ASCEND retreat.">
+<title>Rosary · St. Juan Diego YAG × ASCEND 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>try{const t=JSON.parse(localStorage.getItem("user:theme"));document.documentElement.setAttribute("data-theme",t||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* ═══ Rosary-specific styles ═══ */
+
+.rosary-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--gold-dim, #3a3425);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+.rosary-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  font-family: var(--f-display, 'Cormorant Garamond', serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ink-soft, #999);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+.rosary-tab:hover { color: var(--gold, #c9a14a); }
+.rosary-tab.active {
+  color: var(--gold-bright, #e2c06e);
+  border-bottom-color: var(--gold, #c9a14a);
+}
+
+.rosary-panel { display: none; }
+.rosary-panel.active { display: block; }
+
+/* Options panel */
+.rosary-options {
+  background: var(--cream-dim, #1a1a2e);
+  border: 1px solid var(--gold-dim, #3a3425);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.rosary-options h3 {
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  color: var(--gold, #c9a14a);
+  margin-bottom: 0.75rem;
+}
+.opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gold-soft, rgba(201,161,74,0.1));
+}
+.opt-row:last-child { border-bottom: none; }
+.opt-row label {
+  font-size: 0.875rem;
+  color: var(--ink, #f0ebe0);
+}
+.opt-row .opt-desc {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-top: 0.125rem;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle .slider {
+  position: absolute;
+  inset: 0;
+  background: var(--gold-dim, #3a3425);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle .slider::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: var(--ink, #f0ebe0);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle input:checked + .slider { background: var(--gold, #c9a14a); }
+.toggle input:checked + .slider::after { transform: translateX(20px); }
+
+/* Mystery set selector */
+.mystery-select {
+  background: var(--cream-dim, #1a1a2e);
+  border: 1px solid var(--gold-dim, #3a3425);
+  color: var(--ink, #f0ebe0);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+}
+
+/* Intention input */
+.intention-input {
+  width: 100%;
+  background: var(--cream-dim, #1a1a2e);
+  border: 1px solid var(--gold-dim, #3a3425);
+  color: var(--ink, #f0ebe0);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+.intention-input::placeholder { color: var(--ink-soft); }
+
+/* Text size */
+.text-size-btns {
+  display: flex; gap: 0.25rem;
+}
+.text-size-btns button {
+  background: var(--gold-dim, #3a3425);
+  border: none;
+  color: var(--ink);
+  width: 32px; height: 32px;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.text-size-btns button:hover { background: var(--gold-soft); }
+.text-size-btns button.active { background: var(--gold); color: var(--ink-deep, #0d0d1a); }
+
+/* Prayer card */
+.prayer-card {
+  background: var(--cream-dim, rgba(26,26,46,0.6));
+  border: 1px solid var(--gold-dim, #3a3425);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.prayer-card h3 {
+  font-family: var(--f-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--gold-bright, #e2c06e);
+  margin-bottom: 0.75rem;
+}
+.prayer-card .instruction {
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.prayer-card .prayer-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink, #f0ebe0);
+  white-space: pre-line;
+  max-width: 32rem;
+}
+.prayer-card .prayer-text.text-sm { font-size: 0.875rem; }
+.prayer-card .prayer-text.text-lg { font-size: 1.125rem; }
+
+/* Mystery announcement */
+.mystery-announce { text-align: center; }
+.mystery-announce .decade-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  font-weight: 600;
+}
+.mystery-announce .mystery-title {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold-bright, #e2c06e);
+  margin: 0.5rem 0;
+}
+.mystery-announce .scripture-ref {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+.mystery-announce .meditation {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin-top: 0.75rem;
+  max-width: 28rem;
+  margin-inline: auto;
+}
+.mystery-announce .beginner-hint {
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--gold);
+  margin-top: 0.75rem;
+}
+
+/* Bead counter */
+.bead-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.bead-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.bead-ring svg { width: 100%; height: 100%; }
+.bead-ring .ring-bg { stroke: var(--gold-dim, #3a3425); }
+.bead-ring .ring-fill {
+  stroke: var(--gold, #c9a14a);
+  transition: stroke-dashoffset 0.3s ease;
+}
+.bead-ring button {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+}
+.bead-ring button:focus-visible {
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+.bead-ring button:disabled { opacity: 0.5; cursor: default; }
+.bead-ring .bead-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold-bright, #e2c06e);
+  line-height: 1;
+}
+.bead-ring .bead-total {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.bead-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.375rem;
+}
+.bead-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--gold-dim, #3a3425);
+  transition: background 0.2s;
+}
+.bead-dot.filled { background: var(--gold, #c9a14a); }
+.bead-label {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* Progress bar */
+.progress-bar-wrap {
+  margin-bottom: 1.25rem;
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+.progress-track {
+  height: 0.5rem;
+  border-radius: 0.25rem;
+  background: var(--gold-dim, #3a3425);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 0.25rem;
+  background: var(--gold, #c9a14a);
+  transition: width 0.5s ease;
+}
+
+/* Decade indicator */
+.decade-indicator {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+/* Intention banner */
+.intention-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border: 1px solid var(--gold-dim);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  color: var(--gold);
+}
+.intention-banner svg { flex-shrink: 0; }
+
+/* Nav buttons */
+.pray-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.pray-nav button {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  border: none;
+}
+.pray-nav .btn-back {
+  background: var(--cream-dim, #1a1a2e);
+  border: 1px solid var(--gold-dim);
+  color: var(--ink-soft);
+}
+.pray-nav .btn-back:hover { background: var(--gold-soft); }
+.pray-nav .btn-next {
+  background: var(--gold, #c9a14a);
+  color: var(--ink-deep, #0d0d1a);
+  font-weight: 600;
+}
+.pray-nav .btn-next:hover { background: var(--gold-bright); }
+.pray-nav button:disabled { opacity: 0.3; cursor: default; }
+
+/* Start button */
+.btn-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gold, #c9a14a);
+  color: var(--ink-deep, #0d0d1a);
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 0.75rem;
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 1rem;
+}
+.btn-start:hover { background: var(--gold-bright); }
+
+/* Completion */
+.completion-card {
+  background: linear-gradient(135deg, var(--gold-dim, #3a3425), var(--ink-deep, #0d0d1a));
+  border: 1px solid var(--gold);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+.completion-card h3 {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  color: var(--gold-bright);
+  margin-top: 0.75rem;
+}
+.completion-card p { color: var(--ink); font-size: 0.875rem; margin-top: 0.5rem; }
+.completion-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.completion-btns button, .completion-btns a {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-log {
+  background: var(--gold);
+  color: var(--ink-deep);
+}
+.btn-log:hover { background: var(--gold-bright); }
+.btn-pray-again {
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border: 1px solid var(--gold-dim) !important;
+  color: var(--gold);
+}
+
+/* Litany */
+.litany-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 1rem;
+}
+.litany-heading {
+  grid-column: 1 / -1;
+  padding-top: 1rem;
+  padding-bottom: 0.25rem;
+}
+.litany-heading h4 {
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  color: var(--gold-bright);
+}
+.litany-heading .response-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  margin-top: 0.25rem;
+}
+.litany-leader {
+  padding: 0.375rem 0;
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+.litany-response {
+  padding: 0.375rem 0;
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--gold);
+}
+.litany-full {
+  grid-column: 1 / -1;
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.litany-spacer {
+  grid-column: 1 / -1;
+  height: 1rem;
+}
+.litany-nav {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0;
+}
+.litany-nav button {
+  background: var(--cream-dim);
+  border: 1px solid var(--gold-dim);
+  color: var(--ink-soft);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Scripture panel */
+.scripture-panel {
+  margin-top: 1rem;
+  border: 1px solid var(--gold-dim);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.scripture-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border: none;
+  color: var(--gold);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+.scripture-toggle svg {
+  width: 1.25rem; height: 1.25rem;
+  transition: transform 0.2s;
+}
+.scripture-toggle.open svg { transform: rotate(180deg); }
+.scripture-body {
+  padding: 1rem;
+  border-top: 1px solid var(--gold-dim);
+}
+.scripture-body p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.scripture-body .scripture-ref {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-top: 0.5rem;
+}
+
+/* Learn tab */
+.learn-section {
+  margin-bottom: 2.5rem;
+}
+.learn-section h3 {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  margin-bottom: 0.75rem;
+}
+.learn-section p, .learn-section li {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.learn-tip-list { list-style: none; padding: 0; }
+.learn-tip-list li {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.learn-tip-num {
+  flex-shrink: 0;
+  width: 1.5rem; height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 0.125rem;
+}
+.learn-schedule {
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+}
+.learn-schedule h4 {
+  font-weight: 600;
+  color: var(--gold-bright);
+  margin-bottom: 0.5rem;
+}
+.learn-schedule p {
+  font-size: 0.875rem;
+  color: var(--gold);
+}
+
+/* What to choose cards */
+.wtc-card {
+  background: var(--cream-dim, rgba(26,26,46,0.6));
+  border: 1px solid var(--gold-dim);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.wtc-card h4 {
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+.wtc-card .wtc-desc {
+  font-size: 0.875rem;
+  color: var(--ink);
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+.wtc-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.wtc-label.skip { color: var(--ink-soft); }
+.wtc-list {
+  list-style: none;
+  padding: 0;
+}
+.wtc-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+.wtc-list .dot {
+  margin-top: 0.375rem;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+.wtc-list.skip-list .dot { background: var(--ink-soft); }
+.wtc-tip {
+  background: var(--gold-soft, rgba(201,161,74,0.1));
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--gold);
+}
+
+/* Mysteries tab */
+.mystery-set-card {
+  border: 1px solid var(--gold-dim);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.mystery-set-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--cream-dim, rgba(26,26,46,0.6));
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.mystery-set-btn:hover { background: var(--gold-soft); }
+.mystery-set-btn h3 {
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+.mystery-set-btn.expanded { background: var(--gold-soft); }
+.mystery-set-btn svg {
+  width: 1.25rem; height: 1.25rem;
+  color: var(--gold);
+  transition: transform 0.2s;
+}
+.mystery-set-btn.expanded svg { transform: rotate(180deg); }
+.mystery-list {
+  border-top: 1px solid var(--gold-dim);
+  padding: 0.5rem 1rem;
+}
+.mystery-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.625rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.15s;
+}
+.mystery-item:hover { background: var(--gold-soft, rgba(201,161,74,0.1)); }
+.mystery-num {
+  flex-shrink: 0;
+  width: 1.5rem; height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.mystery-item-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.mystery-item-ref {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.mystery-item-meditation {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+/* Learn quick nav */
+.learn-quicknav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding: 0.75rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gold-dim);
+}
+.learn-quicknav a {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--gold);
+  text-decoration: none;
+}
+.learn-quicknav a:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .litany-grid { grid-template-columns: 1fr; }
+  .litany-response { padding-left: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="St. Juan Diego YAG × ASCEND — Home">
+      <span class="ornament" aria-hidden="true"></span>
+      St. Juan Diego YAG <span class="x">×</span> ASCEND
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html">Timeline</a></li>
+      <li><a href="travel.html">Travel</a></li>
+      <li><a href="hotel.html">Hotel</a></li>
+      <li><a href="hub.html">Hub</a></li>
+      <li><a href="whats-included.html">Costs</a></li>
+      <li><a href="speakers.html">Speakers</a></li>
+      <li><a href="saturday.html">Saturday</a></li>
+      <li><a href="sunday.html">Sunday</a></li>
+      <li><a href="parents.html">Parents</a></li>
+    </ul>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mnav-chip countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+
+<main class="bg-ink bg-grain">
+  <section style="padding-top: var(--space-8);">
+    <div class="container-narrow">
+      <div class="section-header center" data-reveal>
+        <span class="eyebrow">Prayer · Meditation · Devotion</span>
+        <h1>The Holy Rosary</h1>
+        <p class="lede">A guided step-by-step experience to pray the Rosary.</p>
+        <div class="gold-rule center"></div>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="rosary-tabs" role="tablist">
+        <button class="rosary-tab active" role="tab" data-tab="pray" aria-selected="true">Pray</button>
+        <button class="rosary-tab" role="tab" data-tab="learn" aria-selected="false">Learn</button>
+        <button class="rosary-tab" role="tab" data-tab="mysteries" aria-selected="false">Mysteries</button>
+      </div>
+
+      <!-- ═══ PRAY TAB ═══ -->
+      <div class="rosary-panel active" id="panel-pray">
+        <div id="pray-setup">
+          <div class="rosary-options">
+            <h3>Options</h3>
+            <div class="opt-row">
+              <div>
+                <label for="opt-mystery">Mystery Set</label>
+                <div class="opt-desc" id="today-mystery-note"></div>
+              </div>
+              <select id="opt-mystery" class="mystery-select"></select>
+            </div>
+            <div class="opt-row">
+              <div><label for="opt-beginner">Beginner Mode</label><div class="opt-desc">Extra instructions at each step</div></div>
+              <label class="toggle"><input type="checkbox" id="opt-beginner"><span class="slider"></span></label>
+            </div>
+            <div class="opt-row">
+              <div><label for="opt-fatima">Fatima Prayer</label><div class="opt-desc">Added after each decade</div></div>
+              <label class="toggle"><input type="checkbox" id="opt-fatima" checked><span class="slider"></span></label>
+            </div>
+            <div class="opt-row">
+              <div><label for="opt-litany">Litany of Loreto</label><div class="opt-desc">Full litany after Hail Holy Queen</div></div>
+              <label class="toggle"><input type="checkbox" id="opt-litany"><span class="slider"></span></label>
+            </div>
+            <div class="opt-row">
+              <div><label for="opt-scripture">Scripture Readings</label><div class="opt-desc">Scripture before each mystery</div></div>
+              <label class="toggle"><input type="checkbox" id="opt-scripture"><span class="slider"></span></label>
+            </div>
+            <div class="opt-row" style="flex-direction:column;align-items:stretch;gap:0.25rem;">
+              <label for="opt-intention">Intention (optional)</label>
+              <input type="text" id="opt-intention" class="intention-input" placeholder="e.g. For my family's health...">
+            </div>
+            <div class="opt-row">
+              <label>Text Size</label>
+              <div class="text-size-btns">
+                <button data-size="sm">A</button>
+                <button data-size="md" class="active">A</button>
+                <button data-size="lg">A</button>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <button class="btn-start" id="btn-begin">Begin Rosary</button>
+          </div>
+        </div>
+
+        <div id="pray-active" style="display:none;">
+          <div id="intention-bar"></div>
+          <div class="progress-bar-wrap">
+            <div class="progress-header">
+              <span>Progress</span>
+              <span id="progress-pct">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <div id="decade-indicator" class="decade-indicator" style="display:none;"></div>
+          <div class="prayer-card" id="prayer-card"></div>
+          <div class="pray-nav" id="pray-nav">
+            <button class="btn-back" id="btn-prev" disabled>Back</button>
+            <button class="btn-next" id="btn-next">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ LEARN TAB ═══ -->
+      <div class="rosary-panel" id="panel-learn">
+        <nav class="learn-quicknav" aria-label="Jump to section">
+          <a href="#learn-what">What is it?</a>
+          <a href="#learn-why">Why pray it?</a>
+          <a href="#learn-history">History</a>
+          <a href="#learn-tips">Tips</a>
+          <a href="#learn-schedule">Schedule</a>
+          <a href="#learn-choose">What to choose</a>
+        </nav>
+
+        <section class="learn-section" id="learn-what">
+          <h3>What is the Rosary?</h3>
+          <p>The Rosary is a traditional Catholic devotion combining vocal prayer and meditation on the mysteries of the life of Jesus Christ and the Blessed Virgin Mary. It is prayed using a set of beads that help count the prayers. The word "Rosary" comes from the Latin "rosarium," meaning "crown of roses" — each prayer offered is like a spiritual rose given to Mary.</p>
+        </section>
+
+        <section class="learn-section" id="learn-why">
+          <h3>Why Do Catholics Pray It?</h3>
+          <p>Catholics pray the Rosary to meditate on the key events — or "mysteries" — in the lives of Jesus and Mary. It is a way to draw closer to God through Scripture-based reflection, repetitive prayer that calms the mind, and the intercession of the Blessed Virgin Mary. Many saints, popes, and apparitions of Mary (especially at Fatima in 1917) have encouraged the faithful to pray the Rosary daily for peace and conversion.</p>
+        </section>
+
+        <section class="learn-section" id="learn-history">
+          <h3>A Brief History</h3>
+          <p>The Rosary as we know it developed over several centuries. Its roots go back to early monks who would recite 150 Psalms; lay people who could not read began substituting 150 Hail Marys. By the 15th century, the practice of meditating on specific mysteries was introduced. St. Dominic (13th century) is traditionally credited with promoting the Rosary, and in 2002 Pope St. John Paul II added the Luminous Mysteries to the traditional three sets — Joyful, Sorrowful, and Glorious.</p>
+        </section>
+
+        <section class="learn-section" id="learn-tips">
+          <h3>Tips for Praying</h3>
+          <ul class="learn-tip-list">
+            <li><span class="learn-tip-num">1</span><span>Find a quiet place free from distractions. Even 5 minutes of focused prayer is better than a rushed full Rosary.</span></li>
+            <li><span class="learn-tip-num">2</span><span>Read the Scripture passage for each mystery before starting the decade. Let the scene come alive in your imagination.</span></li>
+            <li><span class="learn-tip-num">3</span><span>Don't worry if your mind wanders — gently bring it back. The repetition of the prayers is itself a form of meditation.</span></li>
+            <li><span class="learn-tip-num">4</span><span>Pray with others when possible. Our group prays the Rosary together — join us!</span></li>
+            <li><span class="learn-tip-num">5</span><span>Use our guided experience above. It walks you through each step, perfect for beginners and experienced alike.</span></li>
+          </ul>
+        </section>
+
+        <section class="learn-section" id="learn-schedule">
+          <div class="learn-schedule">
+            <h4>Weekly Mystery Schedule</h4>
+            <p>Mon &amp; Sat: Joyful · Tue &amp; Fri: Sorrowful · Wed &amp; Sun: Glorious · Thu: Luminous</p>
+          </div>
+        </section>
+
+        <section class="learn-section" id="learn-choose">
+          <h3>What should I choose to pray?</h3>
+          <p style="margin-bottom:1.25rem;">If you're short on time, pray the core Rosary — God receives it fully. Optional prayers can help you go deeper, especially when you're praying slowly, praying in a group, or carrying a specific intention.</p>
+
+          <div class="wtc-card">
+            <h4>Core Rosary (the essentials)</h4>
+            <p class="wtc-desc">The standard Rosary: Sign of the Cross, Apostles' Creed, Our Fathers, Hail Marys (10 per decade), Glory Be, Hail Holy Queen, and the closing prayers. This is the complete Rosary as described by the USCCB.</p>
+            <div class="wtc-label">When to include</div>
+            <ul class="wtc-list"><li><span class="dot"></span>Always — this is the foundation of every Rosary.</li><li><span class="dot"></span>Best for a quick rosary or daily consistency.</li></ul>
+            <div class="wtc-label skip">When to skip</div>
+            <ul class="wtc-list skip-list"><li><span class="dot"></span>You never skip the core — it is the Rosary itself.</li></ul>
+            <div class="wtc-tip"><strong>Quick tip:</strong> A full core Rosary takes about 15-20 minutes. Perfect for your commute, before bed, or during a break.</div>
+          </div>
+
+          <div class="wtc-card">
+            <h4>Fatima Prayer (optional)</h4>
+            <p class="wtc-desc">A short prayer added after each Glory Be: "O my Jesus, forgive us our sins..." It was reportedly given by Our Lady of Fatima in 1917. The USCCB notes that some people add this prayer after each decade.</p>
+            <div class="wtc-label">When to include</div>
+            <ul class="wtc-list"><li><span class="dot"></span>When you want to pray for mercy and for souls.</li><li><span class="dot"></span>During group prayer — it's a common addition.</li><li><span class="dot"></span>When carrying a specific intention for conversion.</li></ul>
+            <div class="wtc-label skip">When to skip</div>
+            <ul class="wtc-list skip-list"><li><span class="dot"></span>When you want a quicker rosary — it's fully optional.</li><li><span class="dot"></span>It adds about 1-2 minutes total.</li></ul>
+            <div class="wtc-tip"><strong>Quick tip:</strong> Some people add this after each decade; it's optional. Use it when you want to pray for mercy and for souls.</div>
+          </div>
+
+          <div class="wtc-card">
+            <h4>Litany of Loreto (optional)</h4>
+            <p class="wtc-desc">A beautiful series of invocations honoring Mary under many titles (e.g., "Mirror of Justice," "Seat of Wisdom"). Each invocation is followed by "Pray for us." It is traditionally prayed after the Rosary concluding prayers.</p>
+            <div class="wtc-label">When to include</div>
+            <ul class="wtc-list"><li><span class="dot"></span>When you want to linger in praise and intercession.</li><li><span class="dot"></span>During Marian feast days or group devotions.</li><li><span class="dot"></span>When praying for a special intention through Mary's intercession.</li></ul>
+            <div class="wtc-label skip">When to skip</div>
+            <ul class="wtc-list skip-list"><li><span class="dot"></span>When you want a quicker rosary.</li><li><span class="dot"></span>It adds about 3-5 minutes.</li></ul>
+            <div class="wtc-tip"><strong>Quick tip:</strong> A beautiful Marian litany. Great when you want to linger in praise and intercession — but you can skip it for a quicker rosary.</div>
+          </div>
+
+          <div class="wtc-card">
+            <h4>Scripture Reading (optional)</h4>
+            <p class="wtc-desc">A short Scripture passage shown before each mystery to anchor your meditation in God's Word. The USCCB encourages using Scripture with the Rosary to deepen reflection on each mystery.</p>
+            <div class="wtc-label">When to include</div>
+            <ul class="wtc-list"><li><span class="dot"></span>When you want a slower, more reflective rosary.</li><li><span class="dot"></span>When praying alone and desiring deeper meditation.</li><li><span class="dot"></span>When studying the mysteries for the first time.</li></ul>
+            <div class="wtc-label skip">When to skip</div>
+            <ul class="wtc-list skip-list"><li><span class="dot"></span>When you're short on time.</li><li><span class="dot"></span>During group prayer where pace matters.</li></ul>
+            <div class="wtc-tip"><strong>Quick tip:</strong> Helps meditation by anchoring the mystery in God's Word. Use it when you want a slower, more reflective rosary.</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══ MYSTERIES TAB ═══ -->
+      <div class="rosary-panel" id="panel-mysteries">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <h2 style="font-family:var(--f-display);font-size:1.5rem;font-weight:700;color:var(--gold-bright);">Explore the Mysteries</h2>
+          <p style="font-size:0.875rem;color:var(--ink-soft);margin-top:0.5rem;">Learn more about each set of mysteries and the individual meditations within them.</p>
+          <p style="font-size:0.8125rem;color:var(--ink-soft);margin-top:0.5rem;">Mon &amp; Sat: Joyful · Tue &amp; Fri: Sorrowful · Wed &amp; Sun: Glorious · Thu: Luminous</p>
+        </div>
+        <div id="mysteries-accordion"></div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand">St. Juan Diego Young Adult Group</p>
+      <p class="footer-tag">"In Him, We Rise — Together."</p>
+      <p class="text-mute" style="font-size: 0.8125rem;">A retreat for the ASCEND Eucharistic Revival · May 16-17, 2026</p>
+    </div>
+    <div>
+      <h5>External</h5>
+      <ul>
+        <li><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND</a></li>
+        <li><a href="https://www.northamericanmartyrs.org/" target="_blank" rel="noopener">North American Martyrs</a></li>
+        <li><a href="https://stjames-cathedral.org/" target="_blank" rel="noopener">St. James Cathedral</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contact</h5>
+      <ul>
+        <li><strong>Alex</strong> (lead) — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
+        <li><a href="mailto:alex@sjdyoungadults.com">alex@sjdyoungadults.com</a></li>
+        <li><strong>Johana</strong> — <a href="tel:+15093885123">+1 (509) 388-5123</a></li>
+        <li><a href="mailto:johana@sjdyoungadults.com">johana@sjdyoungadults.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>made with <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a14a" aria-label="heart"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by alex</span>
+    <span><a href="https://github.com/ragerbanjoo/ascend" target="_blank" rel="noopener">open source</a> · <a href="security.html">security</a></span>
+  </div>
+</footer>
+
+<nav class="mnav" aria-label="Mobile primary">
+  <div class="mnav-inner">
+    <a href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/>
+      </svg>
+      <span class="mnav-label">Home</span>
+    </a>
+    <button type="button" data-open-schedule>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="mnav-label">Schedule</span>
+    </button>
+    <a href="hub.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="mnav-label">Hub</span>
+    </a>
+    <a href="parents.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="mnav-label">Parents</span>
+    </a>
+    <button type="button" data-open-sheet>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      <span class="mnav-label">More</span>
+    </button>
+  </div>
+  <div class="mnav-sub" aria-hidden="true">
+    <a href="timeline.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Timeline
+    </a>
+    <a href="saturday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h20"/><path d="M6 20V10M10 20V10M14 20V10M18 20V10"/><path d="M12 3l9 7H3z"/></svg>
+      Saturday
+    </a>
+    <a href="sunday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M10 4.5h4M6 21V11l6-5 6 5v10"/><path d="M10 21v-4h4v4"/></svg>
+      Sunday
+    </a>
+  </div>
+</nav>
+<div class="mnav-sub-backdrop" aria-hidden="true"></div>
+
+<div class="sheet-backdrop" data-close-sheet aria-hidden="true"></div>
+<aside class="sheet" role="dialog" aria-modal="true" aria-label="More pages" aria-hidden="true">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-header">
+    <h5>More</h5>
+    <button type="button" class="sheet-close" data-close-sheet aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <button type="button" class="sheet-theme-toggle" data-theme-toggle>
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      <span class="sheet-theme-label">Dark mode</span>
+    </button>
+  <ul class="sheet-links">
+    <li><a href="travel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/><path d="M9 4v13M15 7v13"/></svg> Travel</a></li>
+    <li><a href="hotel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Hotel</a></li>
+    <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
+    <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
+  </ul>
+</aside>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// ROSARY DATA
+// ═══════════════════════════════════════════════════════════════════════
+
+const DAY_MAP = { 0:'glorious', 1:'joyful', 2:'sorrowful', 3:'glorious', 4:'luminous', 5:'sorrowful', 6:'joyful' };
+
+function getTodaysMystery() { return DAY_MAP[new Date().getDay()]; }
+
+const PRAYERS = {
+  sign_of_cross: {
+    title: 'Sign of the Cross',
+    text: 'In the name of the Father, and of the Son, and of the Holy Spirit. Amen.',
+    instruction: 'Make the Sign of the Cross while saying this prayer.',
+  },
+  apostles_creed: {
+    title: "Apostles' Creed",
+    text: "I believe in God, the Father Almighty, Creator of heaven and earth; and in Jesus Christ, His only Son, our Lord; who was conceived by the Holy Spirit, born of the Virgin Mary; suffered under Pontius Pilate, was crucified, died and was buried. He descended into hell; the third day He rose again from the dead. He ascended into heaven, and is seated at the right hand of God the Father Almighty; from thence He shall come to judge the living and the dead. I believe in the Holy Spirit, the Holy Catholic Church, the communion of Saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
+    instruction: 'Pray on the crucifix of the rosary.',
+  },
+  our_father: {
+    title: 'Our Father',
+    text: 'Our Father, who art in heaven, hallowed be Thy name; Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.',
+  },
+  hail_mary: {
+    title: 'Hail Mary',
+    text: 'Hail Mary, full of grace, the Lord is with thee. Blessed art thou amongst women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.',
+  },
+  glory_be: {
+    title: 'Glory Be',
+    text: 'Glory be to the Father, and to the Son, and to the Holy Spirit. As it was in the beginning, is now, and ever shall be, world without end. Amen.',
+  },
+  fatima_prayer: {
+    title: 'Fatima Prayer',
+    text: 'O my Jesus, forgive us our sins, save us from the fires of hell, lead all souls to heaven, especially those most in need of Thy mercy. Amen.',
+  },
+  hail_holy_queen: {
+    title: 'Hail, Holy Queen',
+    text: 'Hail, Holy Queen, Mother of Mercy, our life, our sweetness and our hope. To thee do we cry, poor banished children of Eve. To thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy toward us, and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.',
+  },
+  pray_for_us: {
+    title: 'Pray for Us',
+    text: 'V: Pray for us, O Holy Mother of God.\nR: That we may be made worthy of the promises of Christ.',
+  },
+  concluding_prayer: {
+    title: 'Concluding Prayer',
+    text: 'O God, whose Only Begotten Son, by His life, Death, and Resurrection, has purchased for us the rewards of eternal life, grant, we beseech Thee, that by meditating on these mysteries of the most holy Rosary of the Blessed Virgin Mary, we may imitate what they contain and obtain what they promise, through the same Christ our Lord. Amen.',
+  },
+};
+
+const MYSTERY_SETS = [
+  {
+    key: 'joyful', label: 'Joyful Mysteries',
+    mysteries: [
+      { number: 1, title: 'The Annunciation', scripture: 'Luke 1:26-38', meditation: 'The Angel Gabriel announces to Mary that she will conceive and bear the Son of God.' },
+      { number: 2, title: 'The Visitation', scripture: 'Luke 1:39-56', meditation: 'Mary visits her cousin Elizabeth, who is pregnant with John the Baptist.' },
+      { number: 3, title: 'The Nativity', scripture: 'Luke 2:1-20', meditation: 'Jesus is born in Bethlehem in a humble stable.' },
+      { number: 4, title: 'The Presentation', scripture: 'Luke 2:22-40', meditation: 'Mary and Joseph present the infant Jesus in the Temple.' },
+      { number: 5, title: 'Finding in the Temple', scripture: 'Luke 2:41-52', meditation: 'The child Jesus is found in the Temple, discussing with the teachers.' },
+    ],
+  },
+  {
+    key: 'sorrowful', label: 'Sorrowful Mysteries',
+    mysteries: [
+      { number: 1, title: 'The Agony in the Garden', scripture: 'Matthew 26:36-46', meditation: 'Jesus prays in the Garden of Gethsemane, sweating blood in anguish.' },
+      { number: 2, title: 'The Scourging at the Pillar', scripture: 'John 19:1', meditation: 'Jesus is bound to a pillar and scourged by Roman soldiers.' },
+      { number: 3, title: 'The Crowning with Thorns', scripture: 'Matthew 27:27-31', meditation: 'The soldiers place a crown of thorns on the head of Jesus.' },
+      { number: 4, title: 'The Carrying of the Cross', scripture: 'John 19:17', meditation: 'Jesus carries His Cross through the streets of Jerusalem to Calvary.' },
+      { number: 5, title: 'The Crucifixion', scripture: 'Luke 23:33-46', meditation: 'Jesus is nailed to the Cross and dies for our salvation.' },
+    ],
+  },
+  {
+    key: 'glorious', label: 'Glorious Mysteries',
+    mysteries: [
+      { number: 1, title: 'The Resurrection', scripture: 'Mark 16:1-7', meditation: 'Jesus rises from the dead on the third day.' },
+      { number: 2, title: 'The Ascension', scripture: 'Acts 1:9-11', meditation: 'Jesus ascends into heaven forty days after the Resurrection.' },
+      { number: 3, title: 'The Descent of the Holy Spirit', scripture: 'Acts 2:1-4', meditation: 'The Holy Spirit descends upon the Apostles and the Blessed Mother.' },
+      { number: 4, title: 'The Assumption', scripture: 'Revelation 12:1', meditation: 'The Blessed Virgin Mary is assumed body and soul into heaven.' },
+      { number: 5, title: 'The Coronation', scripture: 'Revelation 12:1', meditation: 'The Blessed Virgin Mary is crowned Queen of Heaven and Earth.' },
+    ],
+  },
+  {
+    key: 'luminous', label: 'Luminous Mysteries',
+    mysteries: [
+      { number: 1, title: 'The Baptism in the Jordan', scripture: 'Matthew 3:13-17', meditation: 'Jesus is baptized in the River Jordan by John the Baptist.' },
+      { number: 2, title: 'The Wedding at Cana', scripture: 'John 2:1-12', meditation: 'Jesus performs His first miracle at the wedding feast at Cana.' },
+      { number: 3, title: 'Proclamation of the Kingdom', scripture: 'Mark 1:14-15', meditation: 'Jesus proclaims the Kingdom of God and calls all to conversion.' },
+      { number: 4, title: 'The Transfiguration', scripture: 'Matthew 17:1-8', meditation: 'Jesus is transfigured on Mount Tabor in the presence of Peter, James, and John.' },
+      { number: 5, title: 'Institution of the Eucharist', scripture: 'Luke 22:14-20', meditation: 'Jesus institutes the Holy Eucharist at the Last Supper.' },
+    ],
+  },
+];
+
+const MYSTERY_SCRIPTURE = {
+  joyful_1: { passage: 'Luke 1:26\u201327', summary: 'The angel Gabriel was sent by God to a town in Galilee called Nazareth, to a virgin betrothed to a man named Joseph.' },
+  joyful_2: { passage: 'Luke 1:39\u201342', summary: 'Mary set out in haste to visit Elizabeth, who was filled with the Holy Spirit and proclaimed Mary blessed among women.' },
+  joyful_3: { passage: 'Luke 2:1\u20137', summary: 'Joseph and Mary traveled to Bethlehem for the census. While there, the time came for Mary to give birth, and she laid her firstborn son in a manger.' },
+  joyful_4: { passage: 'Luke 2:21\u201324', summary: 'When the days of purification were completed, Joseph and Mary brought Jesus to Jerusalem to present him to the Lord according to the Law.' },
+  joyful_5: { passage: 'Luke 2:41\u201347', summary: 'After three days of searching, Mary and Joseph found the boy Jesus in the Temple, sitting among the teachers, listening and asking questions.' },
+  sorrowful_1: { passage: 'Matthew 26:36\u201339', summary: 'Jesus went with his disciples to Gethsemane and, falling prostrate in prayer, said: "My Father, if it is possible, let this cup pass from me."' },
+  sorrowful_2: { passage: 'Matthew 27:26', summary: 'Pilate released Barabbas to the crowd, and after having Jesus scourged, he handed him over to be crucified.' },
+  sorrowful_3: { passage: 'Matthew 27:27\u201329', summary: 'The soldiers wove a crown out of thorns and placed it on his head, knelt before him, and mocked him, saying: "Hail, King of the Jews!"' },
+  sorrowful_4: { passage: 'Mark 15:21\u201322', summary: 'They pressed Simon of Cyrene into service to carry the cross, and brought Jesus to the place called Golgotha.' },
+  sorrowful_5: { passage: 'Luke 23:33\u201346', summary: 'When they came to the place called the Skull, they crucified him. Jesus cried out: "Father, into your hands I commend my spirit."' },
+  glorious_1: { passage: 'Luke 24:1\u20135', summary: 'At daybreak on the first day of the week, the women came to the tomb and found the stone rolled away. Two men in dazzling garments asked: "Why do you seek the living among the dead?"' },
+  glorious_2: { passage: 'Mark 16:19', summary: 'The Lord Jesus, after he spoke to them, was taken up into heaven and took his seat at the right hand of God.' },
+  glorious_3: { passage: 'Acts 2:1\u20134', summary: 'When the day of Pentecost came, they were all together. Suddenly a noise like a strong driving wind filled the house, and they were all filled with the Holy Spirit.' },
+  glorious_4: { passage: 'Luke 1:48\u201349', summary: 'Mary proclaimed: "The Mighty One has done great things for me, and holy is his name. From now on all generations will call me blessed."' },
+  glorious_5: { passage: 'Revelation 12:1', summary: 'A great sign appeared in the sky: a woman clothed with the sun, with the moon under her feet, and on her head a crown of twelve stars.' },
+  luminous_1: { passage: 'Matthew 3:16\u201317', summary: 'After Jesus was baptized, the heavens opened and the Spirit of God descended like a dove. A voice from heaven said: "This is my beloved Son."' },
+  luminous_2: { passage: 'John 2:1\u20135', summary: 'At a wedding in Cana, when the wine ran short, Mary told the servants: "Do whatever he tells you." Jesus then performed his first sign.' },
+  luminous_3: { passage: 'Mark 1:15', summary: 'Jesus proclaimed: "This is the time of fulfillment. The kingdom of God is at hand. Repent, and believe in the gospel."' },
+  luminous_4: { passage: 'Matthew 17:1\u20132', summary: 'Jesus took Peter, James, and John up a high mountain. He was transfigured before them; his face shone like the sun and his clothes became white as light.' },
+  luminous_5: { passage: 'Matthew 26:26', summary: 'During the meal, Jesus took bread, blessed it, broke it, and gave it to his disciples, saying: "Take and eat; this is my body."' },
+};
+
+const LITANY_OF_LORETO = [
+  { type:'heading', leader:'The Litany of Loreto', response:'' },
+  { type:'pair', leader:'Lord, have mercy.', response:'Lord, have mercy.' },
+  { type:'pair', leader:'Christ, have mercy.', response:'Christ, have mercy.' },
+  { type:'pair', leader:'Lord, have mercy.', response:'Lord, have mercy.' },
+  { type:'pair', leader:'Christ, hear us.', response:'Christ, graciously hear us.' },
+  { type:'heading', leader:'', response:'have mercy on us.' },
+  { type:'pair', leader:'God, the Father of heaven,', response:'have mercy on us.' },
+  { type:'pair', leader:'God the Son, Redeemer of the world,', response:'have mercy on us.' },
+  { type:'pair', leader:'God the Holy Spirit,', response:'have mercy on us.' },
+  { type:'pair', leader:'Holy Trinity, one God,', response:'have mercy on us.' },
+  { type:'heading', leader:'', response:'pray for us.' },
+  { type:'pair', leader:'Holy Mary,', response:'pray for us.' },
+  { type:'pair', leader:'Holy Mother of God,', response:'pray for us.' },
+  { type:'pair', leader:'Holy Virgin of virgins,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of Christ,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of the Church,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of Mercy,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of divine grace,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of Hope,', response:'pray for us.' },
+  { type:'pair', leader:'Mother most pure,', response:'pray for us.' },
+  { type:'pair', leader:'Mother most chaste,', response:'pray for us.' },
+  { type:'pair', leader:'Mother inviolate,', response:'pray for us.' },
+  { type:'pair', leader:'Mother undefiled,', response:'pray for us.' },
+  { type:'pair', leader:'Mother most amiable,', response:'pray for us.' },
+  { type:'pair', leader:'Mother most admirable,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of good counsel,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of our Creator,', response:'pray for us.' },
+  { type:'pair', leader:'Mother of our Saviour,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most prudent,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most venerable,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most renowned,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most powerful,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most merciful,', response:'pray for us.' },
+  { type:'pair', leader:'Virgin most faithful,', response:'pray for us.' },
+  { type:'pair', leader:'Mirror of justice,', response:'pray for us.' },
+  { type:'pair', leader:'Seat of wisdom,', response:'pray for us.' },
+  { type:'pair', leader:'Cause of our joy,', response:'pray for us.' },
+  { type:'pair', leader:'Spiritual vessel,', response:'pray for us.' },
+  { type:'pair', leader:'Vessel of honour,', response:'pray for us.' },
+  { type:'pair', leader:'Singular vessel of devotion,', response:'pray for us.' },
+  { type:'pair', leader:'Mystical rose,', response:'pray for us.' },
+  { type:'pair', leader:'Tower of David,', response:'pray for us.' },
+  { type:'pair', leader:'Tower of ivory,', response:'pray for us.' },
+  { type:'pair', leader:'House of gold,', response:'pray for us.' },
+  { type:'pair', leader:'Ark of the covenant,', response:'pray for us.' },
+  { type:'pair', leader:'Gate of heaven,', response:'pray for us.' },
+  { type:'pair', leader:'Morning star,', response:'pray for us.' },
+  { type:'pair', leader:'Health of the sick,', response:'pray for us.' },
+  { type:'pair', leader:'Refuge of sinners,', response:'pray for us.' },
+  { type:'pair', leader:'Solace of Migrants,', response:'pray for us.' },
+  { type:'pair', leader:'Comfort of the afflicted,', response:'pray for us.' },
+  { type:'pair', leader:'Help of Christians,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Angels,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Patriarchs,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Prophets,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Apostles,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Martyrs,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Confessors,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of Virgins,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of all Saints,', response:'pray for us.' },
+  { type:'pair', leader:'Queen conceived without original sin,', response:'pray for us.' },
+  { type:'pair', leader:'Queen assumed into heaven,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of the most holy Rosary,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of families,', response:'pray for us.' },
+  { type:'pair', leader:'Queen of peace,', response:'pray for us.' },
+  { type:'heading', leader:'', response:'' },
+  { type:'pair', leader:'Lamb of God, who takes away the sins of the world,', response:'spare us, O Lord.' },
+  { type:'pair', leader:'Lamb of God, who takes away the sins of the world,', response:'graciously hear us, O Lord.' },
+  { type:'pair', leader:'Lamb of God, who takes away the sins of the world,', response:'have mercy on us.' },
+  { type:'pair', leader:'Pray for us, O holy Mother of God.', response:'That we may be made worthy of the promises of Christ.' },
+  { type:'heading', leader:'Let us pray.', response:'' },
+  { type:'leader', leader:'Grant, we beseech thee, O Lord God, that we, your servants, may enjoy perpetual health of mind and body; and by the glorious intercession of the Blessed Mary, ever Virgin, may be delivered from present sorrow, and obtain eternal joy. Through Christ our Lord. Amen.', response:'' },
+];
+
+// ═══════════════════════════════════════════════════════════════════════
+// STEP SEQUENCE BUILDER
+// ═══════════════════════════════════════════════════════════════════════
+
+function buildStepSequence(includeFatima, includeLitany) {
+  const steps = [
+    { type: 'sign_of_cross' },
+    { type: 'apostles_creed' },
+    { type: 'our_father' },
+    { type: 'hail_mary_x3' },
+    { type: 'glory_be' },
+  ];
+  for (let d = 0; d < 5; d++) {
+    steps.push({ type: 'announce_mystery', decadeIndex: d });
+    steps.push({ type: 'decade_our_father', decadeIndex: d });
+    steps.push({ type: 'decade_hail_marys', decadeIndex: d });
+    steps.push({ type: 'decade_glory_be', decadeIndex: d });
+    if (includeFatima) steps.push({ type: 'fatima_prayer', decadeIndex: d });
+  }
+  steps.push({ type: 'hail_holy_queen' });
+  if (includeLitany) steps.push({ type: 'litany_of_loreto' });
+  steps.push({ type: 'concluding_prayer' });
+  steps.push({ type: 'final_sign_of_cross' });
+  return steps;
+}
+
+function getMysterySet(key) {
+  return MYSTERY_SETS.find(s => s.key === key);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════════════════════
+
+const state = {
+  tab: 'pray',
+  praying: false,
+  mysterySet: getTodaysMystery(),
+  beginner: false,
+  fatima: true,
+  litany: false,
+  scripture: false,
+  intention: '',
+  textSize: 'md',
+  steps: [],
+  stepIndex: 0,
+  beadCount: 0,
+  expandedMysterySet: null,
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════
+
+document.querySelectorAll('.rosary-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    state.tab = tab;
+    document.querySelectorAll('.rosary-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+      b.setAttribute('aria-selected', b.dataset.tab === tab);
+    });
+    document.querySelectorAll('.rosary-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'panel-' + tab);
+    });
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// OPTIONS SETUP
+// ═══════════════════════════════════════════════════════════════════════
+
+(function initOptions() {
+  const sel = document.getElementById('opt-mystery');
+  MYSTERY_SETS.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.key;
+    opt.textContent = s.label;
+    sel.appendChild(opt);
+  });
+  sel.value = state.mysterySet;
+
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const todaySet = getMysterySet(getTodaysMystery());
+  document.getElementById('today-mystery-note').textContent = "Today (" + dayNames[new Date().getDay()] + "): " + todaySet.label;
+
+  sel.addEventListener('change', () => { state.mysterySet = sel.value; });
+  document.getElementById('opt-beginner').addEventListener('change', e => { state.beginner = e.target.checked; });
+  document.getElementById('opt-fatima').addEventListener('change', e => { state.fatima = e.target.checked; });
+  document.getElementById('opt-litany').addEventListener('change', e => { state.litany = e.target.checked; });
+  document.getElementById('opt-scripture').addEventListener('change', e => { state.scripture = e.target.checked; });
+  document.getElementById('opt-intention').addEventListener('input', e => { state.intention = e.target.value; });
+
+  document.querySelectorAll('.text-size-btns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.textSize = btn.dataset.size;
+      document.querySelectorAll('.text-size-btns button').forEach(b => b.classList.toggle('active', b.dataset.size === state.textSize));
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// PRAYER ENGINE
+// ═══════════════════════════════════════════════════════════════════════
+
+const praySetup = document.getElementById('pray-setup');
+const prayActive = document.getElementById('pray-active');
+const prayerCard = document.getElementById('prayer-card');
+const progressFill = document.getElementById('progress-fill');
+const progressPct = document.getElementById('progress-pct');
+const decadeIndicator = document.getElementById('decade-indicator');
+const intentionBar = document.getElementById('intention-bar');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+
+document.getElementById('btn-begin').addEventListener('click', startPrayer);
+
+function startPrayer() {
+  state.steps = buildStepSequence(state.fatima, state.litany);
+  state.stepIndex = 0;
+  state.beadCount = 0;
+  state.praying = true;
+  praySetup.style.display = 'none';
+  prayActive.style.display = 'block';
+  renderStep();
+}
+
+function renderStep() {
+  const step = state.steps[state.stepIndex];
+  const totalSteps = state.steps.length;
+  const pct = Math.round(((state.stepIndex + 1) / totalSteps) * 100);
+  progressFill.style.width = pct + '%';
+  progressPct.textContent = pct + '%';
+
+  btnPrev.disabled = state.stepIndex === 0;
+
+  const setData = getMysterySet(state.mysterySet);
+  const mystery = step.decadeIndex !== undefined ? setData.mysteries[step.decadeIndex] : null;
+
+  // Intention banner
+  if (state.intention.trim() && step.type !== 'final_sign_of_cross') {
+    intentionBar.innerHTML = '<div class="intention-banner"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-2.046C4.463 12.962 3 11.217 3 9a5 5 0 0110 0c0 2.217-1.463 3.962-2.885 5.174a22.043 22.043 0 01-2.582 2.046 20.764 20.764 0 01-1.162.682l-.019.01-.005.003h-.002z"/></svg>Praying for: <strong>' + escHtml(state.intention.trim()) + '</strong></div>';
+  } else {
+    intentionBar.innerHTML = '';
+  }
+
+  // Decade indicator
+  if (mystery && step.type !== 'announce_mystery' && step.type !== 'final_sign_of_cross') {
+    decadeIndicator.style.display = 'block';
+    decadeIndicator.textContent = setData.label + ' \u2014 ' + mystery.title;
+  } else {
+    decadeIndicator.style.display = 'none';
+  }
+
+  // Check if complete
+  const isComplete = state.stepIndex === totalSteps - 1 && step.type === 'final_sign_of_cross';
+
+  if (isComplete) {
+    renderCompletion();
+    document.getElementById('pray-nav').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('pray-nav').style.display = 'flex';
+
+  const isBeadStep = step.type === 'decade_hail_marys' || step.type === 'hail_mary_x3';
+  const beadTarget = step.type === 'decade_hail_marys' ? 10 : 3;
+  const beadsDone = !isBeadStep || state.beadCount >= beadTarget;
+  btnNext.disabled = !beadsDone;
+
+  switch (step.type) {
+    case 'sign_of_cross':
+    case 'final_sign_of_cross':
+      renderPrayer('sign_of_cross'); break;
+    case 'apostles_creed':
+      renderPrayer('apostles_creed'); break;
+    case 'our_father':
+    case 'decade_our_father':
+      renderPrayer('our_father'); break;
+    case 'glory_be':
+    case 'decade_glory_be':
+      renderPrayer('glory_be'); break;
+    case 'fatima_prayer':
+      renderPrayer('fatima_prayer'); break;
+    case 'hail_holy_queen':
+      renderPrayer('hail_holy_queen'); break;
+    case 'concluding_prayer':
+      renderPrayer('concluding_prayer'); break;
+    case 'hail_mary_x3':
+      renderBeadPrayer('hail_mary', 3); break;
+    case 'decade_hail_marys':
+      renderBeadPrayer('hail_mary', 10); break;
+    case 'announce_mystery':
+      renderMysteryAnnouncement(mystery, step.decadeIndex); break;
+    case 'litany_of_loreto':
+      renderLitany(); break;
+  }
+
+  // Scroll to top of prayer card
+  prayerCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function renderPrayer(key) {
+  const p = PRAYERS[key];
+  let html = '<h3>' + escHtml(p.title) + '</h3>';
+  if (state.beginner && p.instruction) {
+    html += '<div class="instruction">' + escHtml(p.instruction) + '</div>';
+  }
+  html += '<p class="prayer-text text-' + state.textSize + '">' + escHtml(p.text) + '</p>';
+  prayerCard.innerHTML = html;
+}
+
+function renderBeadPrayer(key, total) {
+  const p = PRAYERS[key];
+  const done = state.beadCount >= total;
+  const size = 120, stroke = 8;
+  const radius = (size - stroke) / 2;
+  const circ = 2 * Math.PI * radius;
+  const offset = circ * (1 - state.beadCount / total);
+
+  let html = '<h3>' + escHtml(p.title);
+  if (total === 3) html += ' <span style="font-size:0.875rem;font-weight:400;color:var(--ink-soft);">(Opening)</span>';
+  html += '</h3>';
+
+  if (state.beginner) {
+    html += '<p style="font-size:0.8125rem;color:var(--ink-soft);margin-bottom:0.75rem;">Tap the circle to count each ' + escHtml(p.title) + '. (' + total + ' total)</p>';
+  }
+
+  html += '<div class="bead-counter">';
+  html += '<div class="bead-ring">';
+  html += '<svg viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">';
+  html += '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + radius + '" fill="none" class="ring-bg" stroke-width="' + stroke + '"/>';
+  html += '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + radius + '" fill="none" class="ring-fill" stroke-width="' + stroke + '" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '" stroke-linecap="round" transform="rotate(-90 ' + (size/2) + ' ' + (size/2) + ')"/>';
+  html += '</svg>';
+  html += '<button onclick="tapBead()" ' + (done ? 'disabled' : '') + ' aria-label="Tap to count prayer">';
+  html += '<span class="bead-num">' + state.beadCount + '</span>';
+  html += '<span class="bead-total">/ ' + total + '</span>';
+  html += '</button>';
+  html += '</div>';
+
+  html += '<div class="bead-dots">';
+  for (let i = 0; i < total; i++) {
+    html += '<span class="bead-dot' + (i < state.beadCount ? ' filled' : '') + '"></span>';
+  }
+  html += '</div>';
+
+  const label = done ? 'Complete!' : 'Tap to pray (' + state.beadCount + '/' + total + ')';
+  html += '<p class="bead-label">' + escHtml(label) + '</p>';
+  html += '</div>';
+
+  if (!done) {
+    html += '<p class="prayer-text text-' + state.textSize + '" style="margin-top:1rem;">' + escHtml(p.text) + '</p>';
+  }
+
+  prayerCard.innerHTML = html;
+}
+
+window.tapBead = function() {
+  const step = state.steps[state.stepIndex];
+  const target = step.type === 'decade_hail_marys' ? 10 : 3;
+  if (state.beadCount < target) {
+    state.beadCount++;
+    renderStep();
+  }
+};
+
+function renderMysteryAnnouncement(mystery, decadeIdx) {
+  const num = decadeIdx + 1;
+  let html = '<div class="mystery-announce">';
+  html += '<p class="decade-label">Decade ' + num + ' of 5</p>';
+  html += '<p class="mystery-title">' + escHtml(mystery.title) + '</p>';
+  html += '<p class="scripture-ref">' + escHtml(mystery.scripture) + '</p>';
+  html += '<p class="meditation">' + escHtml(mystery.meditation) + '</p>';
+  if (state.beginner) {
+    html += '<p class="beginner-hint">Reflect on this mystery as you pray the following prayers for this decade.</p>';
+  }
+  if (state.scripture) {
+    const sKey = state.mysterySet + '_' + num;
+    const sc = MYSTERY_SCRIPTURE[sKey];
+    if (sc) {
+      html += '<div class="scripture-panel">';
+      html += '<button class="scripture-toggle open" onclick="this.classList.toggle(\'open\');this.nextElementSibling.style.display=this.classList.contains(\'open\')?\'block\':\'none\'">';
+      html += '<span>Scripture Reading</span>';
+      html += '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>';
+      html += '</button>';
+      html += '<div class="scripture-body">';
+      html += '<p>' + escHtml(sc.summary) + '</p>';
+      html += '<p class="scripture-ref">\u2014 ' + escHtml(sc.passage) + '</p>';
+      html += '</div></div>';
+    }
+  }
+  html += '</div>';
+  prayerCard.innerHTML = html;
+}
+
+function renderLitany() {
+  let html = '<h3>Litany of Loreto</h3>';
+  if (state.beginner) {
+    html += '<div class="instruction">The Litany of Loreto is a series of prayers honoring the Blessed Virgin Mary under her many titles. A leader says each invocation, and the congregation responds.</div>';
+  }
+  html += '<div class="litany-grid" style="text-align:left;margin-top:1rem;">';
+  LITANY_OF_LORETO.forEach(line => {
+    if (line.type === 'heading') {
+      if (!line.leader && !line.response) {
+        html += '<div class="litany-spacer"></div>';
+      } else {
+        html += '<div class="litany-heading">';
+        if (line.leader) html += '<h4>' + escHtml(line.leader) + '</h4>';
+        if (line.response) html += '<p class="response-hint">Response: <em>' + escHtml(line.response) + '</em></p>';
+        html += '</div>';
+      }
+    } else if (line.type === 'leader') {
+      html += '<div class="litany-full">' + escHtml(line.leader) + '</div>';
+    } else {
+      html += '<div class="litany-leader">' + escHtml(line.leader) + '</div>';
+      html += '<div class="litany-response">' + escHtml(line.response) + '</div>';
+    }
+  });
+  html += '</div>';
+  prayerCard.innerHTML = html;
+  prayerCard.style.textAlign = 'left';
+  // Reset alignment after next render
+}
+
+function renderCompletion() {
+  let html = '<div class="completion-card">';
+  html += '<p style="font-size:2rem;">&#128591;</p>';
+  html += '<h3>Rosary Complete</h3>';
+  html += '<p>God bless you. May Our Lady intercede for you.</p>';
+  if (state.intention.trim()) {
+    html += '<p style="background:rgba(255,255,255,0.1);border-radius:0.5rem;padding:0.5rem 1rem;margin-top:0.75rem;">You prayed for: <strong>' + escHtml(state.intention.trim()) + '</strong></p>';
+  }
+  html += '<div class="completion-btns">';
+  html += '<button class="btn-log" onclick="logRosary()">Log this rosary</button>';
+  html += '<button class="btn-pray-again" onclick="resetPrayer()">Pray Again</button>';
+  html += '</div></div>';
+  prayerCard.innerHTML = html;
+}
+
+window.logRosary = function() {
+  if (typeof DataStore !== 'undefined' && DataStore.logPrayer) {
+    DataStore.logPrayer({
+      type: 'rosary',
+      mysterySet: state.mysterySet,
+      includedFatima: state.fatima,
+      includedLitany: state.litany,
+      intention: state.intention.trim() || null,
+      completedAt: new Date().toISOString(),
+    });
+    const btn = prayerCard.querySelector('.btn-log');
+    if (btn) {
+      btn.textContent = 'Logged!';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    }
+  }
+};
+
+window.resetPrayer = function() {
+  state.praying = false;
+  state.stepIndex = 0;
+  state.beadCount = 0;
+  prayActive.style.display = 'none';
+  praySetup.style.display = 'block';
+  document.getElementById('pray-nav').style.display = 'flex';
+  prayerCard.style.textAlign = '';
+};
+
+btnNext.addEventListener('click', () => {
+  if (state.stepIndex < state.steps.length - 1) {
+    state.stepIndex++;
+    state.beadCount = 0;
+    prayerCard.style.textAlign = '';
+    renderStep();
+  }
+});
+
+btnPrev.addEventListener('click', () => {
+  if (state.stepIndex > 0) {
+    state.stepIndex--;
+    state.beadCount = 0;
+    prayerCard.style.textAlign = '';
+    renderStep();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// MYSTERIES TAB
+// ═══════════════════════════════════════════════════════════════════════
+
+(function initMysteries() {
+  const container = document.getElementById('mysteries-accordion');
+  MYSTERY_SETS.forEach(set => {
+    const card = document.createElement('div');
+    card.className = 'mystery-set-card';
+
+    const btn = document.createElement('button');
+    btn.className = 'mystery-set-btn';
+    btn.innerHTML = '<h3>' + escHtml(set.label) + '</h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>';
+
+    const list = document.createElement('div');
+    list.className = 'mystery-list';
+    list.style.display = 'none';
+
+    set.mysteries.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'mystery-item';
+      item.innerHTML = '<span class="mystery-num">' + m.number + '</span><div><p class="mystery-item-title">' + escHtml(m.title) + '</p><p class="mystery-item-ref">' + escHtml(m.scripture) + '</p><p class="mystery-item-meditation">' + escHtml(m.meditation) + '</p></div>';
+      list.appendChild(item);
+    });
+
+    btn.addEventListener('click', () => {
+      const isOpen = list.style.display !== 'none';
+      // Close all
+      container.querySelectorAll('.mystery-list').forEach(l => l.style.display = 'none');
+      container.querySelectorAll('.mystery-set-btn').forEach(b => b.classList.remove('expanded'));
+      if (!isOpen) {
+        list.style.display = 'block';
+        btn.classList.add('expanded');
+      }
+    });
+
+    card.appendChild(btn);
+    card.appendChild(list);
+    container.appendChild(card);
+  });
+})();
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
