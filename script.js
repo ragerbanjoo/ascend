@@ -69,7 +69,7 @@
     KEY: 'user:theme',
     async init() {
       const saved = await Storage.get(this.KEY, null);
-      this.apply(saved || 'dark');
+      this.apply(saved || 'light');
     },
     apply(theme) {
       document.documentElement.setAttribute('data-theme', theme);
@@ -77,7 +77,7 @@
       if (meta) meta.content = theme === 'light' ? '#f7f4ec' : '#060d1a';
     },
     async toggle() {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
       const next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.classList.add('theme-switching');
       this.apply(next);
@@ -988,6 +988,7 @@
     const ua = navigator.userAgent || '';
     const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isAndroid = /Android/.test(ua);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 
     const wizard = document.createElement('div');
     wizard.className = 'onboarding';
@@ -1033,18 +1034,12 @@
         </div>`;
     }
 
-    wizard.innerHTML = `
-      <div class="ob-inner">
-        <div class="ob-progress" aria-hidden="true">
-          <span class="ob-dot active"></span>
-          <span class="ob-dot"></span>
-          <span class="ob-dot"></span>
-          <span class="ob-dot"></span>
-          <span class="ob-dot"></span>
-        </div>
+    const totalSteps = isStandalone ? 4 : 5;
+    let stepNum = 0;
 
-        <div class="ob-step active" data-ob-step="1">
-          <span class="eyebrow">Step 1 of 5</span>
+    const installStep = isStandalone ? '' : `
+        <div class="ob-step active" data-ob-step="${++stepNum}">
+          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Add to your home screen</h2>
           <p class="lede">This site is your retreat guide. Pin it to your home screen for quick access all weekend.</p>
           ${installHTML}
@@ -1052,10 +1047,22 @@
             <button type="button" class="btn btn-ghost" data-ob-next>Skip</button>
             <button type="button" class="btn btn-primary" data-ob-next>Next</button>
           </div>
+        </div>`;
+
+    const dotsHTML = Array.from({ length: totalSteps }, (_, i) =>
+      `<span class="ob-dot${i === 0 ? ' active' : ''}"></span>`
+    ).join('');
+
+    wizard.innerHTML = `
+      <div class="ob-inner">
+        <div class="ob-progress" aria-hidden="true">
+          ${dotsHTML}
         </div>
 
-        <div class="ob-step" data-ob-step="2">
-          <span class="eyebrow">Step 2 of 5</span>
+        ${installStep}
+
+        <div class="ob-step${isStandalone ? ' active' : ''}" data-ob-step="${++stepNum}">
+          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Option A: The Full Experience</h2>
           <div class="ob-time-blocks">
             <div class="ob-time-block">
@@ -1082,8 +1089,8 @@
           </div>
         </div>
 
-        <div class="ob-step" data-ob-step="3">
-          <span class="eyebrow">Step 3 of 5</span>
+        <div class="ob-step" data-ob-step="${++stepNum}">
+          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Option B: Straight to ASCEND</h2>
           <div class="ob-time-blocks">
             <div class="ob-time-block">
@@ -1106,8 +1113,8 @@
           </div>
         </div>
 
-        <div class="ob-step" data-ob-step="4">
-          <span class="eyebrow">Step 4 of 5</span>
+        <div class="ob-step" data-ob-step="${++stepNum}">
+          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Choose your departure</h2>
           <p class="lede">Which option works best for you?</p>
           <div class="ob-choices">
@@ -1128,16 +1135,16 @@
           </div>
         </div>
 
-        <div class="ob-step" data-ob-step="5">
-          <span class="eyebrow">Step 5 of 5</span>
+        <div class="ob-step" data-ob-step="${++stepNum}">
+          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Choose your look</h2>
           <p class="lede">Pick a theme. You can switch anytime from the menu.</p>
           <div class="ob-theme-cards">
-            <button type="button" class="ob-theme-choice" data-ob-theme="dark" aria-pressed="true">
+            <button type="button" class="ob-theme-choice" data-ob-theme="dark" aria-pressed="false">
               <div class="ob-theme-preview ob-preview-dark"></div>
               <span>Dark</span>
             </button>
-            <button type="button" class="ob-theme-choice" data-ob-theme="light" aria-pressed="false">
+            <button type="button" class="ob-theme-choice" data-ob-theme="light" aria-pressed="true">
               <div class="ob-theme-preview ob-preview-light"></div>
               <span>Light</span>
             </button>
@@ -1159,7 +1166,7 @@
     const dots = wizard.querySelectorAll('.ob-dot');
 
     function goTo(n) {
-      if (n < 1 || n > 5) return;
+      if (n < 1 || n > totalSteps) return;
       steps.forEach(s => s.classList.remove('active'));
       dots.forEach((d, i) => d.classList.toggle('active', i < n));
       wizard.querySelector(`[data-ob-step="${n}"]`).classList.add('active');
@@ -1199,7 +1206,7 @@
         if (selectedOption) {
           await Storage.set('user:departureOption', selectedOption, { shared: false });
         }
-        const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
         await Theme.set(theme);
         await Storage.set('onboarding:complete', true, { shared: false });
         wizard.classList.add('closing');
