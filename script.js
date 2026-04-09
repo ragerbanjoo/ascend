@@ -1071,18 +1071,18 @@
             </div>
             <div class="ob-time-block">
               <span class="ob-time">6:30 AM</span>
-              <span class="ob-time-label">Arrive in Edmonds for breakfast</span>
+              <span class="ob-time-label">Arrive at Meydenbauer Center, Bellevue</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">7:00 AM</span>
-              <span class="ob-time-label">Eucharistic Adoration &amp; Confession at Holy Rosary</span>
+              <span class="ob-time-label">Eucharistic Adoration &amp; Confession at the conference</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">9:00 AM</span>
               <span class="ob-time-label">ASCEND conference opens in Bellevue</span>
             </div>
           </div>
-          <p class="ob-desc">This option includes an early-morning hour of Eucharistic Adoration before ASCEND begins. It's the full spiritual experience — Adoration, Confession, and then the conference. It means a very early start, but it's the way to get the most out of the day.</p>
+          <p class="ob-desc">This option gets you to the conference venue early for two hours of Eucharistic Adoration, a Confession window, and praise music before the main program begins. It means a very early start, but it's the way to get the most out of the day.</p>
           <div class="ob-actions">
             <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
             <button type="button" class="btn btn-primary" data-ob-next>Next</button>
