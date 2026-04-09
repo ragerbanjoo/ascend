@@ -1,5 +1,5 @@
 /* =========================================================
-   St. Juan Diego YAG × ASCEND — Pilgrimage Site
+   St. Juan Diego YAG × ASCEND — Retreat Site
    Shared client-side script
    "In Him, We Rise — Together."
    ========================================================= */
@@ -11,7 +11,7 @@
   // 1. Trip constants (all times Pacific — PDT in May 2026)
   // -------------------------------------------------------
   const TRIP = {
-    departPT:  new Date('2026-05-16T06:45:00-07:00'), // Option B recommended default
+    departPT:  new Date('2026-05-16T04:00:00-07:00'), // Option A recommended default
     returnPT:  new Date('2026-05-17T20:00:00-07:00'),
     label:     'May 16–17, 2026'
   };
@@ -82,7 +82,7 @@
 
   function formatCompact(ms) {
     const { d, h, m, s } = formatDuration(ms);
-    if (d > 0) return `${d}d ${h}h ${m}m`;
+    if (d > 0) return `${d}d ${h}h ${m}m ${pad(s)}s`;
     if (h > 0) return `${h}h ${m}m ${pad(s)}s`;
     return `${m}m ${pad(s)}s`;
   }
@@ -102,7 +102,7 @@
         text = formatCompact(TRIP.departPT - now);
         cls  = '';
       } else if (now < TRIP.returnPT) {
-        text = 'ON PILGRIMAGE ' + SVG_VAN;
+        text = 'ON RETREAT ' + SVG_VAN;
         cls  = 'during';
       } else {
         text = 'Deo gratias ' + SVG_PRAYER;
@@ -159,7 +159,7 @@
         });
       } else if (now < TRIP.returnPT) {
         if (cellBox)  cellBox.hidden = true;
-        if (stateBox) { stateBox.hidden = false; stateBox.innerHTML = 'On Pilgrimage ' + SVG_VAN; }
+        if (stateBox) { stateBox.hidden = false; stateBox.innerHTML = 'On Retreat ' + SVG_VAN; }
       } else {
         if (cellBox)  cellBox.hidden = true;
         if (stateBox) { stateBox.hidden = false; stateBox.innerHTML = 'Deo gratias ' + SVG_PRAYER; }
@@ -498,25 +498,25 @@
   // 13. Timeline stops data (module-level)
   // -------------------------------------------------------
   const STOPS = [
-    // Saturday
-    { id: 1,  day: 'sat', timeA: '04:30', timeB: '06:15',
+    // ── Saturday ──
+    { id: 1,  day: 'sat', timeA: '03:45', timeB: '05:30',
       title: 'Meet at St. Juan Diego Parish, Tieton',
       addr:  'St. Juan Diego Parish, Tieton, WA',
       map:   'https://www.google.com/maps/search/?api=1&query=St.+Juan+Diego+Parish+Tieton+WA',
       body:  'Morning prayer, roll call, load vehicles, final restroom break before the road. Please arrive on time — we leave together.',
       bring: 'Everything you packed. Coffee optional but recommended.'
     },
-    { id: 2,  day: 'sat', timeA: '05:00', timeB: '06:45',
+    { id: 2,  day: 'sat', timeA: '04:00', timeB: '05:45',
       title: 'Depart Tieton',
-      body:  'Route: US-12 W → I-82 W → I-90 W → I-405 N → Meydenbauer Center. Approximately 142 miles, ~2h 20m clean drive time.',
+      body:  'Route: US-12 W → I-82 W → I-90 W → I-405 N → Meydenbauer Center. Approximately 142 miles, ~2h 25m clean drive time.',
     },
-    { id: 3,  day: 'sat', timeA: '06:30', timeB: '08:30',
+    { id: 3,  day: 'sat', timeA: '05:00', timeB: '06:50',
       title: 'Rest stop — Indian John Hill Rest Area',
       addr:  'Indian John Hill Rest Area, I-90 near Cle Elum, WA',
       map:   'https://www.google.com/maps/search/?api=1&query=Indian+John+Hill+Rest+Area',
       body:  '15 minutes — restroom, coffee, stretch, regroup the caravan before Snoqualmie Pass.',
     },
-    { id: 4,  day: 'sat', timeA: '07:00', timeB: '09:30',
+    { id: 4,  day: 'sat', timeA: '06:30', timeB: '08:15',
       title: 'Arrive Meydenbauer Center',
       addr:  '11100 NE 6th St, Bellevue, WA',
       map:   'https://www.google.com/maps/search/?api=1&query=Meydenbauer+Center+Bellevue+WA',
@@ -570,7 +570,7 @@
       title: 'Depart Meydenbauer → La Quinta Lynnwood',
       body:  '~25 min drive, ~17 mi north on I-405 → I-5.',
     },
-    { id: 17, day: 'sat', time: '20:15',
+    { id: 17, day: 'sat', time: '20:00',
       title: 'Hotel check-in — La Quinta Inn Lynnwood',
       addr:  '4300 Alderwood Mall Blvd, Lynnwood, WA · (425) 775-7447',
       map:   'https://www.google.com/maps/search/?api=1&query=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd',
@@ -584,48 +584,56 @@
       title: 'Lights out',
       body:  'Latin Mass is early tomorrow. Rest well.',
     },
-    // Sunday
-    { id: 20, day: 'sun', time: '06:45',
+    // ── Sunday ──
+    { id: 20, day: 'sun', time: '05:45',
       title: 'Wake up',
-      body:  'Free continental breakfast at La Quinta — eggs, sausage, waffles, biscuits & gravy, fruit, yogurt.',
+      body:  'No hotel breakfast this morning — we are eating after Mass. Get ready and meet in the lobby.',
     },
-    { id: 21, day: 'sun', time: '07:45',
+    { id: 21, day: 'sun', time: '06:15',
       title: 'Depart hotel → North American Martyrs Parish',
-      body:  '~15 min, ~7 mi.',
+      body:  '~15 min, ~7 mi. Arrive by 6:40 to settle in and get Latin Mass booklets.',
     },
-    { id: 22, day: 'sun', time: '08:30',
+    { id: 22, day: 'sun', time: '07:00',
       title: 'Traditional Latin Mass — NAM Parish, Edmonds',
       addr:  '9924 232nd St SW, Edmonds, WA 98020',
       map:   'https://www.google.com/maps/search/?api=1&query=North+American+Martyrs+Parish+Edmonds+WA',
-      body:  'The 8:30 Low Mass at North American Martyrs, served by the FSSP. The second Yakima group driving up Sunday meets us here. Please arrive by 8:15 to get booklets.',
+      body:  'The 7:00 AM Low Mass at North American Martyrs, served by the FSSP. The second Yakima group driving up Sunday meets us here. Please arrive by 6:40 to get booklets.',
     },
-    { id: 23, day: 'sun', time: '09:45',
+    { id: 23, day: 'sun', time: '08:15',
       title: 'Fellowship outside church — group photo',
-      body:  'Meet the second Yakima group. Group photo on the steps.',
+      body:  'Meet the second Yakima group. Group photo on the steps. Mass ends around 8:00.',
     },
-    { id: 24, day: 'sun', time: '10:30',
-      title: 'Drive to Seattle — St. James Cathedral',
+    { id: 24, day: 'sun', time: '08:45',
+      title: 'Breakfast',
+      body:  '[PLACEHOLDER: restaurant near Edmonds — Bright Minds to confirm location]',
+    },
+    { id: 25, day: 'sun', time: '09:45',
+      title: 'Depart for Seattle',
       body:  '~25 min, ~17 mi south on I-5.',
     },
-    { id: 25, day: 'sun', time: '11:15',
+    { id: 26, day: 'sun', time: '10:15',
       title: 'Arrive St. James Cathedral',
       addr:  '804 9th Ave, Seattle, WA 98104',
       map:   'https://www.google.com/maps/search/?api=1&query=St.+James+Cathedral+Seattle',
       body:  'Visit, prayer, light candles, confession if available. Mother church of the Archdiocese of Seattle — plan about an hour.',
     },
-    { id: 26, day: 'sun', time: '12:30',
-      title: 'Lunch in downtown Seattle',
-      body:  '[PLACEHOLDER: recommendations — Pike Place Market is walkable from the cathedral]',
+    { id: 27, day: 'sun', time: '11:15',
+      title: 'Depart St. James',
+      body:  '[PLACEHOLDER: destination after cathedral — TBD by Bright Minds]',
     },
-    { id: 27, day: 'sun', time: '14:00',
-      title: 'Afternoon — fellowship / sightseeing',
-      body:  '[PLACEHOLDER: possible second Mass, fellowship, or sightseeing — TBD by Bright Minds]',
+    { id: 28, day: 'sun', time: '12:00',
+      title: 'Lunch',
+      body:  '[PLACEHOLDER: location TBD — Bright Minds to confirm]',
     },
-    { id: 28, day: 'sun', time: '17:00',
+    { id: 29, day: 'sun', time: '13:30',
+      title: 'Afternoon fellowship',
+      body:  '[PLACEHOLDER: TBD by Bright Minds]',
+    },
+    { id: 30, day: 'sun', time: '16:30',
       title: 'Depart Seattle for Yakima',
-      body:  'I-5 S → I-90 E → I-82 E → US-12 E. ~2h 30m.',
+      body:  'I-5 S → I-90 E → I-82 E → US-12 E. ~2h 45m.',
     },
-    { id: 29, day: 'sun', time: '19:30',
+    { id: 31, day: 'sun', time: '19:15',
       title: 'Arrive home — Deo gratias',
       body:  'Blessed be God in His angels and in His saints.',
     }
@@ -683,7 +691,7 @@
     const toggleA = $('[data-option="A"]');
     const toggleB = $('[data-option="B"]');
 
-    let option = (await Storage.get('user:departureOption', 'B')) || 'B';
+    let option = (await Storage.get('user:departureOption', 'A')) || 'A';
 
     function setOption(newOption, persist = true) {
       option = newOption;
@@ -783,16 +791,16 @@
       if (now < TRIP.departPT) {
         banner.hidden = false;
         banner.innerHTML = `
-          <h4>Pilgrimage begins in</h4>
+          <h4>Retreat begins in</h4>
           <div class="banner-countdown" data-banner-countdown>${formatCompact(TRIP.departPT - now)}</div>
           <p class="text-mute" style="font-size:0.8125rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'Full Experience' : 'Sustainable Plan'}</p>
         `;
       } else if (now < TRIP.returnPT) {
         banner.hidden = false;
-        banner.innerHTML = `<h4 style="color: var(--live);"><span class="live-dot"></span>On pilgrimage now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
+        banner.innerHTML = `<h4 style="color: var(--live);"><span class="live-dot"></span>On retreat now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
       } else {
         banner.hidden = false;
-        banner.innerHTML = `<h4>Pilgrimage complete — <span class="italic">Deo gratias</span> ${SVG_PRAYER}</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
+        banner.innerHTML = `<h4>Retreat complete — <span class="italic">Deo gratias</span> ${SVG_PRAYER}</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
       }
 
       // Auto-scroll to current / first upcoming (only on first render, no jump-thrash)
