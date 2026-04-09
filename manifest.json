@@ -1,0 +1,22 @@
+{
+  "name": "St. Juan Diego YAG × ASCEND 2026",
+  "short_name": "ASCEND 2026",
+  "description": "Retreat guide for the ASCEND Eucharistic Revival — May 16-17, 2026. In Him, We Rise — Together.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#060d1a",
+  "background_color": "#060d1a",
+  "icons": [
+    {
+      "src": "public/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "public/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

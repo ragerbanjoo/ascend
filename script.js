@@ -63,6 +63,37 @@
   };
 
   // -------------------------------------------------------
+  // 2b. Theme — dark / light persistence
+  // -------------------------------------------------------
+  const Theme = {
+    KEY: 'user:theme',
+    async init() {
+      const saved = await Storage.get(this.KEY, null);
+      this.apply(saved || 'dark');
+    },
+    apply(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.content = theme === 'light' ? '#f7f4ec' : '#060d1a';
+    },
+    async toggle() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.add('theme-switching');
+      this.apply(next);
+      await Storage.set(this.KEY, next, { shared: false });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => document.documentElement.classList.remove('theme-switching'));
+      });
+      return next;
+    },
+    async set(theme) {
+      this.apply(theme);
+      await Storage.set(this.KEY, theme, { shared: false });
+    }
+  };
+
+  // -------------------------------------------------------
   // 3. Utilities
   // -------------------------------------------------------
   const $  = (sel, ctx = document) => ctx.querySelector(sel);
@@ -268,6 +299,17 @@
       sheet.style.transform = '';
       touchStartY = 0;
       touchDeltaY = 0;
+    });
+
+    // --- Theme toggle ---
+    $$('[data-theme-toggle]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await Theme.toggle();
+        $$('.sheet-theme-label').forEach(lbl => {
+          const current = document.documentElement.getAttribute('data-theme');
+          lbl.textContent = current === 'dark' ? 'Light mode' : 'Dark mode';
+        });
+      });
     });
   }
 
@@ -963,9 +1005,241 @@
   }
 
   // -------------------------------------------------------
+  // 20. Onboarding wizard (first visit)
+  // -------------------------------------------------------
+  async function initOnboarding() {
+    const done = await Storage.get('onboarding:complete', false);
+    if (done) return;
+
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/.test(ua);
+
+    const wizard = document.createElement('div');
+    wizard.className = 'onboarding';
+    wizard.setAttribute('role', 'dialog');
+    wizard.setAttribute('aria-modal', 'true');
+    wizard.setAttribute('aria-label', 'Welcome setup');
+
+    // Platform-specific install instructions
+    let installHTML = '';
+    if (isIOS) {
+      installHTML = `
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">1</div>
+          <p>Tap the <span class="ob-key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> Share</span> button at the bottom of Safari</p>
+        </div>
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">2</div>
+          <p>Scroll down and tap <strong>"Add to Home Screen"</strong></p>
+        </div>
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">3</div>
+          <p>Tap <strong>"Add"</strong> in the top right corner</p>
+        </div>`;
+    } else if (isAndroid) {
+      installHTML = `
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">1</div>
+          <p>Tap the <strong>three-dot menu</strong> <span class="ob-key">&#8942;</span> at the top right of Chrome</p>
+        </div>
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">2</div>
+          <p>Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></p>
+        </div>
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">3</div>
+          <p>Tap <strong>"Install"</strong> to confirm</p>
+        </div>`;
+    } else {
+      installHTML = `
+        <div class="ob-instruction">
+          <div class="ob-instruction-num">1</div>
+          <p>Press <strong>Ctrl+D</strong> (Windows) or <strong>Cmd+D</strong> (Mac) to bookmark this site for quick access</p>
+        </div>`;
+    }
+
+    wizard.innerHTML = `
+      <div class="ob-inner">
+        <div class="ob-progress" aria-hidden="true">
+          <span class="ob-dot active"></span>
+          <span class="ob-dot"></span>
+          <span class="ob-dot"></span>
+          <span class="ob-dot"></span>
+          <span class="ob-dot"></span>
+        </div>
+
+        <div class="ob-step active" data-ob-step="1">
+          <span class="eyebrow">Step 1 of 5</span>
+          <h2>Add to your home screen</h2>
+          <p class="lede">This site is your retreat guide. Pin it to your home screen for quick access all weekend.</p>
+          ${installHTML}
+          <div class="ob-actions">
+            <button type="button" class="btn btn-ghost" data-ob-next>Skip</button>
+            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
+          </div>
+        </div>
+
+        <div class="ob-step" data-ob-step="2">
+          <span class="eyebrow">Step 2 of 5</span>
+          <h2>Option A: The Full Experience</h2>
+          <div class="ob-time-blocks">
+            <div class="ob-time-block">
+              <span class="ob-time">3:45 AM</span>
+              <span class="ob-time-label">Depart from St. Juan Diego Parish, Tieton</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">6:30 AM</span>
+              <span class="ob-time-label">Arrive in Edmonds for breakfast</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">7:00 AM</span>
+              <span class="ob-time-label">Eucharistic Adoration &amp; Confession at Holy Rosary</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">9:00 AM</span>
+              <span class="ob-time-label">ASCEND conference opens in Bellevue</span>
+            </div>
+          </div>
+          <p class="ob-desc">This option includes an early-morning hour of Eucharistic Adoration before ASCEND begins. It's the full spiritual experience — Adoration, Confession, and then the conference. It means a very early start, but it's the way to get the most out of the day.</p>
+          <div class="ob-actions">
+            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
+            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
+          </div>
+        </div>
+
+        <div class="ob-step" data-ob-step="3">
+          <span class="eyebrow">Step 3 of 5</span>
+          <h2>Option B: Straight to ASCEND</h2>
+          <div class="ob-time-blocks">
+            <div class="ob-time-block">
+              <span class="ob-time">5:30 AM</span>
+              <span class="ob-time-label">Depart from St. Juan Diego Parish, Tieton</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">8:15 AM</span>
+              <span class="ob-time-label">Arrive at Meydenbauer Center, Bellevue</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">9:00 AM</span>
+              <span class="ob-time-label">ASCEND conference opens</span>
+            </div>
+          </div>
+          <p class="ob-desc">This option lets you sleep a bit more and head straight to the conference. You'll still arrive with time to settle in before the opening session. No pre-conference Adoration, but the day is still packed with powerful speakers, worship, and Holy Mass.</p>
+          <div class="ob-actions">
+            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
+            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
+          </div>
+        </div>
+
+        <div class="ob-step" data-ob-step="4">
+          <span class="eyebrow">Step 4 of 5</span>
+          <h2>Choose your departure</h2>
+          <p class="lede">Which option works best for you?</p>
+          <div class="ob-choices">
+            <button type="button" class="ob-choice" data-ob-option="A" aria-pressed="false">
+              <h3>Option A — The Full Experience</h3>
+              <p class="ob-choice-sub">Depart 3:45 AM &middot; Adoration + ASCEND</p>
+              <span class="ob-choice-tag">Recommended</span>
+            </button>
+            <button type="button" class="ob-choice" data-ob-option="B" aria-pressed="false">
+              <h3>Option B — Straight to ASCEND</h3>
+              <p class="ob-choice-sub">Depart 5:30 AM &middot; Arrive for opening</p>
+            </button>
+          </div>
+          <p class="ob-note">You can change this anytime on the Timeline page.</p>
+          <div class="ob-actions">
+            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
+            <button type="button" class="btn btn-primary" data-ob-next data-ob-require-option disabled>Next</button>
+          </div>
+        </div>
+
+        <div class="ob-step" data-ob-step="5">
+          <span class="eyebrow">Step 5 of 5</span>
+          <h2>Choose your look</h2>
+          <p class="lede">Pick a theme. You can switch anytime from the menu.</p>
+          <div class="ob-theme-cards">
+            <button type="button" class="ob-theme-choice" data-ob-theme="dark" aria-pressed="true">
+              <div class="ob-theme-preview ob-preview-dark"></div>
+              <span>Dark</span>
+            </button>
+            <button type="button" class="ob-theme-choice" data-ob-theme="light" aria-pressed="false">
+              <div class="ob-theme-preview ob-preview-light"></div>
+              <span>Light</span>
+            </button>
+          </div>
+          <div class="ob-actions">
+            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
+            <button type="button" class="btn btn-primary" data-ob-finish>Get Started</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(wizard);
+
+    // Navigation
+    let currentStep = 1;
+    let selectedOption = null;
+    const steps = wizard.querySelectorAll('.ob-step');
+    const dots = wizard.querySelectorAll('.ob-dot');
+
+    function goTo(n) {
+      if (n < 1 || n > 5) return;
+      steps.forEach(s => s.classList.remove('active'));
+      dots.forEach((d, i) => d.classList.toggle('active', i < n));
+      wizard.querySelector(`[data-ob-step="${n}"]`).classList.add('active');
+      currentStep = n;
+    }
+
+    wizard.querySelectorAll('[data-ob-next]').forEach(btn =>
+      btn.addEventListener('click', () => goTo(currentStep + 1))
+    );
+    wizard.querySelectorAll('[data-ob-prev]').forEach(btn =>
+      btn.addEventListener('click', () => goTo(currentStep - 1))
+    );
+
+    // Step 4: option selection
+    wizard.querySelectorAll('[data-ob-option]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        wizard.querySelectorAll('[data-ob-option]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        selectedOption = btn.dataset.obOption;
+        const nextBtn = wizard.querySelector('[data-ob-require-option]');
+        if (nextBtn) nextBtn.disabled = false;
+      });
+    });
+
+    // Step 5: theme selection (live preview)
+    wizard.querySelectorAll('[data-ob-theme]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        wizard.querySelectorAll('[data-ob-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        Theme.apply(btn.dataset.obTheme);
+      });
+    });
+
+    // Finish
+    return new Promise(resolve => {
+      wizard.querySelector('[data-ob-finish]').addEventListener('click', async () => {
+        if (selectedOption) {
+          await Storage.set('user:departureOption', selectedOption, { shared: false });
+        }
+        const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+        await Theme.set(theme);
+        await Storage.set('onboarding:complete', true, { shared: false });
+        wizard.classList.add('closing');
+        setTimeout(() => { wizard.remove(); resolve(); }, 500);
+      });
+    });
+  }
+
+  // -------------------------------------------------------
   // Kick off on DOM ready
   // -------------------------------------------------------
-  function start() {
+  async function start() {
+    await Theme.init();
+    await initOnboarding();
     initCountdownChip();
     initBigCountdown();
     initNav();
