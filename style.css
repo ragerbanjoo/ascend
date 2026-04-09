@@ -242,6 +242,7 @@ body {
   margin: 0;
   font-family: var(--font-body);
   font-size: var(--fs-base);
+  font-weight: 500;
   line-height: 1.6;
   color: var(--cream);
   background: var(--ink);
@@ -304,8 +305,9 @@ h3 { font-size: clamp(1.5rem, 3.5vw, var(--fs-2xl)); }
 h4 { font-size: var(--fs-xl); }
 h5 { font-size: var(--fs-lg); }
 
-p { margin: 0 0 var(--space-4); color: var(--cream-dim); }
+p { margin: 0 0 var(--space-4); color: var(--cream-dim); font-weight: 400; }
 p:last-child { margin-bottom: 0; }
+li { font-weight: 400; }
 
 .display-xl {
   font-family: var(--font-display);
@@ -996,6 +998,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   flex-wrap: wrap;
   gap: var(--space-4);
   align-items: center;
+  justify-content: center;
 }
 
 /* ---------- 8. Cards ---------- */
@@ -1375,6 +1378,7 @@ textarea.field {
   font-size: 0.75rem;
   color: var(--cream-mute);
   font-style: italic;
+  text-align: center;
 }
 
 /* Saint picker */
