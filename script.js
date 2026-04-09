@@ -857,7 +857,7 @@
         banner.innerHTML = `
           <h4>Retreat begins in</h4>
           <div class="banner-countdown" data-banner-countdown>${formatCompact(TRIP.departPT - now)}</div>
-          <p class="text-mute" style="font-size:0.8125rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'Full Experience' : 'Sustainable Plan'}</p>
+          <p class="text-mute" style="font-size:0.8125rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'With Confession &amp; Adoration' : 'Without Confession &amp; Adoration'}</p>
         `;
       } else if (now < TRIP.returnPT) {
         banner.hidden = false;
@@ -1084,7 +1084,7 @@
 
         <div class="ob-step${isStandalone ? ' active' : ''}" data-ob-step="${++stepNum}">
           <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Option A: The Full Experience</h2>
+          <h2>Option A: With Confession &amp; Adoration</h2>
           <div class="ob-time-blocks">
             <div class="ob-time-block">
               <span class="ob-time">3:45 AM</span>
@@ -1096,14 +1096,14 @@
             </div>
             <div class="ob-time-block">
               <span class="ob-time">7:00 AM</span>
-              <span class="ob-time-label">Eucharistic Adoration &amp; Confession at the conference</span>
+              <span class="ob-time-label">Eucharistic Adoration &amp; Confession begin</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">9:00 AM</span>
-              <span class="ob-time-label">ASCEND conference opens in Bellevue</span>
+              <span class="ob-time-label">ASCEND conference opens</span>
             </div>
           </div>
-          <p class="ob-desc">This option gets you to the conference venue early for two hours of Eucharistic Adoration, a Confession window, and praise music before the main program begins. It means a very early start, but it's the way to get the most out of the day.</p>
+          <p class="ob-desc">Arrive early for two hours of Eucharistic Adoration, a Confession window, and praise music before the main program begins. It means a very early start, but you begin the day in the Lord's presence.</p>
           <div class="ob-actions">
             <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
             <button type="button" class="btn btn-primary" data-ob-next>Next</button>
@@ -1112,7 +1112,7 @@
 
         <div class="ob-step" data-ob-step="${++stepNum}">
           <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Option B: Straight to ASCEND</h2>
+          <h2>Option B: Without Confession &amp; Adoration</h2>
           <div class="ob-time-blocks">
             <div class="ob-time-block">
               <span class="ob-time">5:30 AM</span>
@@ -1127,7 +1127,7 @@
               <span class="ob-time-label">ASCEND conference opens</span>
             </div>
           </div>
-          <p class="ob-desc">This option lets you sleep a bit more and head straight to the conference. You'll still arrive with time to settle in before the opening session. No pre-conference Adoration, but the day is still packed with powerful speakers, worship, and Holy Mass.</p>
+          <p class="ob-desc">Sleep a bit more and head straight to the conference. You'll arrive with time to settle in before the opening session. The day is still packed with powerful speakers, worship, and Holy Mass — just without the early Adoration and Confession window.</p>
           <div class="ob-actions">
             <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
             <button type="button" class="btn btn-primary" data-ob-next>Next</button>
@@ -1140,13 +1140,13 @@
           <p class="lede">Which option works best for you?</p>
           <div class="ob-choices">
             <button type="button" class="ob-choice" data-ob-option="A" aria-pressed="false">
-              <h3>Option A — The Full Experience</h3>
-              <p class="ob-choice-sub">Depart 3:45 AM &middot; Adoration + ASCEND</p>
+              <h3>Option A — With Confession &amp; Adoration</h3>
+              <p class="ob-choice-sub">Depart 3:45 AM &middot; Adoration + Confession + ASCEND</p>
               <span class="ob-choice-tag">Recommended</span>
             </button>
             <button type="button" class="ob-choice" data-ob-option="B" aria-pressed="false">
-              <h3>Option B — Straight to ASCEND</h3>
-              <p class="ob-choice-sub">Depart 5:30 AM &middot; Arrive for opening</p>
+              <h3>Option B — Without Confession &amp; Adoration</h3>
+              <p class="ob-choice-sub">Depart 5:30 AM &middot; Conference only</p>
             </button>
           </div>
           <p class="ob-note">You can change this anytime on the Timeline page.</p>
