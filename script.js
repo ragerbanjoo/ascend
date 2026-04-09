@@ -1,0 +1,920 @@
+/* =========================================================
+   St. Juan Diego YAG × ASCEND — Pilgrimage Site
+   Shared client-side script
+   "In Him, We Rise — Together."
+   ========================================================= */
+
+(function () {
+  'use strict';
+
+  // -------------------------------------------------------
+  // 1. Trip constants (all times Pacific — PDT in May 2026)
+  // -------------------------------------------------------
+  const TRIP = {
+    departPT:  new Date('2026-05-16T06:45:00-07:00'), // Option B recommended default
+    returnPT:  new Date('2026-05-17T20:00:00-07:00'),
+    label:     'May 16–17, 2026'
+  };
+
+  // -------------------------------------------------------
+  // 2. Storage wrapper — uses window.storage if present,
+  //    falls back to localStorage. Supports shared/user scopes.
+  // -------------------------------------------------------
+  const Storage = {
+    _lsGet(key, def) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw == null ? def : JSON.parse(raw);
+      } catch (e) { return def; }
+    },
+    _lsSet(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    },
+    async get(key, def = null) {
+      try {
+        if (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
+          const v = await window.storage.get(key);
+          return (v === undefined || v === null) ? def : v;
+        }
+      } catch (e) { /* fall through */ }
+      return this._lsGet(key, def);
+    },
+    async set(key, value, opts = {}) {
+      try {
+        if (typeof window !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
+          return await window.storage.set(key, value, opts);
+        }
+      } catch (e) { /* fall through */ }
+      this._lsSet(key, value);
+    }
+  };
+
+  // -------------------------------------------------------
+  // 3. Utilities
+  // -------------------------------------------------------
+  const $  = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function formatDuration(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const d = Math.floor(s / 86400);
+    const h = Math.floor((s % 86400) / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return { d, h, m, s: sec };
+  }
+
+  function formatCompact(ms) {
+    const { d, h, m, s } = formatDuration(ms);
+    if (d > 0) return `${d}d ${h}h ${m}m`;
+    if (h > 0) return `${h}h ${m}m ${pad(s)}s`;
+    return `${m}m ${pad(s)}s`;
+  }
+
+  // -------------------------------------------------------
+  // 4. Countdown nav chip — every second
+  // -------------------------------------------------------
+  function initCountdownChip() {
+    const chips = $$('.countdown-chip');
+    if (!chips.length) return;
+
+    function tick() {
+      const now = new Date();
+      let text, cls;
+
+      if (now < TRIP.departPT) {
+        text = formatCompact(TRIP.departPT - now);
+        cls  = '';
+      } else if (now < TRIP.returnPT) {
+        text = 'ON PILGRIMAGE 🚐';
+        cls  = 'during';
+      } else {
+        text = 'Deo gratias 🙏';
+        cls  = 'after';
+      }
+
+      chips.forEach(chip => {
+        chip.querySelector('.chip-value').textContent = text;
+        chip.classList.remove('during', 'after');
+        if (cls) chip.classList.add(cls);
+      });
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // -------------------------------------------------------
+  // 5. Big hero countdown (home)
+  // -------------------------------------------------------
+  function initBigCountdown() {
+    const root = $('[data-big-countdown]');
+    if (!root) return;
+
+    const cells = {
+      d: root.querySelector('[data-cd="d"]'),
+      h: root.querySelector('[data-cd="h"]'),
+      m: root.querySelector('[data-cd="m"]'),
+      s: root.querySelector('[data-cd="s"]')
+    };
+    const stateBox = root.querySelector('[data-big-state]');
+    const cellBox  = root.querySelector('[data-big-cells]');
+
+    let prev = { d: null, h: null, m: null, s: null };
+
+    function tick() {
+      const now = new Date();
+      if (now < TRIP.departPT) {
+        if (stateBox) stateBox.hidden = true;
+        if (cellBox)  cellBox.hidden = false;
+        const t = formatDuration(TRIP.departPT - now);
+        ['d','h','m','s'].forEach(k => {
+          const el = cells[k];
+          if (!el) return;
+          const val = pad(t[k]);
+          if (el.textContent !== val) {
+            el.textContent = val;
+            if (prev[k] !== null && !prefersReduced()) {
+              el.classList.remove('flip');
+              void el.offsetWidth;
+              el.classList.add('flip');
+            }
+          }
+          prev[k] = t[k];
+        });
+      } else if (now < TRIP.returnPT) {
+        if (cellBox)  cellBox.hidden = true;
+        if (stateBox) { stateBox.hidden = false; stateBox.textContent = 'On Pilgrimage 🚐'; }
+      } else {
+        if (cellBox)  cellBox.hidden = true;
+        if (stateBox) { stateBox.hidden = false; stateBox.textContent = 'Deo gratias 🙏'; }
+      }
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // -------------------------------------------------------
+  // 6. Intersection observer reveals
+  // -------------------------------------------------------
+  function initReveal() {
+    const targets = $$('[data-reveal], [data-reveal-stagger]');
+    if (!targets.length || prefersReduced()) {
+      targets.forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    targets.forEach(el => io.observe(el));
+  }
+
+  // -------------------------------------------------------
+  // 7. Nav active + mobile More sheet
+  // -------------------------------------------------------
+  function initNav() {
+    const path = location.pathname.split('/').pop() || 'index.html';
+    $$('.nav-links a, .mnav a').forEach(a => {
+      const href = a.getAttribute('href');
+      if (href === path) a.setAttribute('aria-current', 'page');
+    });
+
+    const sheet = $('.sheet');
+    const backdrop = $('.sheet-backdrop');
+    const openBtn = $('[data-open-sheet]');
+    const closeBtn = $('[data-close-sheet]');
+    if (!sheet || !openBtn) return;
+
+    function open() {
+      sheet.classList.add('open');
+      backdrop.classList.add('open');
+      sheet.setAttribute('aria-hidden', 'false');
+    }
+    function close() {
+      sheet.classList.remove('open');
+      backdrop.classList.remove('open');
+      sheet.setAttribute('aria-hidden', 'true');
+    }
+    openBtn.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (backdrop) backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  }
+
+  // -------------------------------------------------------
+  // 8. Hero particles (home)
+  // -------------------------------------------------------
+  function initHeroParticles() {
+    const canvas = $('[data-hero-canvas]');
+    if (!canvas || prefersReduced()) return;
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, particles = [], dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width; h = rect.height;
+      canvas.width  = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const target = Math.floor((w * h) / 14000);
+      particles = [];
+      for (let i = 0; i < target; i++) particles.push(makeParticle());
+    }
+
+    function makeParticle() {
+      const size = Math.random() * 1.8 + 0.3;
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.12,
+        vy: -(Math.random() * 0.18 + 0.05),
+        size,
+        a: Math.random() * 0.5 + 0.2,
+        phase: Math.random() * Math.PI * 2
+      };
+    }
+
+    let raf = 0, t0 = performance.now();
+    function frame(t) {
+      const dt = Math.min(t - t0, 60); t0 = t;
+      ctx.clearRect(0, 0, w, h);
+
+      // Background light rays — subtle gold gradient sweeps
+      const grd = ctx.createRadialGradient(w * 0.5, h * 0.85, 0, w * 0.5, h * 0.85, Math.max(w, h) * 0.9);
+      grd.addColorStop(0, 'rgba(201, 161, 74, 0.10)');
+      grd.addColorStop(0.4, 'rgba(201, 161, 74, 0.03)');
+      grd.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, w, h);
+
+      // Particles
+      for (let p of particles) {
+        p.x += p.vx * dt * 0.6;
+        p.y += p.vy * dt * 0.6;
+        p.phase += 0.02;
+        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+
+        const twinkle = 0.55 + Math.sin(p.phase) * 0.35;
+        const alpha = p.a * twinkle;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(229, 192, 106, ${alpha.toFixed(3)})`;
+        ctx.fill();
+        // glow
+        if (p.size > 1.2) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(229, 192, 106, ${(alpha * 0.08).toFixed(3)})`;
+          ctx.fill();
+        }
+      }
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    raf = requestAnimationFrame(frame);
+  }
+
+  // -------------------------------------------------------
+  // 9. RSVP wall (home)
+  // -------------------------------------------------------
+  async function initRSVP() {
+    const form = $('[data-rsvp-form]');
+    if (!form) return;
+
+    const nameInput = form.querySelector('[name="name"]');
+    const iconsWrap = form.querySelector('[data-saint-grid]');
+    const wall      = $('[data-rsvp-wall]');
+    const error     = form.querySelector('[data-rsvp-error]');
+    let selectedIcon = null;
+
+    iconsWrap.querySelectorAll('.saint').forEach(btn => {
+      btn.addEventListener('click', () => {
+        iconsWrap.querySelectorAll('.saint').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        selectedIcon = btn.dataset.icon;
+      });
+    });
+
+    async function render() {
+      const list = await Storage.get('rsvp:attendees', []);
+      wall.innerHTML = '';
+      if (!list.length) {
+        wall.innerHTML = '<div class="wall-empty">Be the first to say <em>I\'m going</em> →</div>';
+        return;
+      }
+      list.slice().reverse().forEach((it, i) => {
+        const el = document.createElement('div');
+        el.className = 'wall-item';
+        el.style.animationDelay = (i * 60) + 'ms';
+        el.innerHTML = `<span class="icon">${it.icon || '✦'}</span><span>${escapeHTML(it.name)}</span>`;
+        wall.appendChild(el);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = (nameInput.value || '').trim();
+      error.textContent = '';
+      if (!name) { error.textContent = 'Please enter your first name.'; return; }
+      if (name.length > 32) { error.textContent = 'Name is a little long — try a shorter version.'; return; }
+      if (!selectedIcon)    { error.textContent = 'Pick a saint icon to represent you.'; return; }
+
+      const list = await Storage.get('rsvp:attendees', []);
+      list.push({ name, icon: selectedIcon, timestamp: Date.now() });
+      await Storage.set('rsvp:attendees', list, { shared: true });
+      nameInput.value = '';
+      iconsWrap.querySelectorAll('.saint').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      selectedIcon = null;
+      await render();
+      confettiBurst();
+    });
+
+    await render();
+  }
+
+  // -------------------------------------------------------
+  // 10. Prayer intentions wall
+  // -------------------------------------------------------
+  async function initIntentions() {
+    const form  = $('[data-intention-form]');
+    if (!form) return;
+    const input = form.querySelector('[name="intention"]');
+    const stage = $('[data-intention-stage]');
+    const error = form.querySelector('[data-intention-error]');
+
+    async function render() {
+      const list = await Storage.get('intentions:list', []);
+      stage.innerHTML = '';
+      if (!list.length) {
+        stage.innerHTML = '<div class="intentions-empty">Be the first to share a prayer intention. It will drift gently across the night sky for all to pray with.</div>';
+        return;
+      }
+      list.slice().reverse().slice(0, 14).forEach((it, idx) => {
+        const el = document.createElement('div');
+        el.className = 'intention-card';
+        const top = 10 + ((idx * 73) % 72);
+        const left = 4 + ((idx * 109) % 84);
+        el.style.top = top + '%';
+        el.style.left = left + '%';
+        el.style.animationDelay = -(idx * 2.4) + 's';
+        el.style.animationDuration = (18 + (idx % 6) * 2) + 's';
+        el.textContent = '“' + it.text + '”';
+        stage.appendChild(el);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = (input.value || '').trim();
+      error.textContent = '';
+      if (!text) { error.textContent = 'Please enter an intention.'; return; }
+      if (text.length > 240) { error.textContent = 'Please keep it under 240 characters.'; return; }
+
+      const list = await Storage.get('intentions:list', []);
+      list.push({ text, timestamp: Date.now() });
+      await Storage.set('intentions:list', list, { shared: true });
+      input.value = '';
+      await render();
+    });
+
+    await render();
+  }
+
+  // -------------------------------------------------------
+  // 11. Confetti burst (gold sparkles)
+  // -------------------------------------------------------
+  function confettiBurst() {
+    if (prefersReduced()) return;
+    const canvas = document.createElement('canvas');
+    canvas.className = 'confetti-canvas';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = window.innerWidth  * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const w = window.innerWidth, h = window.innerHeight;
+    const particles = [];
+    const colors = ['#c9a14a', '#e5c06a', '#f0e9d6', '#f5f1e8', '#8a6e33'];
+    const cx = w / 2, cy = h / 2;
+    for (let i = 0; i < 140; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const sp  = Math.random() * 10 + 4;
+      particles.push({
+        x: cx, y: cy,
+        vx: Math.cos(ang) * sp,
+        vy: Math.sin(ang) * sp - 2,
+        size: Math.random() * 4 + 1.5,
+        color: colors[(Math.random() * colors.length) | 0],
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.3,
+        life: 1
+      });
+    }
+
+    let start = performance.now();
+    function frame(t) {
+      const dt = Math.min((t - start) / 16, 3);
+      start = t;
+      ctx.clearRect(0, 0, w, h);
+      let alive = 0;
+      for (const p of particles) {
+        if (p.life <= 0) continue;
+        alive++;
+        p.vy += 0.25 * dt;
+        p.vx *= 0.995;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rot += p.vr * dt;
+        p.life -= 0.008 * dt;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size, -p.size * 0.4, p.size * 2, p.size * 0.8);
+        ctx.restore();
+      }
+      if (alive > 0) requestAnimationFrame(frame);
+      else canvas.remove();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // -------------------------------------------------------
+  // 12. Prayer lines fade-in (home)
+  // -------------------------------------------------------
+  function initPrayerLines() {
+    const prayer = $('[data-prayer-lines]');
+    if (!prayer) return;
+    const lines = prayer.querySelectorAll('.line');
+    if (prefersReduced()) {
+      lines.forEach(l => l.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        lines.forEach((l, i) => {
+          setTimeout(() => l.classList.add('in'), i * 650);
+        });
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.35 });
+    io.observe(prayer);
+  }
+
+  // -------------------------------------------------------
+  // 13. Timeline stops data (module-level)
+  // -------------------------------------------------------
+  const STOPS = [
+    // Saturday
+    { id: 1,  day: 'sat', timeA: '04:30', timeB: '06:15',
+      title: 'Meet at St. Juan Diego Parish, Tieton',
+      addr:  'St. Juan Diego Parish, Tieton, WA',
+      map:   'https://www.google.com/maps/search/?api=1&query=St.+Juan+Diego+Parish+Tieton+WA',
+      body:  'Morning prayer, roll call, load vehicles, final restroom break before the road. Please arrive on time — we leave together.',
+      bring: 'Everything you packed. Coffee optional but recommended.'
+    },
+    { id: 2,  day: 'sat', timeA: '05:00', timeB: '06:45',
+      title: 'Depart Tieton',
+      body:  'Route: US-12 W → I-82 W → I-90 W → I-405 N → Meydenbauer Center. Approximately 142 miles, ~2h 20m clean drive time.',
+    },
+    { id: 3,  day: 'sat', timeA: '06:30', timeB: '08:30',
+      title: 'Rest stop — Indian John Hill Rest Area',
+      addr:  'Indian John Hill Rest Area, I-90 near Cle Elum, WA',
+      map:   'https://www.google.com/maps/search/?api=1&query=Indian+John+Hill+Rest+Area',
+      body:  '15 minutes — restroom, coffee, stretch, regroup the caravan before Snoqualmie Pass.',
+    },
+    { id: 4,  day: 'sat', timeA: '07:00', timeB: '09:30',
+      title: 'Arrive Meydenbauer Center',
+      addr:  '11100 NE 6th St, Bellevue, WA',
+      map:   'https://www.google.com/maps/search/?api=1&query=Meydenbauer+Center+Bellevue+WA',
+      body:  'Park in the underground garage. Walk in together, check in, find seats as a group near the front if possible.',
+    },
+    { id: 5,  day: 'sat', timeA: '07:00', optionOnly: 'A',
+      title: 'Eucharistic Adoration · Confession · Praise Music',
+      body:  'Early arrival perk — two hours of Adoration, a confession window, and praise music before the main program begins.',
+    },
+    { id: 6,  day: 'sat', time: '09:00',
+      title: 'Welcome & Opening Remarks',
+      body:  'Fr. Nicholas Wichert and Deacon Charlie Echeverry open ASCEND.',
+    },
+    { id: 7,  day: 'sat', time: '09:15',
+      title: 'Morning Plenary — Chris Stefanick',
+      body:  'The first of two plenary talks from Chris Stefanick.',
+    },
+    { id: 8,  day: 'sat', time: '10:45',
+      title: 'Breakout Sessions',
+      body:  'Recommended for our group: the Youth Breakout with Dr. Andrew & Sarah Swafford. Other options: Dr. Tim Gray (English) or Deacon Charlie Echeverry (Spanish).',
+    },
+    { id: 9,  day: 'sat', time: '12:00',
+      title: 'Lunch at local Bellevue restaurants',
+      body:  '[PLACEHOLDER: list 3–4 walkable options + group meet-back time + note whether the group covers this meal or members pay their own — Bright Minds to clarify]',
+    },
+    { id: 10, day: 'sat', time: '13:30',
+      title: 'Program resumes — Center Hall',
+      body:  '1st floor of Meydenbauer. Find your seats again.',
+    },
+    { id: 11, day: 'sat', time: '15:30',
+      title: 'Afternoon Plenary — Chris Stefanick',
+      body:  'Second plenary talk.',
+    },
+    { id: 12, day: 'sat', time: '16:30',
+      title: 'Praise Music & Adoration — Marie Miller',
+      body:  'Folk singer Marie Miller performs. Adoration closes the afternoon.',
+    },
+    { id: 13, day: 'sat', time: '17:00',
+      title: 'Holy Mass — Archbishop Paul Etienne',
+      body:  'The high point of the day. Mass celebrated by the Archbishop of Seattle.',
+    },
+    { id: 14, day: 'sat', time: '18:30',
+      title: 'Walk with One — Eucharistic Missionaries',
+      body:  'Commissioning ceremony for Eucharistic missionaries — we are sent.',
+    },
+    { id: 15, day: 'sat', time: '19:00',
+      title: 'ASCEND concludes',
+      body:  'Gather your things. Meet at the vehicles.',
+    },
+    { id: 16, day: 'sat', time: '19:30',
+      title: 'Depart Meydenbauer → La Quinta Lynnwood',
+      body:  '~25 min drive, ~17 mi north on I-405 → I-5.',
+    },
+    { id: 17, day: 'sat', time: '20:15',
+      title: 'Hotel check-in — La Quinta Inn Lynnwood',
+      addr:  '4300 Alderwood Mall Blvd, Lynnwood, WA · (425) 775-7447',
+      map:   'https://www.google.com/maps/search/?api=1&query=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd',
+      body:  'Check in, drop bags. Guys and girls in separate rooms.',
+    },
+    { id: 18, day: 'sat', time: '21:00',
+      title: 'Group dinner + debrief',
+      body:  '[PLACEHOLDER: pick a spot near the hotel — Alderwood Mall area has many options]',
+    },
+    { id: 19, day: 'sat', time: '23:00',
+      title: 'Lights out',
+      body:  'Latin Mass is early tomorrow. Rest well.',
+    },
+    // Sunday
+    { id: 20, day: 'sun', time: '06:45',
+      title: 'Wake up',
+      body:  'Free continental breakfast at La Quinta — eggs, sausage, waffles, biscuits & gravy, fruit, yogurt.',
+    },
+    { id: 21, day: 'sun', time: '07:45',
+      title: 'Depart hotel → North American Martyrs Parish',
+      body:  '~15 min, ~7 mi.',
+    },
+    { id: 22, day: 'sun', time: '08:30',
+      title: 'Traditional Latin Mass — NAM Parish, Edmonds',
+      addr:  '9924 232nd St SW, Edmonds, WA 98020',
+      map:   'https://www.google.com/maps/search/?api=1&query=North+American+Martyrs+Parish+Edmonds+WA',
+      body:  'The 8:30 Low Mass at North American Martyrs, served by the FSSP. The second Yakima group driving up Sunday meets us here. Please arrive by 8:15 to get booklets.',
+    },
+    { id: 23, day: 'sun', time: '09:45',
+      title: 'Fellowship outside church — group photo',
+      body:  'Meet the second Yakima group. Group photo on the steps.',
+    },
+    { id: 24, day: 'sun', time: '10:30',
+      title: 'Drive to Seattle — St. James Cathedral',
+      body:  '~25 min, ~17 mi south on I-5.',
+    },
+    { id: 25, day: 'sun', time: '11:15',
+      title: 'Arrive St. James Cathedral',
+      addr:  '804 9th Ave, Seattle, WA 98104',
+      map:   'https://www.google.com/maps/search/?api=1&query=St.+James+Cathedral+Seattle',
+      body:  'Visit, prayer, light candles, confession if available. Mother church of the Archdiocese of Seattle — plan about an hour.',
+    },
+    { id: 26, day: 'sun', time: '12:30',
+      title: 'Lunch in downtown Seattle',
+      body:  '[PLACEHOLDER: recommendations — Pike Place Market is walkable from the cathedral]',
+    },
+    { id: 27, day: 'sun', time: '14:00',
+      title: 'Afternoon — fellowship / sightseeing',
+      body:  '[PLACEHOLDER: possible second Mass, fellowship, or sightseeing — TBD by Bright Minds]',
+    },
+    { id: 28, day: 'sun', time: '17:00',
+      title: 'Depart Seattle for Yakima',
+      body:  'I-5 S → I-90 E → I-82 E → US-12 E. ~2h 30m.',
+    },
+    { id: 29, day: 'sun', time: '19:30',
+      title: 'Arrive home — Deo gratias 🙏',
+      body:  'Blessed be God in His angels and in His saints.',
+    }
+  ];
+
+  function stopDate(stop, option) {
+    const dateStr = stop.day === 'sat' ? '2026-05-16' : '2026-05-17';
+    let time = stop.time;
+    if (!time) time = (option === 'A' ? stop.timeA : stop.timeB);
+    return new Date(`${dateStr}T${time}:00-07:00`);
+  }
+
+  function formatStopTime(stop, option) {
+    const d = stopDate(stop, option);
+    return d.toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit',
+      timeZone: 'America/Los_Angeles'
+    });
+  }
+
+  function computeStates(stops, now) {
+    let currentIdx = -1;
+    for (let i = 0; i < stops.length; i++) {
+      if (now >= stopDate(stops[i])) currentIdx = i;
+    }
+    return stops.map((_, i) => {
+      if (i < currentIdx) return 'past';
+      if (i === currentIdx) return 'current';
+      return 'upcoming';
+    });
+  }
+
+  function relativeLabel(stop, option, now) {
+    const d = stopDate(stop, option);
+    const diff = d - now;
+    if (diff < 0) return '';
+    const { d: dd, h, m } = formatDuration(diff);
+    if (dd > 0) return `in ${dd}d ${h}h`;
+    if (h > 0)  return `in ${h}h ${m}m`;
+    if (m > 1)  return `in ${m} min`;
+    if (m === 1) return `in 1 min`;
+    return `in <1 min`;
+  }
+
+  // -------------------------------------------------------
+  // 14. Timeline page
+  // -------------------------------------------------------
+  async function initTimeline() {
+    const root = $('[data-timeline]');
+    if (!root) return;
+
+    const list = $('[data-timeline-list]');
+    const banner = $('[data-timeline-banner]');
+    const bannerCountdown = $('[data-banner-countdown]');
+    const toggleA = $('[data-option="A"]');
+    const toggleB = $('[data-option="B"]');
+
+    let option = (await Storage.get('user:departureOption', 'B')) || 'B';
+
+    function setOption(newOption, persist = true) {
+      option = newOption;
+      toggleA.setAttribute('aria-pressed', option === 'A' ? 'true' : 'false');
+      toggleB.setAttribute('aria-pressed', option === 'B' ? 'true' : 'false');
+      if (persist) Storage.set('user:departureOption', option, { shared: false });
+      render();
+    }
+
+    toggleA.addEventListener('click', () => setOption('A'));
+    toggleB.addEventListener('click', () => setOption('B'));
+
+    const openIds = new Set();
+
+    function render() {
+      const filtered = STOPS.filter(s => !s.optionOnly || s.optionOnly === option);
+      const now = new Date();
+      const states = computeStates(filtered, now);
+
+      // preserve currently expanded stops across re-renders
+      list.querySelectorAll('.stop-card.open').forEach(card => {
+        const stopEl = card.closest('.stop');
+        if (stopEl && stopEl.dataset.stopId) openIds.add(stopEl.dataset.stopId);
+      });
+
+      list.innerHTML = '';
+      let lastDay = null;
+      let currentStopEl = null;
+
+      filtered.forEach((stop, i) => {
+        if (stop.day !== lastDay) {
+          const marker = document.createElement('div');
+          marker.className = 'day-marker';
+          marker.innerHTML = `<span>${stop.day === 'sat' ? 'Saturday · May 16, 2026' : 'Sunday · May 17, 2026'}</span>`;
+          list.appendChild(marker);
+          lastDay = stop.day;
+        }
+
+        const state = states[i];
+        const el = document.createElement('article');
+        el.className = `stop ${state}`;
+        el.dataset.stopId = stop.id;
+
+        const card = document.createElement('div');
+        card.className = 'stop-card';
+
+        const time = formatStopTime(stop, option);
+        const rel  = state === 'upcoming' ? relativeLabel(stop, option, now) : '';
+        const statusLabel = state === 'current' ? '🔴 Happening now'
+                          : state === 'past'    ? 'Completed'
+                          : rel || 'Upcoming';
+
+        const headerId = `stop-head-${stop.id}`;
+        const detailId = `stop-detail-${stop.id}`;
+
+        card.innerHTML = `
+          <button type="button" class="stop-head" id="${headerId}" aria-expanded="false" aria-controls="${detailId}">
+            <div class="stop-time">
+              <span>${time}</span>
+              <span class="stop-status">${statusLabel}</span>
+            </div>
+            <h3 class="stop-title">${escapeHTML(stop.title)}</h3>
+          </button>
+          <div class="stop-detail" id="${detailId}" role="region" aria-labelledby="${headerId}">
+            ${stop.addr ? `<span class="addr">${escapeHTML(stop.addr)}</span>` : ''}
+            <p>${escapeHTML(stop.body)}</p>
+            ${stop.bring ? `<p><strong class="text-gold">Bring:</strong> ${escapeHTML(stop.bring)}</p>` : ''}
+            ${stop.map ? `<a class="map-link" href="${stop.map}" target="_blank" rel="noopener">Open in Google Maps →</a>` : ''}
+          </div>
+        `;
+
+        const headBtn = card.querySelector('.stop-head');
+
+        if (openIds.has(String(stop.id))) {
+          card.classList.add('open');
+          headBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        headBtn.addEventListener('click', () => {
+          const open = card.classList.toggle('open');
+          headBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open) openIds.add(String(stop.id));
+          else openIds.delete(String(stop.id));
+        });
+
+        const dot = document.createElement('div');
+        dot.className = 'stop-dot';
+
+        el.appendChild(dot);
+        el.appendChild(card);
+        list.appendChild(el);
+
+        if (state === 'current') currentStopEl = el;
+      });
+
+      // Banner — before, during, after
+      if (now < TRIP.departPT) {
+        banner.hidden = false;
+        banner.innerHTML = `
+          <h4>Pilgrimage begins in</h4>
+          <div class="banner-countdown" data-banner-countdown>${formatCompact(TRIP.departPT - now)}</div>
+          <p class="text-mute" style="font-size:0.8125rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'Full Experience' : 'Sustainable Plan'}</p>
+        `;
+      } else if (now < TRIP.returnPT) {
+        banner.hidden = false;
+        banner.innerHTML = `<h4 style="color: var(--live);">🔴 On pilgrimage now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
+      } else {
+        banner.hidden = false;
+        banner.innerHTML = `<h4>Pilgrimage complete — <span class="italic">Deo gratias</span> 🙏</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
+      }
+
+      // Auto-scroll to current / first upcoming (only on first render, no jump-thrash)
+      if (!render._scrolled) {
+        render._scrolled = true;
+        const target = currentStopEl || list.querySelector('.stop.upcoming');
+        if (target) {
+          setTimeout(() => {
+            const y = target.getBoundingClientRect().top + window.scrollY - 140;
+            window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? 'auto' : 'smooth' });
+          }, 500);
+        }
+      }
+    }
+
+    setOption(option, false);
+    setInterval(render, 30000); // refresh every 30s for relative labels / state transitions
+
+    // live banner countdown (every second)
+    setInterval(() => {
+      const el = $('[data-banner-countdown]');
+      const now = new Date();
+      if (el && now < TRIP.departPT) {
+        el.textContent = formatCompact(TRIP.departPT - now);
+      }
+    }, 1000);
+  }
+
+  // -------------------------------------------------------
+  // 15. Packing checklist
+  // -------------------------------------------------------
+  async function initPacking() {
+    const root = $('[data-packing]');
+    if (!root) return;
+    const boxes = $$('input[type="checkbox"]', root);
+    const totalEl = $('[data-packing-total]');
+    const countEl = $('[data-packing-count]');
+    const fill = $('[data-packing-fill]');
+
+    const saved = await Storage.get('packing:checklist', {}) || {};
+    boxes.forEach(b => { if (saved[b.id]) b.checked = true; });
+
+    function update() {
+      const total = boxes.length;
+      const done  = boxes.filter(b => b.checked).length;
+      if (totalEl) totalEl.textContent = total;
+      if (countEl) countEl.textContent = done;
+      if (fill) fill.style.width = (total ? (done / total) * 100 : 0) + '%';
+      const state = {};
+      boxes.forEach(b => { if (b.checked) state[b.id] = true; });
+      Storage.set('packing:checklist', state, { shared: false });
+    }
+
+    boxes.forEach(b => b.addEventListener('change', update));
+    update();
+  }
+
+  // -------------------------------------------------------
+  // 16. Speaker card flip
+  // -------------------------------------------------------
+  function initSpeakers() {
+    const cards = $$('.speaker');
+    if (!cards.length) return;
+    cards.forEach(card => {
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      const toggle = () => card.classList.toggle('flipped');
+      card.addEventListener('click', toggle);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+  }
+
+  // -------------------------------------------------------
+  // 17. Footer auto date
+  // -------------------------------------------------------
+  function initFooter() {
+    const y = $('[data-year]');
+    if (y) y.textContent = new Date().getFullYear();
+    const u = $('[data-updated]');
+    if (u) {
+      const d = new Date();
+      u.textContent = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+  }
+
+  // -------------------------------------------------------
+  // 18. Smooth internal scroll for anchor links
+  // -------------------------------------------------------
+  function initAnchors() {
+    $$('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href').slice(1);
+        if (!id) return;
+        const target = document.getElementById(id);
+        if (!target) return;
+        e.preventDefault();
+        const y = target.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: prefersReduced() ? 'auto' : 'smooth' });
+      });
+    });
+  }
+
+  // -------------------------------------------------------
+  // 19. Helpers
+  // -------------------------------------------------------
+  function escapeHTML(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  // -------------------------------------------------------
+  // Kick off on DOM ready
+  // -------------------------------------------------------
+  function start() {
+    initCountdownChip();
+    initBigCountdown();
+    initNav();
+    initReveal();
+    initAnchors();
+    initFooter();
+    initHeroParticles();
+    initRSVP().catch(console.warn);
+    initIntentions().catch(console.warn);
+    initPrayerLines();
+    initTimeline().catch(console.warn);
+    initPacking().catch(console.warn);
+    initSpeakers();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();

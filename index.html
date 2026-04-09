@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1228">
+<meta name="description" content="St. Juan Diego YAG × ASCEND Eucharistic Revival — Pilgrimage to Bellevue & Seattle, May 16–17, 2026. In Him, We Rise — Together.">
+
+<title>St. Juan Diego YAG × ASCEND 2026 · Pilgrimage to Bellevue & Seattle</title>
+
+<!--
+================================================================================
+  PLACEHOLDER MANIFEST — fill these in before handing the site to attendees.
+  Bright Minds: this list is the single source of truth. Every placeholder
+  below corresponds to a [PLACEHOLDER] marker somewhere in the site.
+================================================================================
+
+  FOOTER (every page)
+   [01] Bright Minds phone/email — shown in footer + all contact blocks
+
+  TIMELINE (timeline.html — also pulled into index.html via script.js)
+   [02] Saturday 12:00 PM — Bellevue lunch: 3–4 walkable options + meet-back
+        time + clarify whether group covers lunch or members pay their own
+   [03] Saturday 9:00 PM — group dinner spot near La Quinta (Alderwood Mall)
+   [04] Sunday 12:30 PM — downtown Seattle lunch recommendations (Pike Place)
+   [05] Sunday afternoon — second Mass / fellowship / sightseeing plan
+
+  TRAVEL (travel.html)
+   [06] Vehicle list, drivers, passengers, and meet-at details
+
+  HOTEL (hotel.html)
+   [07] Room assignments (guys/girls separate)
+   [08] La Quinta confirmation number
+   [09] Name the reservation is booked under
+
+  WHAT'S INCLUDED (whats-included.html)
+   [10] Confirm whether Saturday group dinner is covered
+   [11] Confirm whether any other meals are covered
+   [12] Suggested spending-money amount ($30–50 is typical)
+   [13] Restaurant tips policy
+   [14] Saturday lunch in Bellevue — covered or not?
+
+  SUNDAY (sunday.html)
+   [15] Contact info for the second Yakima group's lead driver
+   [16] St. James Cathedral Sunday Mass schedule (if attending a 2nd Mass)
+   [17] Pike Place area restaurant suggestions for lunch
+   [18] Sunday afternoon plan details (fellowship/sightseeing/Mass)
+
+  PARENTS (parents.html)
+   [19] Lead chaperone phone
+   [20] Emergency contact phone (trip-wide)
+   [21] Consent form download link
+   [22] Consent form return deadline
+   [23] Bright Minds phone (parents' contact line)
+   [24] Bright Minds email
+
+  NOTES FOR BRIGHT MINDS
+  - All placeholders use the visual marker class "placeholder" so they are
+    easy to spot in the rendered pages.
+  - Search any .html file for the string [PLACEHOLDER] to jump to it.
+  - Live countdown targets May 16, 2026 · 6:45 AM PT (Option B departure).
+  - Client-side storage only; no backend. For a true shared RSVP/intentions
+    wall across attendees, wire a tiny backend into the Storage wrapper
+    in script.js (it already calls window.storage if present).
+================================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== DESKTOP NAV ===================== -->
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="St. Juan Diego YAG × ASCEND — Home">
+      <span class="ornament" aria-hidden="true"></span>
+      St. Juan Diego YAG <span class="x">×</span> ASCEND
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html">Timeline</a></li>
+      <li><a href="travel.html">Travel</a></li>
+      <li><a href="hotel.html">Hotel</a></li>
+      <li><a href="packing.html">Packing</a></li>
+      <li><a href="whats-included.html">Costs</a></li>
+      <li><a href="speakers.html">Speakers</a></li>
+      <li><a href="sunday.html">Sunday</a></li>
+      <li><a href="parents.html">Parents</a></li>
+    </ul>
+    <div class="countdown-chip" role="status" aria-live="polite" aria-label="Time until pilgrimage">
+      <span class="chip-value">—</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== MOBILE FLOATING CHIP ===================== -->
+<div class="mnav-chip countdown-chip" role="status" aria-live="polite">
+  <span class="chip-value">—</span>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero bg-grain" id="top">
+  <canvas data-hero-canvas aria-hidden="true"></canvas>
+  <div class="hero-vignette" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span>A Pilgrimage · May 16–17, 2026</span>
+    </div>
+    <h1 class="hero-title">St. Juan Diego YAG <span class="amp">×</span><br>ASCEND 2026</h1>
+    <p class="hero-subtitle">Pilgrimage to Bellevue &amp; Seattle · May 16–17, 2026</p>
+
+    <div data-big-countdown aria-label="Time until pilgrimage begins">
+      <div class="countdown-big" data-big-cells>
+        <div class="countdown-cell">
+          <span class="countdown-num" data-cd="d">00</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-cell">
+          <span class="countdown-num" data-cd="h">00</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-cell">
+          <span class="countdown-num" data-cd="m">00</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-cell">
+          <span class="countdown-num" data-cd="s">00</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      </div>
+      <div class="countdown-state" data-big-state hidden></div>
+    </div>
+
+    <div class="btn-row" style="justify-content: center;">
+      <a class="btn btn-primary btn-lg" href="timeline.html">View My Journey</a>
+      <a class="btn btn-outline btn-lg" href="https://www.ascendeucharisticrevival.church/register-now/" target="_blank" rel="noopener">
+        Register for ASCEND
+      </a>
+    </div>
+
+    <p class="hero-tagline">“In Him, We Rise — Together.”</p>
+  </div>
+
+  <a href="#glance" class="scroll-indicator" aria-label="Scroll down">
+    <span>Begin</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </a>
+</header>
+
+<!-- ===================== TRIP AT A GLANCE ===================== -->
+<section id="glance" class="bg-ink bg-grain">
+  <div class="container">
+    <div class="section-header center" data-reveal>
+      <span class="eyebrow">Trip at a glance</span>
+      <h2>Four days of prayer, fellowship, and fire.</h2>
+      <div class="gold-rule center"></div>
+    </div>
+    <div class="grid grid-4" data-reveal-stagger>
+      <div class="tile">
+        <span class="emoji" aria-hidden="true">📍</span>
+        <h4>Depart from</h4>
+        <p>St. Juan Diego Parish, Tieton, WA — Saturday morning together.</p>
+      </div>
+      <div class="tile">
+        <span class="emoji" aria-hidden="true">🏛️</span>
+        <h4>Main Event</h4>
+        <p>ASCEND Eucharistic Revival at Meydenbauer Center, Bellevue.</p>
+      </div>
+      <div class="tile">
+        <span class="emoji" aria-hidden="true">⛪</span>
+        <h4>Sunday</h4>
+        <p>Traditional Latin Mass in Edmonds, then St. James Cathedral in Seattle.</p>
+      </div>
+      <div class="tile">
+        <span class="emoji" aria-hidden="true">💸</span>
+        <h4>Your cost</h4>
+        <p>Covered by the group. Bring money only for extra food &amp; personal items.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RSVP WALL ===================== -->
+<section class="bg-ink-deep bg-rays bg-grain">
+  <div class="container-narrow">
+    <div class="section-header center" data-reveal>
+      <span class="eyebrow">Saint under whose intercession you travel</span>
+      <h2>I'm going.</h2>
+      <p class="lede">Add your name to the pilgrimage wall. We walk together.</p>
+      <div class="gold-rule center"></div>
+    </div>
+
+    <form class="form-wrap" data-rsvp-form data-reveal>
+      <label class="label" for="rsvp-name">Your first name</label>
+      <input class="field" id="rsvp-name" name="name" type="text" maxlength="32" required placeholder="e.g., María" autocomplete="given-name">
+
+      <div class="label" style="margin-top: var(--space-5);">Choose a saint icon to represent you</div>
+      <div class="saint-grid" data-saint-grid role="radiogroup" aria-label="Saint icon">
+        <button type="button" class="saint" data-icon="🌹" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">🌹</span>
+          <span>St. Juan Diego</span>
+        </button>
+        <button type="button" class="saint" data-icon="☀" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">☀</span>
+          <span>Our Lady of Guadalupe</span>
+        </button>
+        <button type="button" class="saint" data-icon="⚔" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">⚔</span>
+          <span>St. Michael</span>
+        </button>
+        <button type="button" class="saint" data-icon="❀" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">❀</span>
+          <span>St. Thérèse</span>
+        </button>
+        <button type="button" class="saint" data-icon="✟" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">✟</span>
+          <span>St. Joseph</span>
+        </button>
+        <button type="button" class="saint" data-icon="♥" aria-pressed="false">
+          <span class="saint-icon" aria-hidden="true">♥</span>
+          <span>Sacred Heart</span>
+        </button>
+      </div>
+
+      <div class="btn-row" style="margin-top: var(--space-5);">
+        <button type="submit" class="btn btn-primary">I'm going!</button>
+        <span class="help" data-rsvp-error role="alert" style="color: var(--sacred-bright);"></span>
+      </div>
+      <p class="help" style="margin-top: var(--space-4);">Your name will be visible to everyone in the group.</p>
+    </form>
+
+    <div class="wall" data-rsvp-wall data-reveal aria-live="polite">
+      <div class="wall-empty">Loading…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INTENTIONS WALL ===================== -->
+<section class="bg-ink bg-stars bg-grain">
+  <div class="container-narrow">
+    <div class="section-header center" data-reveal>
+      <span class="eyebrow">Pray with us</span>
+      <h2>Prayer Intentions</h2>
+      <p class="lede">What shall we hold before the Blessed Sacrament for you this weekend?</p>
+      <div class="gold-rule center"></div>
+    </div>
+
+    <form class="form-wrap" data-intention-form data-reveal>
+      <label class="label" for="intention-text">Your intention</label>
+      <textarea class="field" id="intention-text" name="intention" maxlength="240" required placeholder="for healing in our family…"></textarea>
+      <div class="btn-row" style="margin-top: var(--space-4);">
+        <button type="submit" class="btn btn-outline">Lift it up</button>
+        <span class="help" data-intention-error role="alert" style="color: var(--sacred-bright);"></span>
+      </div>
+      <p class="help" style="margin-top: var(--space-4);">Your intention will be visible to everyone in the group.</p>
+    </form>
+
+    <div class="intentions-stage" data-intention-stage data-reveal aria-live="polite">
+      <div class="intentions-empty">Loading…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRAYER BEFORE WE GO ===================== -->
+<section class="bg-ink-deep bg-rays">
+  <div class="container-narrow">
+    <div class="section-header center" data-reveal>
+      <span class="eyebrow">Prayer Before We Go</span>
+      <h2 class="italic">Anima Christi</h2>
+      <div class="gold-rule center"></div>
+    </div>
+
+    <div class="prayer" data-prayer-lines>
+      <span class="line">Soul of Christ, sanctify me.</span>
+      <span class="line">Body of Christ, save me.</span>
+      <span class="line">Blood of Christ, inebriate me.</span>
+      <span class="line">Water from the side of Christ, wash me.</span>
+      <span class="line">Passion of Christ, strengthen me.</span>
+      <span class="line">O good Jesus, hear me.</span>
+      <span class="line">Within Thy wounds hide me.</span>
+      <span class="line">Suffer me not to be separated from Thee.</span>
+      <span class="line">From the malicious enemy defend me.</span>
+      <span class="line">In the hour of my death call me.</span>
+      <span class="line">And bid me come unto Thee,</span>
+      <span class="line">That with Thy saints I may praise Thee</span>
+      <span class="line">forever and ever.</span>
+      <span class="amen line">Amen</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUICK LINKS ===================== -->
+<section class="bg-ink bg-grain">
+  <div class="container">
+    <div class="section-header center" data-reveal>
+      <span class="eyebrow">Everything you need</span>
+      <h2>Know before you go.</h2>
+      <div class="gold-rule center"></div>
+    </div>
+
+    <div class="grid grid-3" data-reveal-stagger>
+      <a class="quicklink" href="timeline.html">
+        <span class="emoji" aria-hidden="true">⧗</span>
+        <h4>Timeline</h4>
+        <p>Live, time-aware schedule. Auto-scrolls to where the group is right now.</p>
+      </a>
+      <a class="quicklink" href="travel.html">
+        <span class="emoji" aria-hidden="true">🗺</span>
+        <h4>Travel</h4>
+        <p>Route, distances, rest stops, parking, and carpool details.</p>
+      </a>
+      <a class="quicklink" href="hotel.html">
+        <span class="emoji" aria-hidden="true">🏨</span>
+        <h4>Hotel</h4>
+        <p>La Quinta Inn Lynnwood — address, check-in, rooms, house rules.</p>
+      </a>
+      <a class="quicklink" href="packing.html">
+        <span class="emoji" aria-hidden="true">🎒</span>
+        <h4>Packing</h4>
+        <p>Interactive checklist — saves your progress automatically.</p>
+      </a>
+      <a class="quicklink" href="sunday.html">
+        <span class="emoji" aria-hidden="true">⛪</span>
+        <h4>Sunday Plan</h4>
+        <p>Traditional Latin Mass, St. James Cathedral, fellowship, return home.</p>
+      </a>
+      <a class="quicklink" href="parents.html">
+        <span class="emoji" aria-hidden="true">✦</span>
+        <h4>For Parents</h4>
+        <p>Everything parents need: facts, safety, contacts, consent form.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand">St. Juan Diego Young Adult Group</p>
+      <p class="footer-tag">“In Him, We Rise — Together.”</p>
+      <p class="text-mute" style="font-size: 0.8125rem;">
+        A pilgrimage to the ASCEND Eucharistic Revival · May 16–17, 2026
+      </p>
+    </div>
+    <div>
+      <h5>External</h5>
+      <ul>
+        <li><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND</a></li>
+        <li><a href="https://www.northamericanmartyrs.org/" target="_blank" rel="noopener">North American Martyrs</a></li>
+        <li><a href="https://stjames-cathedral.org/" target="_blank" rel="noopener">St. James Cathedral</a></li>
+        <li><a href="https://ascendmerchstore.itemorder.com/shop/home/" target="_blank" rel="noopener">ASCEND Merch Store</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contact</h5>
+      <ul>
+        <li>Bright Minds</li>
+        <li><span class="placeholder">[PLACEHOLDER: phone]</span></li>
+        <li><span class="placeholder">[PLACEHOLDER: email]</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Made with ♥ for the glory of God · © <span data-year></span> St. Juan Diego YAG</span>
+    <span>Last updated <span data-updated>—</span></span>
+  </div>
+</footer>
+
+<!-- ===================== MOBILE BOTTOM NAV ===================== -->
+<nav class="mnav" aria-label="Mobile primary">
+  <div class="mnav-inner">
+    <a href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/>
+      </svg>
+      <span class="mnav-label">Home</span>
+    </a>
+    <a href="timeline.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
+      <span class="mnav-label">Timeline</span>
+    </a>
+    <a href="travel.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/>
+        <path d="M9 4v13M15 7v13"/>
+      </svg>
+      <span class="mnav-label">Travel</span>
+    </a>
+    <a href="hotel.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 21V8l9-5 9 5v13"/>
+        <path d="M9 21v-6h6v6"/>
+      </svg>
+      <span class="mnav-label">Hotel</span>
+    </a>
+    <button type="button" data-open-sheet>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      <span class="mnav-label">More</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== MORE SHEET ===================== -->
+<div class="sheet-backdrop" data-close-sheet aria-hidden="true"></div>
+<aside class="sheet" role="dialog" aria-modal="true" aria-label="More pages" aria-hidden="true">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <h5>More</h5>
+  <ul class="sheet-links">
+    <li><a href="packing.html">🎒 Packing Checklist</a></li>
+    <li><a href="whats-included.html">💸 What's Included</a></li>
+    <li><a href="speakers.html">🎤 Speakers</a></li>
+    <li><a href="sunday.html">⛪ Sunday Plan</a></li>
+    <li><a href="parents.html">✦ For Parents</a></li>
+  </ul>
+</aside>
+
+<script src="script.js"></script>
+</body>
+</html>
