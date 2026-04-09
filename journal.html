@@ -485,15 +485,25 @@ html[data-theme="light"] .journal-type-badge.talk_note {
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="timeline.html">Timeline</a></li>
-      <li><a href="travel.html">Travel</a></li>
-      <li><a href="hotel.html">Hotel</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">Schedule <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="timeline.html">Timeline</a>
+          <a href="saturday.html">Saturday</a>
+          <a href="sunday.html">Sunday</a>
+        </div>
+      </li>
       <li><a href="hub.html">Hub</a></li>
-      <li><a href="whats-included.html">Costs</a></li>
-      <li><a href="speakers.html">Speakers</a></li>
-      <li><a href="saturday.html">Saturday</a></li>
-      <li><a href="sunday.html">Sunday</a></li>
-      <li><a href="parents.html">Parents</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">More <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="travel.html">Travel</a>
+          <a href="hotel.html">Hotel</a>
+          <a href="whats-included.html">Costs</a>
+          <a href="speakers.html">Speakers</a>
+          <a href="parents.html">Parents</a>
+        </div>
+      </li>
     </ul>
     <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
     <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme">

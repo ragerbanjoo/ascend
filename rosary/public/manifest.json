@@ -1,0 +1,23 @@
+{
+  "name": "Holy Rosary - St. Juan Young Adult Group",
+  "short_name": "Holy Rosary",
+  "description": "Guided bilingual Rosary app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/images/rosary-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/rosary-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

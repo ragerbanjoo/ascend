@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Brand color CSS variables (light = green, dark = black glossy) ── */
+:root {
+  --brand-50: #f0f9f4;
+  --brand-100: #d9f0e3;
+  --brand-200: #b5e1c9;
+  --brand-300: #84cba8;
+  --brand-400: #51af83;
+  --brand-500: #2f9468;
+  --brand-600: #207753;
+  --brand-700: #1a5f44;
+  --brand-800: #174c38;
+  --brand-900: #143f2f;
+  --brand-950: #0a231a;
+
+  --surface-bg: #f9fafb;
+  --surface-card: #ffffff;
+  --surface-border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+
+  /* Navbar: green gradient top bar */
+  --nav-bg: linear-gradient(135deg, #1a5f44 0%, #144030 100%);
+  --nav-border: rgba(255,255,255,0.15);
+  --nav-text: #ffffff;
+  --nav-text-muted: rgba(255,255,255,0.65);
+  --nav-pill-border: rgba(255,255,255,0.30);
+  --nav-pill-active-bg: rgba(255,255,255,0.18);
+
+  /* Bottom tab bar: green text in light mode */
+  --bottom-nav-text: #1a5f44;
+  --bottom-nav-text-muted: rgba(26,95,68,0.50);
+  --bottom-nav-pill-border: rgba(26,95,68,0.25);
+  --bottom-nav-pill-active-bg: rgba(26,95,68,0.10);
+}
+
+html[data-theme='dark'] {
+  /* Brand (green) stays the SAME — only surfaces change */
+  --surface-bg: #0f0f0f;
+  --surface-card: #1a1a1a;
+  --surface-border: #2a2a2a;
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+
+  /* Navbar: dark mode — semi-transparent dark bar, white text */
+  --nav-bg: rgba(10,10,10,0.70);
+  --nav-border: rgba(255,255,255,0.08);
+  --nav-text: #ffffff;
+  --nav-text-muted: rgba(255,255,255,0.50);
+  --nav-pill-border: rgba(255,255,255,0.20);
+  --nav-pill-active-bg: rgba(255,255,255,0.15);
+
+  /* Bottom tab bar: white text in dark mode (same as top nav) */
+  --bottom-nav-text: #ffffff;
+  --bottom-nav-text-muted: rgba(255,255,255,0.50);
+  --bottom-nav-pill-border: rgba(255,255,255,0.20);
+  --bottom-nav-pill-active-bg: rgba(255,255,255,0.15);
+}
+
+/* Text-size scaling — OUTSIDE @layer so it beats Tailwind preflight */
+/* Default: 21px (comfortable reading). Large: 24px (accessibility). */
+html {
+  scroll-behavior: smooth;
+  font-size: 21px !important;
+}
+
+html[data-text-size='large'] {
+  font-size: 24px !important;
+}
+
+/* ── Dark mode global overrides ── */
+html[data-theme='dark'] body {
+  background-color: var(--surface-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+html[data-theme='dark'] .bg-gray-50 { background-color: var(--surface-bg) !important; }
+html[data-theme='dark'] .bg-white { background-color: var(--surface-card) !important; }
+html[data-theme='dark'] .bg-gray-100 { background-color: #1f1f1f !important; }
+html[data-theme='dark'] .bg-gray-200 { background-color: #2a2a2a !important; }
+
+html[data-theme='dark'] .text-gray-900 { color: var(--text-primary) !important; }
+html[data-theme='dark'] .text-gray-800 { color: #e0e0e0 !important; }
+html[data-theme='dark'] .text-gray-700 { color: var(--text-secondary) !important; }
+html[data-theme='dark'] .text-gray-600 { color: var(--text-secondary) !important; }
+html[data-theme='dark'] .text-gray-500 { color: var(--text-muted) !important; }
+html[data-theme='dark'] .text-gray-400 { color: #707070 !important; }
+
+html[data-theme='dark'] .border-gray-100 { border-color: var(--surface-border) !important; }
+html[data-theme='dark'] .border-gray-200 { border-color: var(--surface-border) !important; }
+html[data-theme='dark'] .border-gray-300 { border-color: #3a3a3a !important; }
+
+/* Dark mode: brand-50 bg gets slightly darker for contrast on dark surfaces */
+html[data-theme='dark'] .bg-brand-50 {
+  background-color: #122b1e !important;
+}
+
+/* Dark mode: brand-100 circle badges — dark green bg + light text */
+html[data-theme='dark'] .bg-brand-100 {
+  background-color: #1a5f44 !important;
+}
+
+/* Dark mode: lighten brand TEXT so green is readable on dark surfaces */
+html[data-theme='dark'] .text-brand-600 { color: #51af83 !important; }
+html[data-theme='dark'] .text-brand-700 { color: #84cba8 !important; }
+html[data-theme='dark'] .text-brand-800 { color: #b5e1c9 !important; }
+
+/* Dark mode: brand border colors get slightly lighter for visibility */
+html[data-theme='dark'] .border-brand-100 { border-color: #1a5f44 !important; }
+html[data-theme='dark'] .border-brand-200 { border-color: #207753 !important; }
+
+/* Dark mode cards and containers */
+html[data-theme='dark'] .shadow-sm,
+html[data-theme='dark'] .shadow-md,
+html[data-theme='dark'] .shadow-lg,
+html[data-theme='dark'] .shadow-xl {
+  --tw-shadow-color: rgba(0,0,0,0.5) !important;
+}
+
+/* Checkbox: dark mode — dark background for unchecked state + green accent */
+html[data-theme='dark'] input[type='checkbox'] {
+  accent-color: #51af83 !important;
+  color-scheme: dark;
+}
+
+/* Select inputs */
+html[data-theme='dark'] select {
+  background-color: var(--surface-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--surface-border) !important;
+}
+html[data-theme='dark'] select option {
+  background-color: #1a1a1a !important;
+  color: var(--text-primary) !important;
+}
+
+/* SVG strokes for bead counter ring etc */
+html[data-theme='dark'] .stroke-gray-200 { stroke: #333333 !important; }
+
+/* Backdrop variants */
+html[data-theme='dark'] .bg-gray-50\/95 { background-color: rgba(15,15,15,0.95) !important; }
+html[data-theme='dark'] .bg-brand-50\/50 { background-color: rgba(18,43,30,0.5) !important; }
+
+/* Border-t/b overrides for stacked items */
+html[data-theme='dark'] .border-t { border-color: var(--surface-border); }
+html[data-theme='dark'] .border-b { border-color: var(--surface-border); }
+
+/* Disabled button text in dark mode */
+html[data-theme='dark'] button:disabled { opacity: 0.35; }
+
+/* Focus ring stays green */
+html[data-theme='dark'] .focus\:ring-brand-300:focus { --tw-ring-color: rgba(132,203,168,0.5) !important; }
+
+
+/* Progress bar track */
+html[data-theme='dark'] .bg-gray-200 { background-color: #2a2a2a !important; }
+
+/* Nav menu dropdown in dark mode */
+html[data-theme='dark'] .hover\:bg-gray-50:hover { background-color: #222222 !important; }
+html[data-theme='dark'] .hover\:bg-gray-100:hover { background-color: #2a2a2a !important; }
+
+/* Mysteries list: use darker green hover so text stays readable in dark mode */
+html[data-theme='dark'] .hover\:bg-brand-50:hover { background-color: #0e2318 !important; }
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  input[type='checkbox'] {
+    accent-color: #207753;
+  }
+
+  * {
+    overflow-wrap: break-word;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-brand-600 bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-sm transition-all hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-lg bg-gold-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gold-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500;
+  }
+}
