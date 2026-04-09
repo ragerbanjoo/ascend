@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" shape-rendering="geometricPrecision">
+  <defs>
+    <!-- App background gradient: deep navy top to slightly warmer base -->
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#080e20"/>
+      <stop offset="100%" stop-color="#0f1a30"/>
+    </linearGradient>
+
+    <!-- Sunrise glow radiating from below the cross -->
+    <radialGradient id="sunrise-glow" cx="50%" cy="100%" r="75%" gradientUnits="objectBoundingBox">
+      <stop offset="0%"  stop-color="#e8c05a" stop-opacity="0.55"/>
+      <stop offset="35%" stop-color="#c9a14a" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#c9a14a" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#c9a14a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft gold glow for cross bloom -->
+    <filter id="cross-bloom" x="-20%" y="-10%" width="140%" height="130%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Clipping mask to keep rays inside the rounded-rect icon -->
+    <clipPath id="icon-clip">
+      <rect width="512" height="512" rx="108"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" rx="108" fill="url(#bg-grad)"/>
+
+  <!-- ── All content clipped to icon shape ── -->
+  <g clip-path="url(#icon-clip)">
+
+    <!-- Sunrise ambient glow -->
+    <rect width="512" height="512" fill="url(#sunrise-glow)"/>
+
+    <!-- Concentrated hot-spot at horizon -->
+    <ellipse cx="256" cy="440" rx="160" ry="80" fill="#e8c060" opacity="0.18"/>
+    <ellipse cx="256" cy="440" rx="80"  ry="40" fill="#f0cc6a" opacity="0.22"/>
+
+    <!-- ── Sun rays ── -->
+    <!-- All rays taper from wide at origin (256, 440) to a point far off-canvas -->
+    <!-- Polygon: two base points near origin, two tip points off-screen -->
+    <!-- Rotation is around the origin point (256, 440) -->
+    <!-- 11 rays: 0°, ±18°, ±36°, ±54°, ±72°, ±90° -->
+    <g fill="#c9a14a">
+      <!-- 0° — straight up — brightest -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#eac45c" opacity="0.90"/>
+
+      <!-- ±18° -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#d9b048" opacity="0.75"
+               transform="rotate(18,256,440)"/>
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#d9b048" opacity="0.75"
+               transform="rotate(-18,256,440)"/>
+
+      <!-- ±36° -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.56"
+               transform="rotate(36,256,440)"/>
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.56"
+               transform="rotate(-36,256,440)"/>
+
+      <!-- ±54° -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.36"
+               transform="rotate(54,256,440)"/>
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.36"
+               transform="rotate(-54,256,440)"/>
+
+      <!-- ±72° -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.20"
+               transform="rotate(72,256,440)"/>
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.20"
+               transform="rotate(-72,256,440)"/>
+
+      <!-- ±90° — nearly horizontal, very faint -->
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.09"
+               transform="rotate(90,256,440)"/>
+      <polygon points="249,442 263,442 257,-30 255,-30"
+               fill="#c9a14a" opacity="0.09"
+               transform="rotate(-90,256,440)"/>
+    </g>
+
+    <!-- ── Cross ── -->
+    <!-- Subtle gold bloom behind cross (gives it a backlit look) -->
+    <rect x="208" y="72" width="96" height="376" rx="14"
+          fill="#c9a14a" opacity="0.30" filter="url(#cross-bloom)"/>
+    <rect x="78"  y="155" width="356" height="96" rx="14"
+          fill="#c9a14a" opacity="0.30" filter="url(#cross-bloom)"/>
+
+    <!-- Vertical bar -->
+    <rect x="216" y="78" width="80" height="368" rx="11" fill="#f5f1e8"/>
+
+    <!-- Horizontal bar (intersection at ~1/3 from top of vertical) -->
+    <rect x="84" y="158" width="344" height="80" rx="11" fill="#f5f1e8"/>
+
+  </g>
+</svg>
