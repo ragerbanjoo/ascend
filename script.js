@@ -2607,6 +2607,14 @@
     } catch (e) { console.warn('Admin audit error:', e); }
   }
 
+  // Expose modules for sub-pages (journal.html, rosary.html, etc.)
+  window.DataStore = DataStore;
+  window.Storage = Storage;
+  window.Auth = Auth;
+  window.Crypto = Crypto;
+  window.showToast = showToast;
+  window.escapeHtml = escapeHtml;
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {
