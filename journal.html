@@ -25,6 +25,7 @@
   min-height: 100vh;
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -275,6 +276,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
   border-bottom: 1px solid var(--cream-line);
   flex-shrink: 0;
 }
@@ -433,6 +435,7 @@
   font-size: 0.6875rem;
   color: var(--cream-mute);
   padding: 0 var(--space-4) var(--space-2);
+  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
   text-align: right;
   flex-shrink: 0;
 }
@@ -465,13 +468,17 @@ html[data-theme="light"] .journal-type-badge.talk_note {
 
 /* ═══ Responsive ═══ */
 @media (max-width: 600px) {
+  .journal-page { padding-top: calc(var(--space-5) + env(safe-area-inset-top, 0px)); }
   .journal-header h1 { font-size: 1.375rem; }
+  .journal-header { flex-wrap: wrap; }
+  .journal-header-actions { flex-wrap: wrap; }
   .journal-card { padding: var(--space-4); min-height: 40vh; }
   .rt-body { padding: var(--space-3); font-size: 0.9375rem; }
-  .editor-top-bar { padding: var(--space-2) var(--space-3); }
-  .rt-toolbar { padding: var(--space-2) var(--space-3); }
+  .editor-top-bar { padding: var(--space-2) env(safe-area-inset-right, var(--space-3)) var(--space-2) env(safe-area-inset-left, var(--space-3)); padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px)); }
+  .rt-toolbar { padding: var(--space-2) var(--space-3); gap: 4px; }
   .draw-canvas { height: 220px; }
   .editor-talk-fields { flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+  .rt-font-select { max-width: 5rem; font-size: 0.7rem; }
 }
 </style>
 </head>
@@ -663,8 +670,8 @@ html[data-theme="light"] .journal-type-badge.talk_note {
       <ul>
         <li><strong>Gaby</strong> (lead) — <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
         <li><a href="mailto:gaby@sjdyoungadults.com">gaby@sjdyoungadults.com</a></li>
-        <li><strong>Alex</strong> — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
         <li><strong>Johana</strong> — <a href="tel:+15093885123">+1 (509) 388-5123</a></li>
+        <li><strong>Alex</strong> (Sunday YAG) — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
       </ul>
     </div>
   </div>

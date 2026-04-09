@@ -2328,39 +2328,45 @@ textarea.field {
 }
 .group-rules {
   list-style: none;
-  counter-reset: rule;
-  max-width: 28rem;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-3);
+  max-width: 54rem;
+  margin: 0 auto;
   text-align: left;
 }
 .group-rules li {
-  counter-increment: rule;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(245,241,232,0.04);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-lg);
   font-family: var(--f-body);
   color: var(--cream-dim);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  transition: border-color 0.2s, background 0.2s;
 }
-.group-rules li::before {
-  content: counter(rule);
+.group-rules li:hover { border-color: var(--gold-dim); background: rgba(201,161,74,0.04); }
+.rule-icon {
   flex-shrink: 0;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
   background: var(--gold-soft);
+  border-radius: var(--r-md);
   color: var(--gold-bright);
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: var(--f-body);
 }
+.rule-icon svg { width: 20px; height: 20px; }
+html[data-theme="light"] .group-rules li {
+  background: rgba(30,30,60,0.03);
+  border-color: rgba(30,30,60,0.1);
+}
+html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.06); border-color: rgba(158,124,46,0.25); }
 
 /* ---------- 15c. Hub ---------- */
 .hub-topbar { padding: var(--space-6) 0 var(--space-4); }
@@ -2465,7 +2471,9 @@ textarea.field {
 .confession-list li { padding: var(--space-2) 0; border-bottom: 1px solid var(--cream-line); color: var(--cream-dim); font-size: 0.85rem; }
 
 .group-rules-compact { max-width: none; }
-.group-rules-compact li { font-size: 0.85rem; }
+.group-rules-compact li { font-size: 0.85rem; padding: var(--space-3); }
+.group-rules-compact .rule-icon { width: 2.25rem; height: 2.25rem; }
+.group-rules-compact .rule-icon svg { width: 16px; height: 16px; }
 
 /* Modals */
 .modal-overlay {
