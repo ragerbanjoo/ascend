@@ -1638,37 +1638,46 @@
     },
 
     // Journal entries (ENCRYPTED)
-    async getJournalEntries() {
+    async getJournalEntries(filter) {
       if (Auth.isGuest) {
-        return Storage._lsGet('hub:journal', []);
+        let entries = Storage._lsGet('hub:journal', []);
+        if (filter) entries = entries.filter(e => (e.entry_type || 'journal') === filter);
+        return entries;
       }
       const sb = getSupabase();
-      const { data } = await sb.from('journal_entries').select('*')
+      let query = sb.from('journal_entries').select('*')
         .eq('user_id', Auth.user.id).order('created_at', { ascending: false });
+      if (filter) query = query.eq('entry_type', filter);
+      const { data } = await query;
       if (!data || !Crypto.hasCEK) return data || [];
-      // Decrypt each entry
       const decrypted = [];
       for (const entry of data) {
         try {
           const title = entry.title_ciphertext ? await Crypto.decrypt(entry.title_ciphertext, entry.title_iv) : '';
           const body = entry.body_ciphertext ? await Crypto.decrypt(entry.body_ciphertext, entry.body_iv) : '';
-          decrypted.push({ ...entry, title, body });
+          const speaker = entry.speaker_ciphertext ? await Crypto.decrypt(entry.speaker_ciphertext, entry.speaker_iv) : '';
+          const talkTitle = entry.talk_title_ciphertext ? await Crypto.decrypt(entry.talk_title_ciphertext, entry.talk_title_iv) : '';
+          decrypted.push({ ...entry, title, body, speaker, talkTitle });
         } catch (e) {
-          decrypted.push({ ...entry, title: '[Encrypted]', body: '[Could not decrypt]' });
+          decrypted.push({ ...entry, title: '[Encrypted]', body: '[Could not decrypt]', speaker: '', talkTitle: '' });
         }
       }
       return decrypted;
     },
 
-    async saveJournalEntry(id, title, body) {
+    async saveJournalEntry(id, title, body, opts) {
+      opts = opts || {};
+      const entryType = opts.entryType || 'journal';
+      const speaker = opts.speaker || '';
+      const talkTitle = opts.talkTitle || '';
       if (Auth.isGuest) {
         const entries = Storage._lsGet('hub:journal', []);
         const now = new Date().toISOString();
         if (id) {
           const idx = entries.findIndex(e => e.id === id);
-          if (idx >= 0) { entries[idx] = { ...entries[idx], title, body, updated_at: now }; }
+          if (idx >= 0) { entries[idx] = { ...entries[idx], title, body, entry_type: entryType, speaker, talkTitle, updated_at: now }; }
         } else {
-          entries.unshift({ id: crypto.randomUUID(), title, body, created_at: now, updated_at: now });
+          entries.unshift({ id: crypto.randomUUID(), title, body, entry_type: entryType, speaker, talkTitle, created_at: now, updated_at: now });
         }
         Storage._lsSet('hub:journal', entries);
         return;
@@ -1676,18 +1685,21 @@
       const sb = getSupabase();
       const titleEnc = title ? await Crypto.encrypt(title) : { ciphertext: null, iv: null };
       const bodyEnc = body ? await Crypto.encrypt(body) : { ciphertext: null, iv: null };
+      const speakerEnc = speaker ? await Crypto.encrypt(speaker) : { ciphertext: null, iv: null };
+      const talkTitleEnc = talkTitle ? await Crypto.encrypt(talkTitle) : { ciphertext: null, iv: null };
+      const row = {
+        title_ciphertext: titleEnc.ciphertext, title_iv: titleEnc.iv,
+        body_ciphertext: bodyEnc.ciphertext, body_iv: bodyEnc.iv,
+        speaker_ciphertext: speakerEnc.ciphertext, speaker_iv: speakerEnc.iv,
+        talk_title_ciphertext: talkTitleEnc.ciphertext, talk_title_iv: talkTitleEnc.iv,
+        entry_type: entryType,
+      };
       if (id) {
-        await sb.from('journal_entries').update({
-          title_ciphertext: titleEnc.ciphertext, title_iv: titleEnc.iv,
-          body_ciphertext: bodyEnc.ciphertext, body_iv: bodyEnc.iv,
-          updated_at: new Date().toISOString()
-        }).eq('id', id).eq('user_id', Auth.user.id);
+        row.updated_at = new Date().toISOString();
+        await sb.from('journal_entries').update(row).eq('id', id).eq('user_id', Auth.user.id);
       } else {
-        await sb.from('journal_entries').insert({
-          user_id: Auth.user.id,
-          title_ciphertext: titleEnc.ciphertext, title_iv: titleEnc.iv,
-          body_ciphertext: bodyEnc.ciphertext, body_iv: bodyEnc.iv,
-        });
+        row.user_id = Auth.user.id;
+        await sb.from('journal_entries').insert(row);
       }
     },
 
@@ -1731,24 +1743,11 @@
       }
     },
 
-    // Prayer log
-    async getPrayerLog() {
-      if (Auth.isGuest) return Storage._lsGet('hub:prayerlog', []);
-      const sb = getSupabase();
-      const { data } = await sb.from('prayer_log').select('*')
-        .eq('user_id', Auth.user.id).order('prayed_at', { ascending: false });
-      return data || [];
-    },
-
+    // Prayer log (localStorage only — used by rosary.html)
     async logPrayer(type, detail) {
-      if (Auth.isGuest) {
-        const log = Storage._lsGet('hub:prayerlog', []);
-        log.unshift({ id: crypto.randomUUID(), prayer_type: type, detail, prayed_at: new Date().toISOString() });
-        Storage._lsSet('hub:prayerlog', log);
-        return;
-      }
-      const sb = getSupabase();
-      await sb.from('prayer_log').insert({ user_id: Auth.user.id, prayer_type: type, detail });
+      const log = Storage._lsGet('hub:prayerlog', []);
+      log.unshift({ id: crypto.randomUUID(), prayer_type: type, detail, prayed_at: new Date().toISOString() });
+      Storage._lsSet('hub:prayerlog', log);
     },
 
     // Private intentions (ENCRYPTED)
@@ -1923,12 +1922,6 @@
       await DataStore.saveTalkNote(null, note.speaker, note.talk_title, note.notes);
     }
 
-    // Prayer log
-    const prayers = Storage._lsGet('hub:prayerlog', []);
-    for (const p of prayers) {
-      await DataStore.logPrayer(p.prayer_type, p.detail);
-    }
-
     // Intentions (encrypt)
     const intentions = Storage._lsGet('hub:intentions', []);
     for (const item of intentions) {
@@ -1936,7 +1929,7 @@
     }
 
     // Clear localStorage hub data
-    ['hub:packing', 'hub:journal', 'hub:talknotes', 'hub:prayerlog', 'hub:intentions', 'hub:photos'].forEach(k => {
+    ['hub:packing', 'hub:journal', 'hub:talknotes', 'hub:intentions', 'hub:photos'].forEach(k => {
       try { localStorage.removeItem(k); } catch (e) {}
     });
 
@@ -2031,8 +2024,6 @@
     // Init sub-features
     await initHubPacking();
     await initHubJournal();
-    await initHubTalkNotes();
-    await initHubPrayerLog();
     await initHubIntentions();
     initHubConfessionPrep();
     initHubEmergency();
@@ -2079,161 +2070,9 @@
   async function initHubJournal() {
     const container = document.querySelector('[data-hub-journal]');
     if (!container) return;
-
-    async function renderEntries() {
-      const entries = await DataStore.getJournalEntries();
-      const list = container.querySelector('[data-journal-list]');
-      if (!list) return;
-      list.innerHTML = entries.length ? entries.map(e => `
-        <div class="journal-entry" data-entry-id="${e.id}">
-          <h4>${escapeHtml(e.title || 'Untitled')}</h4>
-          <p class="text-dim" style="font-size:0.8rem">${new Date(e.created_at).toLocaleDateString()}</p>
-          <p>${escapeHtml((e.body || '').slice(0, 120))}${(e.body || '').length > 120 ? '...' : ''}</p>
-          <div class="journal-actions">
-            <button type="button" data-edit-journal="${e.id}" class="btn btn-ghost btn-sm">Edit</button>
-            <button type="button" data-delete-journal="${e.id}" class="btn btn-ghost btn-sm">Delete</button>
-          </div>
-        </div>
-      `).join('') : '<p class="text-mute">No entries yet. Start writing!</p>';
-
-      list.querySelectorAll('[data-delete-journal]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          await DataStore.deleteJournalEntry(btn.dataset.deleteJournal);
-          renderEntries();
-        });
-      });
-    }
-
-    // New entry button
-    container.querySelector('[data-new-journal]')?.addEventListener('click', () => {
-      openJournalEditor(null, renderEntries);
-    });
-
-    await renderEntries();
-  }
-
-  function openJournalEditor(entryId, onSave) {
-    // Simple modal editor
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-      <div class="modal">
-        <h3>${entryId ? 'Edit entry' : 'New journal entry'}</h3>
-        <input type="text" class="field" placeholder="Title (optional)" data-journal-title>
-        <textarea class="field" rows="8" placeholder="Write your thoughts..." data-journal-body></textarea>
-        <p class="text-mute" style="font-size:0.75rem">This entry is encrypted with your password. Only you can read it.</p>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" data-modal-cancel>Cancel</button>
-          <button type="button" class="btn btn-primary" data-modal-save>Save</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    requestAnimationFrame(() => modal.classList.add('open'));
-
-    const titleInput = modal.querySelector('[data-journal-title]');
-    const bodyInput = modal.querySelector('[data-journal-body]');
-
-    // Autosave timer
-    let autosaveTimer;
-    const autosave = () => {
-      clearTimeout(autosaveTimer);
-      autosaveTimer = setTimeout(async () => {
-        await DataStore.saveJournalEntry(entryId, titleInput.value, bodyInput.value);
-      }, 5000);
-    };
-    titleInput.addEventListener('input', autosave);
-    bodyInput.addEventListener('input', autosave);
-
-    modal.querySelector('[data-modal-cancel]').addEventListener('click', () => {
-      clearTimeout(autosaveTimer);
-      modal.classList.remove('open');
-      setTimeout(() => modal.remove(), 300);
-    });
-
-    modal.querySelector('[data-modal-save]').addEventListener('click', async () => {
-      clearTimeout(autosaveTimer);
-      await DataStore.saveJournalEntry(entryId, titleInput.value, bodyInput.value);
-      modal.classList.remove('open');
-      setTimeout(() => modal.remove(), 300);
-      if (onSave) onSave();
-      showToast('Entry saved');
-    });
-  }
-
-  async function initHubTalkNotes() {
-    const container = document.querySelector('[data-hub-talknotes]');
-    if (!container) return;
-
-    async function render() {
-      const notes = await DataStore.getTalkNotes();
-      const list = container.querySelector('[data-talknotes-list]');
-      if (!list) return;
-      list.innerHTML = notes.length ? notes.map(n => `
-        <div class="talk-note-card">
-          <h4>${escapeHtml(n.speaker || 'Unknown speaker')}</h4>
-          <p class="text-dim" style="font-size:0.8rem">${escapeHtml(n.talk_title || '')}</p>
-          <p>${escapeHtml((n.notes || '').slice(0, 100))}</p>
-        </div>
-      `).join('') : '<p class="text-mute">No notes yet.</p>';
-    }
-
-    container.querySelector('[data-new-talknote]')?.addEventListener('click', () => {
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
-      modal.innerHTML = `
-        <div class="modal">
-          <h3>New talk note</h3>
-          <select class="field" data-note-speaker>
-            <option value="">Select speaker...</option>
-            <option value="Chris Stefanick">Chris Stefanick</option>
-            <option value="Dr. Tim Gray">Dr. Tim Gray</option>
-            <option value="Dr. Andrew Swafford">Dr. Andrew Swafford</option>
-            <option value="Sarah Swafford">Sarah Swafford</option>
-            <option value="Deacon Charlie Echeverry">Deacon Charlie Echeverry</option>
-            <option value="Other">Other</option>
-          </select>
-          <input type="text" class="field" placeholder="Talk title" data-note-title>
-          <textarea class="field" rows="6" placeholder="Your notes..." data-note-body></textarea>
-          <div class="modal-actions">
-            <button type="button" class="btn btn-ghost" data-modal-cancel>Cancel</button>
-            <button type="button" class="btn btn-primary" data-modal-save>Save</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      requestAnimationFrame(() => modal.classList.add('open'));
-      modal.querySelector('[data-modal-cancel]').addEventListener('click', () => { modal.classList.remove('open'); setTimeout(() => modal.remove(), 300); });
-      modal.querySelector('[data-modal-save]').addEventListener('click', async () => {
-        await DataStore.saveTalkNote(null,
-          modal.querySelector('[data-note-speaker]').value,
-          modal.querySelector('[data-note-title]').value,
-          modal.querySelector('[data-note-body]').value
-        );
-        modal.classList.remove('open');
-        setTimeout(() => modal.remove(), 300);
-        render();
-        showToast('Note saved');
-      });
-    });
-
-    await render();
-  }
-
-  async function initHubPrayerLog() {
-    const container = document.querySelector('[data-hub-prayerlog]');
-    if (!container) return;
-    const log = await DataStore.getPrayerLog();
-    const list = container.querySelector('[data-prayerlog-list]');
-    if (list) {
-      list.innerHTML = log.length ? log.map(p => `
-        <div class="prayer-log-entry">
-          <span class="text-gold">${escapeHtml(p.prayer_type || 'Prayer')}</span>
-          <span class="text-dim">${p.detail ? ' — ' + escapeHtml(p.detail) : ''}</span>
-          <span class="text-mute" style="font-size:0.75rem">${new Date(p.prayed_at).toLocaleDateString()}</span>
-        </div>
-      `).join('') : '<p class="text-mute">No prayers logged yet.</p>';
-    }
+    const entries = await DataStore.getJournalEntries();
+    const count = container.querySelector('[data-journal-count]');
+    if (count) count.textContent = entries.length + ' ' + (entries.length === 1 ? 'entry' : 'entries');
   }
 
   async function initHubIntentions() {
@@ -2498,7 +2337,7 @@
     modal.innerHTML = `
       <div class="modal hub-welcome-modal">
         <h2>Welcome, pilgrim.</h2>
-        <p>Save your packing list, journal, prayer log, notes, and photos.</p>
+        <p>Save your packing list, journal, talk notes, and photos.</p>
         <div class="hub-welcome-actions">
           <button type="button" class="btn btn-primary" data-welcome-signup>Create a free account</button>
           <button type="button" class="btn btn-ghost" data-welcome-guest>Continue as guest</button>
@@ -2557,9 +2396,6 @@
       // Talk notes
       zip.file('talk-notes.json', JSON.stringify(await DataStore.getTalkNotes(), null, 2));
 
-      // Prayer log
-      zip.file('prayer-log.json', JSON.stringify(await DataStore.getPrayerLog(), null, 2));
-
       // Intentions (decrypted)
       const intentions = await DataStore.getIntentions();
       zip.file('intentions.json', JSON.stringify(intentions.map(i => ({
@@ -2570,7 +2406,7 @@
       zip.file('audit-log.json', JSON.stringify(await DataStore.getMyAuditLog(), null, 2));
 
       // README
-      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries (decrypted)\n- talk-notes.json — Notes from talks\n- prayer-log.json — Prayer history\n- intentions.json — Private intentions (decrypted)\n- audit-log.json — Account activity log\n`);
+      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries (decrypted)\n- talk-notes.json — Notes from talks\n- intentions.json — Private intentions (decrypted)\n- audit-log.json — Account activity log\n`);
 
       const blob = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');

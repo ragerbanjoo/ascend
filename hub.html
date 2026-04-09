@@ -144,16 +144,16 @@
           </div>
         </div>
 
-        <!-- 2. Journal (ENCRYPTED) -->
+        <!-- 2. Journal & Talk Notes (ENCRYPTED) -->
         <div class="hub-tile hub-tile-encrypted" data-hub-journal data-reveal>
           <div class="hub-tile-header">
             <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
             <h3>Journal</h3>
             <span class="encrypted-badge" title="End-to-end encrypted">&#128274;</span>
           </div>
-          <p class="hub-tile-desc">Your private retreat journal. Encrypted with your password.</p>
-          <div data-journal-list></div>
-          <button type="button" class="btn btn-primary btn-sm" data-new-journal>New entry</button>
+          <p class="hub-tile-desc">Write, draw, and capture talk notes. Encrypted with your password.</p>
+          <p class="text-mute" style="font-size:0.8125rem;" data-journal-count>0 entries</p>
+          <a href="journal.html" class="btn btn-primary btn-sm">Open Journal</a>
         </div>
 
         <!-- 3. Rosary -->
@@ -164,16 +164,6 @@
           </div>
           <p class="hub-tile-desc">Pray the Holy Rosary with a guided, step-by-step experience.</p>
           <a href="rosary.html" class="btn btn-primary btn-sm">Open Rosary</a>
-        </div>
-
-        <!-- 4. Talk Notes -->
-        <div class="hub-tile" data-hub-talknotes data-reveal>
-          <div class="hub-tile-header">
-            <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            <h3>Talk Notes</h3>
-          </div>
-          <div data-talknotes-list></div>
-          <button type="button" class="btn btn-primary btn-sm" data-new-talknote>New note</button>
         </div>
 
         <!-- 5. Private Intentions (ENCRYPTED) -->
@@ -301,14 +291,6 @@
           </ul>
         </div>
 
-        <!-- Prayer Log -->
-        <div class="hub-tile" data-hub-prayerlog data-reveal>
-          <div class="hub-tile-header">
-            <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>
-            <h3>Prayer Log</h3>
-          </div>
-          <div data-prayerlog-list></div>
-        </div>
 
       </div>
     </div>

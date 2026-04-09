@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ec">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="public/images/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ASCEND 2026">
+<meta name="description" content="Your private retreat journal — write, draw, and reflect.">
+<title>Journal · St. Juan Diego YAG × ASCEND 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>try{const t=JSON.parse(localStorage.getItem("user:theme"));document.documentElement.setAttribute("data-theme",t||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* ═══ Journal page styles ═══ */
+
+.journal-page {
+  min-height: 100vh;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+/* Header */
+.journal-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.journal-header h1 {
+  font-family: var(--f-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin: 0;
+  flex: 1;
+}
+.journal-header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.journal-encrypted-note {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--cream-mute);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Filter tabs */
+.journal-filters {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--cream-line);
+  margin-bottom: var(--space-4);
+}
+.journal-filter-btn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  font-family: var(--f-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cream-mute);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.journal-filter-btn:hover { color: var(--gold); }
+.journal-filter-btn.active {
+  color: var(--gold-bright);
+  border-bottom-color: var(--gold);
+}
+
+/* Page navigator */
+.journal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.journal-nav button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--cream-line);
+  background: transparent;
+  color: var(--cream);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.journal-nav button:hover:not(:disabled) {
+  background: rgba(201,161,74,0.1);
+  border-color: var(--gold-dim);
+}
+.journal-nav button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.journal-nav-indicator {
+  font-size: 0.875rem;
+  color: var(--cream-dim);
+  min-width: 5rem;
+  text-align: center;
+}
+
+/* Carousel */
+.journal-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  gap: 0;
+  scroll-behavior: smooth;
+}
+.journal-carousel::-webkit-scrollbar { display: none; }
+
+.journal-card {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  min-height: 50vh;
+  padding: var(--space-5);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-lg);
+  background: rgba(245,241,232,0.03);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.journal-card:hover {
+  border-color: var(--gold-dim);
+}
+.journal-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.journal-card-title {
+  font-family: var(--f-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin: 0;
+}
+.journal-card-meta {
+  font-size: 0.75rem;
+  color: var(--cream-mute);
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+.journal-type-badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.journal-type-badge.journal {
+  background: rgba(201,161,74,0.15);
+  color: var(--gold-bright);
+}
+.journal-type-badge.talk_note {
+  background: rgba(100,180,255,0.15);
+  color: #7cb8f0;
+}
+.journal-card-speaker {
+  font-size: 0.8125rem;
+  color: var(--gold);
+  margin-bottom: var(--space-2);
+}
+.journal-card-body {
+  color: var(--cream-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-height: 40vh;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+.journal-card-body img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+}
+.journal-card-actions {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  gap: var(--space-2);
+}
+.journal-card-actions button {
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: var(--cream-mute);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.journal-card-actions button:hover {
+  background: rgba(201,161,74,0.3);
+  color: var(--cream);
+}
+
+/* Empty state */
+.journal-empty {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+}
+.journal-empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+  opacity: 0.4;
+}
+.journal-empty h3 {
+  font-family: var(--f-display);
+  color: var(--cream);
+  margin-bottom: var(--space-2);
+}
+.journal-empty p {
+  color: var(--cream-mute);
+  font-size: 0.875rem;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+
+/* ═══ Editor ═══ */
+.journal-editor-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity 0.25s, transform 0.25s;
+  overflow: hidden;
+}
+.journal-editor-overlay.open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.editor-top-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--cream-line);
+  flex-shrink: 0;
+}
+.editor-top-bar .btn { white-space: nowrap; }
+.editor-title-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--cream);
+  font-family: var(--f-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  outline: none;
+  padding: 0.25rem 0;
+}
+.editor-title-input::placeholder { color: var(--cream-mute); }
+
+/* Talk note fields */
+.editor-talk-fields {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--cream-line);
+  flex-shrink: 0;
+}
+.editor-talk-fields select,
+.editor-talk-fields input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Rich text toolbar */
+.rt-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--cream-line);
+  flex-shrink: 0;
+  align-items: center;
+}
+.rt-toolbar .rt-sep {
+  width: 1px;
+  height: 1.25rem;
+  background: var(--cream-line);
+  margin: 0 0.25rem;
+}
+.rt-btn {
+  min-width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--cream-dim);
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  padding: 0 0.4rem;
+}
+.rt-btn:hover { background: rgba(245,241,232,0.08); color: var(--cream); }
+.rt-btn.active { background: rgba(201,161,74,0.2); color: var(--gold-bright); }
+.rt-btn svg { width: 16px; height: 16px; }
+
+.rt-color-input {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--cream-line);
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.rt-color-input::-webkit-color-swatch-wrapper { padding: 0; }
+.rt-color-input::-webkit-color-swatch { border: none; border-radius: 50%; }
+.rt-color-input::-moz-color-swatch { border: none; border-radius: 50%; }
+
+.rt-font-select {
+  background: transparent;
+  border: 1px solid var(--cream-line);
+  border-radius: 6px;
+  color: var(--cream-dim);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  max-width: 6rem;
+}
+.rt-font-select option { background: var(--ink); color: var(--cream); }
+
+/* Contenteditable body */
+.rt-body {
+  flex: 1;
+  padding: var(--space-4);
+  overflow-y: auto;
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--cream);
+  outline: none;
+  min-height: 200px;
+}
+.rt-body:empty::before {
+  content: attr(data-placeholder);
+  color: var(--cream-mute);
+  pointer-events: none;
+}
+.rt-body img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  display: block;
+}
+.rt-body b, .rt-body strong { font-weight: 700; }
+.rt-body i, .rt-body em { font-style: italic; }
+.rt-body u { text-decoration: underline; }
+
+/* ═══ Drawing panel ═══ */
+.draw-panel {
+  flex-shrink: 0;
+  border-top: 1px solid var(--cream-line);
+  background: rgba(0,0,0,0.15);
+}
+.draw-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  flex-wrap: wrap;
+}
+.draw-toolbar label {
+  font-size: 0.75rem;
+  color: var(--cream-mute);
+}
+.draw-canvas-wrap {
+  position: relative;
+  margin: 0 var(--space-4) var(--space-3);
+  border: 1px solid var(--cream-line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+}
+.draw-canvas {
+  display: block;
+  width: 100%;
+  height: 280px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* ═══ Autosave indicator ═══ */
+.autosave-status {
+  font-size: 0.6875rem;
+  color: var(--cream-mute);
+  padding: 0 var(--space-4) var(--space-2);
+  text-align: right;
+  flex-shrink: 0;
+}
+.autosave-status.saving { color: var(--gold); }
+
+/* ═══ Light mode overrides ═══ */
+html[data-theme="light"] .journal-card {
+  background: rgba(26,26,46,0.03);
+  border-color: rgba(26,26,46,0.1);
+}
+html[data-theme="light"] .journal-card:hover {
+  border-color: rgba(158,124,46,0.3);
+}
+html[data-theme="light"] .journal-editor-overlay {
+  background: var(--ink);
+}
+html[data-theme="light"] .journal-card-actions button {
+  background: rgba(255,255,255,0.7);
+}
+html[data-theme="light"] .draw-canvas-wrap {
+  background: #fff;
+}
+html[data-theme="light"] .rt-color-input {
+  border-color: rgba(26,26,46,0.15);
+}
+html[data-theme="light"] .journal-type-badge.talk_note {
+  background: rgba(40,100,180,0.12);
+  color: #2b6cb0;
+}
+
+/* ═══ Responsive ═══ */
+@media (max-width: 600px) {
+  .journal-header h1 { font-size: 1.375rem; }
+  .journal-card { padding: var(--space-4); min-height: 40vh; }
+  .rt-body { padding: var(--space-3); font-size: 0.9375rem; }
+  .editor-top-bar { padding: var(--space-2) var(--space-3); }
+  .rt-toolbar { padding: var(--space-2) var(--space-3); }
+  .draw-canvas { height: 220px; }
+  .editor-talk-fields { flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="St. Juan Diego YAG × ASCEND — Home">
+      <span class="ornament" aria-hidden="true"></span>
+      St. Juan Diego YAG <span class="x">×</span> ASCEND
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html">Timeline</a></li>
+      <li><a href="travel.html">Travel</a></li>
+      <li><a href="hotel.html">Hotel</a></li>
+      <li><a href="hub.html">Hub</a></li>
+      <li><a href="whats-included.html">Costs</a></li>
+      <li><a href="speakers.html">Speakers</a></li>
+      <li><a href="saturday.html">Saturday</a></li>
+      <li><a href="sunday.html">Sunday</a></li>
+      <li><a href="parents.html">Parents</a></li>
+    </ul>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mnav-chip countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+
+<main class="bg-ink bg-grain journal-page">
+  <div class="container-narrow">
+
+    <!-- Header -->
+    <div class="journal-header">
+      <a href="hub.html" class="btn btn-ghost btn-sm">&larr; Hub</a>
+      <h1>My Journal</h1>
+      <div class="journal-header-actions">
+        <button type="button" class="btn btn-ghost btn-sm" data-new-talk-note>+ Talk Note</button>
+        <button type="button" class="btn btn-primary btn-sm" data-new-entry>+ New Entry</button>
+      </div>
+      <div class="journal-encrypted-note">
+        <span>&#128274;</span> End-to-end encrypted — only you can read your entries
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="journal-filters">
+      <button class="journal-filter-btn active" data-filter="all">All</button>
+      <button class="journal-filter-btn" data-filter="journal">Journal</button>
+      <button class="journal-filter-btn" data-filter="talk_note">Talk Notes</button>
+    </div>
+
+    <!-- Page navigator -->
+    <div class="journal-nav" data-journal-nav style="display:none;">
+      <button type="button" data-prev-page aria-label="Previous entry">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="journal-nav-indicator" data-page-indicator>1 / 1</span>
+      <button type="button" data-next-page aria-label="Next entry">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+    <!-- Carousel -->
+    <div class="journal-carousel" data-journal-carousel></div>
+
+    <!-- Empty state -->
+    <div class="journal-empty" data-journal-empty style="display:none;">
+      <div class="journal-empty-icon">&#128214;</div>
+      <h3>Your journal is empty</h3>
+      <p>Start writing your first entry — capture thoughts, reflections, drawings, or talk notes from the retreat.</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══ Editor overlay (injected into DOM, starts hidden) ═══ -->
+<div class="journal-editor-overlay" data-journal-editor>
+  <!-- Top bar -->
+  <div class="editor-top-bar">
+    <button type="button" class="btn btn-ghost btn-sm" data-editor-cancel>Cancel</button>
+    <input type="text" class="editor-title-input" data-editor-title placeholder="Title...">
+    <button type="button" class="btn btn-ghost btn-sm" data-editor-delete style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" data-editor-save>Save</button>
+  </div>
+
+  <!-- Talk note metadata (hidden for regular entries) -->
+  <div class="editor-talk-fields" data-editor-talk-fields style="display:none;">
+    <select class="field" data-editor-speaker>
+      <option value="">Select speaker...</option>
+      <option value="Chris Stefanick">Chris Stefanick</option>
+      <option value="Dr. Andrew & Sarah Swafford">Dr. Andrew & Sarah Swafford</option>
+      <option value="Dr. Tim Gray">Dr. Tim Gray</option>
+      <option value="Archbishop Paul Etienne">Archbishop Paul Etienne</option>
+      <option value="Marie Miller">Marie Miller</option>
+      <option value="Floriani">Floriani</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="text" class="field" data-editor-talk-title placeholder="Talk title (optional)">
+  </div>
+
+  <!-- Rich text toolbar -->
+  <div class="rt-toolbar">
+    <button type="button" class="rt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+    <button type="button" class="rt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
+    <button type="button" class="rt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+    <span class="rt-sep"></span>
+    <select class="rt-font-select" data-cmd-font title="Font">
+      <option value="Inter">Sans</option>
+      <option value="Cormorant Garamond">Serif</option>
+      <option value="Georgia">Georgia</option>
+      <option value="monospace">Mono</option>
+    </select>
+    <select class="rt-font-select" data-cmd-size title="Size">
+      <option value="3">Normal</option>
+      <option value="1">Small</option>
+      <option value="5">Large</option>
+      <option value="7">Huge</option>
+    </select>
+    <span class="rt-sep"></span>
+    <input type="color" class="rt-color-input" data-cmd-color value="#f5f1e8" title="Text color">
+    <span class="rt-sep"></span>
+    <button type="button" class="rt-btn" data-cmd="insertUnorderedList" title="Bullet list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+    </button>
+    <span class="rt-sep"></span>
+    <button type="button" class="rt-btn" data-toggle-draw title="Draw / Sketch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+    </button>
+  </div>
+
+  <!-- Contenteditable body -->
+  <div class="rt-body" contenteditable="true" data-rt-body data-placeholder="Start writing..."></div>
+
+  <!-- Drawing panel (hidden by default) -->
+  <div class="draw-panel" data-draw-panel style="display:none;">
+    <div class="draw-toolbar">
+      <label>Color</label>
+      <input type="color" class="rt-color-input" data-draw-color value="#c9a14a">
+      <label>Size</label>
+      <input type="range" data-draw-size min="1" max="20" value="3" style="width:80px;">
+      <button type="button" class="rt-btn" data-draw-eraser title="Eraser">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7l-4-4 10-10 8 8-4 4"/><line x1="18" y1="13" x2="11" y2="6"/></svg>
+      </button>
+      <button type="button" class="btn btn-ghost btn-sm" data-draw-clear>Clear</button>
+      <button type="button" class="btn btn-primary btn-sm" data-draw-insert>Insert Drawing</button>
+    </div>
+    <div class="draw-canvas-wrap">
+      <canvas class="draw-canvas" data-draw-canvas></canvas>
+    </div>
+  </div>
+
+  <!-- Autosave indicator -->
+  <div class="autosave-status" data-autosave-status></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-brand">St. Juan Diego Young Adult Group</p>
+      <p class="footer-tag">"In Him, We Rise — Together."</p>
+      <p class="text-mute" style="font-size: 0.8125rem;">A retreat for the ASCEND Eucharistic Revival · May 16-17, 2026</p>
+    </div>
+    <div>
+      <h5>External</h5>
+      <ul>
+        <li><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND</a></li>
+        <li><a href="https://www.northamericanmartyrs.org/" target="_blank" rel="noopener">North American Martyrs</a></li>
+        <li><a href="https://stjames-cathedral.org/" target="_blank" rel="noopener">St. James Cathedral</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contact</h5>
+      <ul>
+        <li><strong>Alex</strong> (lead) — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
+        <li><a href="mailto:alex@sjdyoungadults.com">alex@sjdyoungadults.com</a></li>
+        <li><strong>Johana</strong> — <a href="tel:+15093885123">+1 (509) 388-5123</a></li>
+        <li><a href="mailto:johana@sjdyoungadults.com">johana@sjdyoungadults.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>made with <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a14a" aria-label="heart"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by alex</span>
+    <span><a href="https://github.com/ragerbanjoo/ascend" target="_blank" rel="noopener">open source</a> · <a href="security.html">security</a></span>
+  </div>
+</footer>
+
+<nav class="mnav" aria-label="Mobile primary">
+  <div class="mnav-inner">
+    <a href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/>
+      </svg>
+      <span class="mnav-label">Home</span>
+    </a>
+    <button type="button" data-open-schedule>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="mnav-label">Schedule</span>
+    </button>
+    <a href="hub.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="mnav-label">Hub</span>
+    </a>
+    <a href="parents.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="mnav-label">Parents</span>
+    </a>
+    <button type="button" data-open-sheet>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      <span class="mnav-label">More</span>
+    </button>
+  </div>
+  <div class="mnav-sub" aria-hidden="true">
+    <a href="timeline.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Timeline
+    </a>
+    <a href="saturday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h20"/><path d="M6 20V10M10 20V10M14 20V10M18 20V10"/><path d="M12 3l9 7H3z"/></svg>
+      Saturday
+    </a>
+    <a href="sunday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M10 4.5h4M6 21V11l6-5 6 5v10"/><path d="M10 21v-4h4v4"/></svg>
+      Sunday
+    </a>
+  </div>
+</nav>
+<div class="mnav-sub-backdrop" aria-hidden="true"></div>
+
+<div class="sheet-backdrop" data-close-sheet aria-hidden="true"></div>
+<aside class="sheet" role="dialog" aria-modal="true" aria-label="More pages" aria-hidden="true">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-header">
+    <h5>More</h5>
+    <button type="button" class="sheet-close" data-close-sheet aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <button type="button" class="sheet-theme-toggle" data-theme-toggle>
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      <span class="sheet-theme-label">Dark mode</span>
+    </button>
+  <ul class="sheet-links">
+    <li><a href="travel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/><path d="M9 4v13M15 7v13"/></svg> Travel</a></li>
+    <li><a href="hotel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Hotel</a></li>
+    <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
+    <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
+  </ul>
+</aside>
+
+<script src="script.js"></script>
+<script>
+/* ═══ Journal Page Logic ═══ */
+(function() {
+  'use strict';
+
+  // State
+  let allEntries = [];
+  let filteredEntries = [];
+  let currentFilter = 'all';
+  let currentPage = 0;
+  let editingId = null;
+  let editingType = 'journal';
+  let autosaveTimer = null;
+  let drawingCtx = null;
+  let isDrawing = false;
+  let isErasing = false;
+
+  // DOM refs
+  const carousel = document.querySelector('[data-journal-carousel]');
+  const emptyState = document.querySelector('[data-journal-empty]');
+  const navBar = document.querySelector('[data-journal-nav]');
+  const pageIndicator = document.querySelector('[data-page-indicator]');
+  const editor = document.querySelector('[data-journal-editor]');
+  const rtBody = document.querySelector('[data-rt-body]');
+  const titleInput = document.querySelector('[data-editor-title]');
+  const drawPanel = document.querySelector('[data-draw-panel]');
+  const drawCanvas = document.querySelector('[data-draw-canvas]');
+  const autosaveStatus = document.querySelector('[data-autosave-status]');
+  const talkFields = document.querySelector('[data-editor-talk-fields]');
+  const speakerSelect = document.querySelector('[data-editor-speaker]');
+  const talkTitleInput = document.querySelector('[data-editor-talk-title]');
+  const deleteBtn = document.querySelector('[data-editor-delete]');
+
+  // ═══ Init ═══
+  async function init() {
+    // Wait for script.js to be ready
+    await waitForReady();
+
+    // Migrate talk notes if needed
+    await migrateTalkNotes();
+
+    // Check URL params
+    const params = new URLSearchParams(location.search);
+    if (params.get('new') === 'talk_note') {
+      await loadEntries();
+      openEditor(null, 'talk_note');
+      return;
+    }
+
+    await loadEntries();
+    renderCarousel();
+
+    // Wire up buttons
+    document.querySelector('[data-new-entry]').addEventListener('click', () => openEditor(null, 'journal'));
+    document.querySelector('[data-new-talk-note]').addEventListener('click', () => openEditor(null, 'talk_note'));
+    document.querySelector('[data-prev-page]').addEventListener('click', () => goToPage(currentPage - 1));
+    document.querySelector('[data-next-page]').addEventListener('click', () => goToPage(currentPage + 1));
+
+    // Filter tabs
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.filter;
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter();
+        renderCarousel();
+      });
+    });
+
+    // Carousel scroll tracking
+    carousel.addEventListener('scroll', onCarouselScroll, { passive: true });
+
+    // Editor buttons
+    document.querySelector('[data-editor-cancel]').addEventListener('click', closeEditor);
+    document.querySelector('[data-editor-save]').addEventListener('click', saveEntry);
+    deleteBtn.addEventListener('click', deleteEntry);
+
+    // Rich text toolbar
+    document.querySelectorAll('.rt-btn[data-cmd]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.execCommand(btn.dataset.cmd, false, null);
+        rtBody.focus();
+        updateToolbarState();
+      });
+    });
+
+    // Font select
+    document.querySelector('[data-cmd-font]').addEventListener('change', (e) => {
+      document.execCommand('fontName', false, e.target.value);
+      rtBody.focus();
+    });
+
+    // Size select
+    document.querySelector('[data-cmd-size]').addEventListener('change', (e) => {
+      document.execCommand('fontSize', false, e.target.value);
+      rtBody.focus();
+    });
+
+    // Color picker
+    document.querySelector('[data-cmd-color]').addEventListener('input', (e) => {
+      document.execCommand('foreColor', false, e.target.value);
+      rtBody.focus();
+    });
+
+    // Bullet list
+    document.querySelector('[data-cmd="insertUnorderedList"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.execCommand('insertUnorderedList', false, null);
+      rtBody.focus();
+    });
+
+    // Drawing toggle
+    document.querySelector('[data-toggle-draw]').addEventListener('click', toggleDrawPanel);
+
+    // Drawing tools
+    setupDrawing();
+
+    // Autosave on input
+    rtBody.addEventListener('input', scheduleAutosave);
+    titleInput.addEventListener('input', scheduleAutosave);
+
+    // Track toolbar state on selection change
+    document.addEventListener('selectionchange', updateToolbarState);
+  }
+
+  function waitForReady() {
+    return new Promise(resolve => {
+      if (typeof DataStore !== 'undefined') return resolve();
+      const check = setInterval(() => {
+        if (typeof DataStore !== 'undefined') { clearInterval(check); resolve(); }
+      }, 50);
+    });
+  }
+
+  // ═══ Talk Notes Migration ═══
+  async function migrateTalkNotes() {
+    if (Storage.get('hub:talknotes-migrated')) return;
+    try {
+      const notes = typeof Auth !== 'undefined' && !Auth.isGuest
+        ? await DataStore.getTalkNotes()
+        : Storage._lsGet('hub:talknotes', []);
+      for (const note of notes) {
+        await DataStore.saveJournalEntry(null, note.talk_title || note.speaker || 'Talk Note', note.notes || '', {
+          entryType: 'talk_note',
+          speaker: note.speaker || '',
+          talkTitle: note.talk_title || ''
+        });
+      }
+      Storage.set('hub:talknotes-migrated', true);
+    } catch (e) {
+      console.warn('Talk notes migration failed:', e);
+    }
+  }
+
+  // ═══ Data Loading ═══
+  async function loadEntries() {
+    allEntries = await DataStore.getJournalEntries();
+    applyFilter();
+  }
+
+  function applyFilter() {
+    if (currentFilter === 'all') {
+      filteredEntries = allEntries;
+    } else {
+      filteredEntries = allEntries.filter(e => (e.entry_type || 'journal') === currentFilter);
+    }
+    currentPage = Math.min(currentPage, Math.max(0, filteredEntries.length - 1));
+  }
+
+  // ═══ Carousel Rendering ═══
+  function renderCarousel() {
+    if (filteredEntries.length === 0) {
+      carousel.innerHTML = '';
+      carousel.style.display = 'none';
+      navBar.style.display = 'none';
+      emptyState.style.display = '';
+      return;
+    }
+
+    emptyState.style.display = 'none';
+    carousel.style.display = '';
+    navBar.style.display = '';
+
+    carousel.innerHTML = filteredEntries.map((entry, i) => {
+      const type = entry.entry_type || 'journal';
+      const date = new Date(entry.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const title = escapeHtml(entry.title || 'Untitled');
+      const speaker = entry.speaker ? `<div class="journal-card-speaker">${escapeHtml(entry.speaker)}${entry.talkTitle ? ' — ' + escapeHtml(entry.talkTitle) : ''}</div>` : '';
+      const badgeClass = type === 'talk_note' ? 'talk_note' : 'journal';
+      const badgeLabel = type === 'talk_note' ? 'Talk Note' : 'Journal';
+
+      return `
+        <div class="journal-card" data-entry-index="${i}" data-entry-id="${entry.id}">
+          <div class="journal-card-actions">
+            <button type="button" data-edit-entry="${i}" title="Edit" aria-label="Edit entry">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button type="button" data-delete-card="${i}" title="Delete" aria-label="Delete entry">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <div class="journal-card-header">
+            <h3 class="journal-card-title">${title}</h3>
+          </div>
+          <div class="journal-card-meta">
+            <span class="journal-type-badge ${badgeClass}">${badgeLabel}</span>
+            <span>${date}</span>
+          </div>
+          ${speaker}
+          <div class="journal-card-body">${entry.body || ''}</div>
+        </div>
+      `;
+    }).join('');
+
+    updateNav();
+
+    // Wire card actions
+    carousel.querySelectorAll('[data-edit-entry]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.editEntry);
+        const entry = filteredEntries[idx];
+        openEditor(entry.id, entry.entry_type || 'journal');
+      });
+    });
+
+    carousel.querySelectorAll('[data-delete-card]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.deleteCard);
+        const entry = filteredEntries[idx];
+        if (confirm('Delete this entry? This cannot be undone.')) {
+          await DataStore.deleteJournalEntry(entry.id);
+          await loadEntries();
+          renderCarousel();
+        }
+      });
+    });
+
+    // Tap card to edit
+    carousel.querySelectorAll('.journal-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.entryIndex);
+        const entry = filteredEntries[idx];
+        openEditor(entry.id, entry.entry_type || 'journal');
+      });
+    });
+
+    // Scroll to current page
+    if (currentPage > 0) goToPage(currentPage, false);
+  }
+
+  function onCarouselScroll() {
+    if (!filteredEntries.length) return;
+    const scrollLeft = carousel.scrollLeft;
+    const cardWidth = carousel.firstElementChild?.offsetWidth || 1;
+    currentPage = Math.round(scrollLeft / cardWidth);
+    updateNav();
+  }
+
+  function goToPage(page, smooth = true) {
+    if (page < 0 || page >= filteredEntries.length) return;
+    currentPage = page;
+    const card = carousel.children[page];
+    if (card) card.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', inline: 'center', block: 'nearest' });
+    updateNav();
+  }
+
+  function updateNav() {
+    const total = filteredEntries.length;
+    pageIndicator.textContent = total ? `${currentPage + 1} / ${total}` : '0 / 0';
+    document.querySelector('[data-prev-page]').disabled = currentPage <= 0;
+    document.querySelector('[data-next-page]').disabled = currentPage >= total - 1;
+  }
+
+  // ═══ Editor ═══
+  function openEditor(entryId, type = 'journal') {
+    editingId = entryId;
+    editingType = type;
+
+    // Reset
+    titleInput.value = '';
+    rtBody.innerHTML = '';
+    speakerSelect.value = '';
+    talkTitleInput.value = '';
+    autosaveStatus.textContent = '';
+
+    // Show/hide talk fields
+    talkFields.style.display = type === 'talk_note' ? '' : 'none';
+
+    // Show/hide delete button
+    deleteBtn.style.display = entryId ? '' : 'none';
+
+    // Load existing entry
+    if (entryId) {
+      const entry = allEntries.find(e => e.id === entryId);
+      if (entry) {
+        titleInput.value = entry.title || '';
+        rtBody.innerHTML = entry.body || '';
+        if (type === 'talk_note') {
+          speakerSelect.value = entry.speaker || '';
+          talkTitleInput.value = entry.talkTitle || '';
+        }
+      }
+    }
+
+    // Show editor
+    editor.style.display = 'flex';
+    requestAnimationFrame(() => {
+      editor.classList.add('open');
+      if (type === 'talk_note' && !entryId) {
+        speakerSelect.focus();
+      } else {
+        titleInput.focus();
+      }
+    });
+
+    // Hide draw panel
+    drawPanel.style.display = 'none';
+    document.querySelector('[data-toggle-draw]').classList.remove('active');
+  }
+
+  function closeEditor() {
+    clearTimeout(autosaveTimer);
+    editor.classList.remove('open');
+    setTimeout(() => { editor.style.display = ''; }, 250);
+    editingId = null;
+  }
+
+  async function saveEntry() {
+    const title = titleInput.value.trim();
+    const body = rtBody.innerHTML;
+    const opts = { entryType: editingType };
+
+    if (editingType === 'talk_note') {
+      opts.speaker = speakerSelect.value;
+      opts.talkTitle = talkTitleInput.value.trim();
+    }
+
+    await DataStore.saveJournalEntry(editingId, title || 'Untitled', body, opts);
+    closeEditor();
+    await loadEntries();
+    renderCarousel();
+    if (typeof showToast === 'function') showToast('Entry saved');
+  }
+
+  async function deleteEntry() {
+    if (!editingId) return;
+    if (!confirm('Delete this entry? This cannot be undone.')) return;
+    await DataStore.deleteJournalEntry(editingId);
+    closeEditor();
+    await loadEntries();
+    renderCarousel();
+    if (typeof showToast === 'function') showToast('Entry deleted');
+  }
+
+  // ═══ Autosave ═══
+  function scheduleAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveStatus.textContent = '';
+    autosaveTimer = setTimeout(async () => {
+      if (!editingId) return; // Only autosave existing entries
+      autosaveStatus.textContent = 'Saving...';
+      autosaveStatus.classList.add('saving');
+      const title = titleInput.value.trim();
+      const body = rtBody.innerHTML;
+      const opts = { entryType: editingType };
+      if (editingType === 'talk_note') {
+        opts.speaker = speakerSelect.value;
+        opts.talkTitle = talkTitleInput.value.trim();
+      }
+      await DataStore.saveJournalEntry(editingId, title || 'Untitled', body, opts);
+      autosaveStatus.textContent = 'Saved';
+      autosaveStatus.classList.remove('saving');
+      setTimeout(() => { autosaveStatus.textContent = ''; }, 2000);
+    }, 5000);
+  }
+
+  // ═══ Toolbar State ═══
+  function updateToolbarState() {
+    if (!editor.classList.contains('open')) return;
+    document.querySelectorAll('.rt-btn[data-cmd]').forEach(btn => {
+      try {
+        const active = document.queryCommandState(btn.dataset.cmd);
+        btn.classList.toggle('active', active);
+      } catch (e) { /* ignore */ }
+    });
+  }
+
+  // ═══ Drawing ═══
+  function setupDrawing() {
+    const canvas = drawCanvas;
+    const colorInput = document.querySelector('[data-draw-color]');
+    const sizeInput = document.querySelector('[data-draw-size]');
+    const eraserBtn = document.querySelector('[data-draw-eraser]');
+    const clearBtn = document.querySelector('[data-draw-clear]');
+    const insertBtn = document.querySelector('[data-draw-insert]');
+
+    function initCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * (window.devicePixelRatio || 1);
+      canvas.height = (280) * (window.devicePixelRatio || 1);
+      canvas.style.height = '280px';
+      drawingCtx = canvas.getContext('2d');
+      drawingCtx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      drawingCtx.lineCap = 'round';
+      drawingCtx.lineJoin = 'round';
+    }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches?.[0]?.clientX || 0) - rect.left;
+      const y = (e.clientY || e.touches?.[0]?.clientY || 0) - rect.top;
+      return { x, y };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      isDrawing = true;
+      canvas.setPointerCapture(e.pointerId);
+      const pos = getPos(e);
+      drawingCtx.beginPath();
+      drawingCtx.moveTo(pos.x, pos.y);
+
+      if (isErasing) {
+        drawingCtx.globalCompositeOperation = 'destination-out';
+        drawingCtx.lineWidth = parseInt(sizeInput.value) * 3;
+      } else {
+        drawingCtx.globalCompositeOperation = 'source-over';
+        drawingCtx.strokeStyle = colorInput.value;
+        drawingCtx.lineWidth = parseInt(sizeInput.value);
+      }
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      drawingCtx.lineTo(pos.x, pos.y);
+      drawingCtx.stroke();
+    });
+
+    canvas.addEventListener('pointerup', (e) => {
+      isDrawing = false;
+      canvas.releasePointerCapture(e.pointerId);
+    });
+
+    canvas.addEventListener('pointerleave', () => { isDrawing = false; });
+
+    eraserBtn.addEventListener('click', () => {
+      isErasing = !isErasing;
+      eraserBtn.classList.toggle('active', isErasing);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (!drawingCtx) return;
+      drawingCtx.globalCompositeOperation = 'source-over';
+      drawingCtx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    insertBtn.addEventListener('click', () => {
+      if (!drawingCtx) return;
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      rtBody.focus();
+      document.execCommand('insertImage', false, dataUrl);
+      // Clear canvas after inserting
+      drawingCtx.globalCompositeOperation = 'source-over';
+      drawingCtx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPanel.style.display = 'none';
+      document.querySelector('[data-toggle-draw]').classList.remove('active');
+    });
+
+    // Observe draw panel visibility to init canvas
+    const observer = new MutationObserver(() => {
+      if (drawPanel.style.display !== 'none') {
+        requestAnimationFrame(initCanvas);
+      }
+    });
+    observer.observe(drawPanel, { attributes: true, attributeFilter: ['style'] });
+  }
+
+  function toggleDrawPanel() {
+    const btn = document.querySelector('[data-toggle-draw]');
+    const visible = drawPanel.style.display !== 'none';
+    drawPanel.style.display = visible ? 'none' : '';
+    btn.classList.toggle('active', !visible);
+  }
+
+  // ═══ Helpers ═══
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Start
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
