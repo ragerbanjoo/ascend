@@ -257,7 +257,7 @@ body {
 @media (max-width: 880px) {
   body {
     padding-top: 0;
-    padding-bottom: var(--mnav-h);
+    padding-bottom: calc(var(--mnav-h) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -709,18 +709,21 @@ html[data-theme="light"] .btn-scroll-top {
   .btn-scroll-top { bottom: var(--space-6); }
 }
 
-/* Mobile bottom nav */
+/* Mobile bottom nav — floating pill */
 .mnav {
   display: none;
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  left: var(--space-4);
+  right: var(--space-4);
   z-index: var(--z-nav);
-  height: calc(var(--mnav-h) + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: var(--mnav-h);
   background: var(--ink-glass);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border-top: 1px solid var(--cream-line);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-pill);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
 }
 .mnav-inner {
   height: 100%;
@@ -820,6 +823,13 @@ html[data-theme="light"] .btn-scroll-top {
   pointer-events: auto;
 }
 
+/* Light mode floating nav */
+html[data-theme="light"] .mnav {
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(30,30,60,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+}
+
 /* More sheet — popover style matching schedule submenu */
 .sheet-backdrop {
   position: fixed;
@@ -832,7 +842,7 @@ html[data-theme="light"] .btn-scroll-top {
 
 .sheet {
   position: fixed;
-  bottom: calc(var(--mnav-h) + env(safe-area-inset-bottom, 0px) + 8px);
+  bottom: calc(var(--mnav-h) + var(--space-3) + env(safe-area-inset-bottom, 0px) + 8px);
   right: var(--space-3);
   z-index: var(--z-nav);
   background: var(--ink-soft);
@@ -2525,7 +2535,7 @@ textarea.field {
 
 /* Toast */
 .toast {
-  position: fixed; bottom: calc(var(--mnav-h, 64px) + env(safe-area-inset-bottom, 0px) + 16px);
+  position: fixed; bottom: calc(var(--mnav-h, 68px) + var(--space-3) + env(safe-area-inset-bottom, 0px) + 16px);
   left: 50%; transform: translateX(-50%) translateY(20px); z-index: 700;
   background: var(--ink); border: 1px solid var(--gold-dim); border-radius: var(--r-md);
   padding: var(--space-3) var(--space-5); color: var(--cream); font-size: 0.85rem;
