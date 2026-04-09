@@ -379,6 +379,7 @@ p:last-child { margin-bottom: 0; }
 }
 
 section { padding: var(--space-9) 0; position: relative; }
+section.section-hero { padding-bottom: var(--space-5); }
 @media (max-width: 640px) { section { padding: var(--space-8) 0; } }
 
 /* Standalone app (added to home screen) — push content below status bar */
@@ -666,6 +667,47 @@ html[data-theme="light"] .nav-dropdown-menu {
 }
 .countdown-chip.during { color: var(--gold-bright); border-color: var(--gold); background: rgba(201,161,74, 0.14); }
 .countdown-chip.after  { color: var(--cream); background: rgba(245, 241, 232, 0.06); }
+
+/* Scroll to top */
+.btn-scroll-top {
+  position: fixed;
+  bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  right: var(--space-4);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--cream-line);
+  background: var(--ink-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--cream-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition: opacity 0.25s, visibility 0.25s, transform 0.25s, background 0.15s;
+}
+.btn-scroll-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.btn-scroll-top:hover {
+  background: rgba(201,161,74,0.15);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+html[data-theme="light"] .btn-scroll-top {
+  background: rgba(255,255,255,0.8);
+  border-color: rgba(26,26,46,0.1);
+}
+@media (min-width: 881px) {
+  .btn-scroll-top { bottom: var(--space-6); }
+}
 
 /* Mobile bottom nav */
 .mnav {
@@ -2312,6 +2354,7 @@ textarea.field {
 
 /* ---------- 15c. Hub ---------- */
 .hub-topbar { padding: var(--space-6) 0 var(--space-4); }
+@media (max-width: 880px) { .hub-topbar { padding-top: calc(3.5rem + env(safe-area-inset-top, 0px)); } }
 .hub-topbar-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
 .hub-welcome { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; color: var(--cream); }
 .hub-account-pill {

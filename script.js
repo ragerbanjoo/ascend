@@ -970,6 +970,27 @@
   }
 
   // -------------------------------------------------------
+  // 18b. Scroll to top button
+  // -------------------------------------------------------
+  function initScrollTop() {
+    const btn = document.querySelector('.btn-scroll-top');
+    if (!btn) return;
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          btn.classList.toggle('visible', window.scrollY > 400);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: prefersReduced() ? 'auto' : 'smooth' });
+    });
+  }
+
+  // -------------------------------------------------------
   // 19. Helpers
   // -------------------------------------------------------
   function escapeHTML(s) {
@@ -2463,6 +2484,7 @@
     initNav();
     initReveal();
     initAnchors();
+    initScrollTop();
     initFooter();
     initHeroParticles();
     initRSVP().catch(console.warn);

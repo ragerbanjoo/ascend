@@ -24,7 +24,7 @@
 .rosary-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--gold-dim, #3a3425);
+  border-bottom: 2px solid var(--gold-dim);
   margin-bottom: var(--space-6, 1.5rem);
 }
 .rosary-tab {
@@ -35,16 +35,16 @@
   font-family: var(--f-display, 'Cormorant Garamond', serif);
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--ink-soft, #999);
+  color: var(--cream-mute);
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
   border-bottom: 3px solid transparent;
   margin-bottom: -2px;
 }
-.rosary-tab:hover { color: var(--gold, #c9a14a); }
+.rosary-tab:hover { color: var(--gold); }
 .rosary-tab.active {
-  color: var(--gold-bright, #e2c06e);
-  border-bottom-color: var(--gold, #c9a14a);
+  color: var(--gold-bright);
+  border-bottom-color: var(--gold);
 }
 
 .rosary-panel { display: none; }
@@ -52,8 +52,8 @@
 
 /* Options panel */
 .rosary-options {
-  background: var(--cream-dim, #1a1a2e);
-  border: 1px solid var(--gold-dim, #3a3425);
+  background: rgba(245,241,232,0.03);
+  border: 1px solid var(--cream-line);
   border-radius: 1rem;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
@@ -61,7 +61,7 @@
 .rosary-options h3 {
   font-family: var(--f-display);
   font-size: 1.125rem;
-  color: var(--gold, #c9a14a);
+  color: var(--gold);
   margin-bottom: 0.75rem;
 }
 .opt-row {
@@ -69,12 +69,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--gold-soft, rgba(201,161,74,0.1));
+  border-bottom: 1px solid var(--gold-soft);
 }
 .opt-row:last-child { border-bottom: none; }
 .opt-row label {
   font-size: 0.875rem;
-  color: var(--ink, #f0ebe0);
+  color: var(--cream);
 }
 .opt-row .opt-desc {
   font-size: 0.75rem;
@@ -93,7 +93,7 @@
 .toggle .slider {
   position: absolute;
   inset: 0;
-  background: var(--gold-dim, #3a3425);
+  background: var(--gold-dim);
   border-radius: 12px;
   cursor: pointer;
   transition: background 0.2s;
@@ -103,18 +103,18 @@
   position: absolute;
   top: 2px; left: 2px;
   width: 20px; height: 20px;
-  background: var(--ink, #f0ebe0);
+  background: var(--cream);
   border-radius: 50%;
   transition: transform 0.2s;
 }
-.toggle input:checked + .slider { background: var(--gold, #c9a14a); }
+.toggle input:checked + .slider { background: var(--gold); }
 .toggle input:checked + .slider::after { transform: translateX(20px); }
 
 /* Mystery set selector */
 .mystery-select {
-  background: var(--cream-dim, #1a1a2e);
-  border: 1px solid var(--gold-dim, #3a3425);
-  color: var(--ink, #f0ebe0);
+  background: rgba(245,241,232,0.04);
+  border: 1px solid var(--cream-line);
+  color: var(--cream);
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   font-family: var(--f-body);
@@ -124,9 +124,9 @@
 /* Intention input */
 .intention-input {
   width: 100%;
-  background: var(--cream-dim, #1a1a2e);
-  border: 1px solid var(--gold-dim, #3a3425);
-  color: var(--ink, #f0ebe0);
+  background: rgba(245,241,232,0.04);
+  border: 1px solid var(--cream-line);
+  color: var(--cream);
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   font-family: var(--f-body);
@@ -140,7 +140,7 @@
   display: flex; gap: 0.25rem;
 }
 .text-size-btns button {
-  background: var(--gold-dim, #3a3425);
+  background: var(--gold-dim);
   border: none;
   color: var(--ink);
   width: 32px; height: 32px;
@@ -151,12 +151,12 @@
   transition: background 0.15s;
 }
 .text-size-btns button:hover { background: var(--gold-soft); }
-.text-size-btns button.active { background: var(--gold); color: var(--ink-deep, #0d0d1a); }
+.text-size-btns button.active { background: var(--gold); color: var(--ink-deep); }
 
 /* Prayer card */
 .prayer-card {
-  background: var(--cream-dim, rgba(26,26,46,0.6));
-  border: 1px solid var(--gold-dim, #3a3425);
+  background: rgba(245,241,232,0.03);
+  border: 1px solid var(--cream-line);
   border-radius: 1rem;
   padding: 1.5rem;
   min-height: 280px;
@@ -170,11 +170,11 @@
   font-family: var(--f-display);
   font-size: 1.375rem;
   font-weight: 700;
-  color: var(--gold-bright, #e2c06e);
+  color: var(--gold-bright);
   margin-bottom: 0.75rem;
 }
 .prayer-card .instruction {
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
@@ -184,7 +184,7 @@
 .prayer-card .prayer-text {
   font-size: 1rem;
   line-height: 1.7;
-  color: var(--ink, #f0ebe0);
+  color: var(--cream);
   white-space: pre-line;
   max-width: 32rem;
 }
@@ -204,7 +204,7 @@
   font-family: var(--f-display);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--gold-bright, #e2c06e);
+  color: var(--gold-bright);
   margin: 0.5rem 0;
 }
 .mystery-announce .scripture-ref {
@@ -220,7 +220,7 @@
   margin-inline: auto;
 }
 .mystery-announce .beginner-hint {
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border-radius: 0.5rem;
   padding: 0.625rem 1rem;
   font-size: 0.8125rem;
@@ -241,9 +241,9 @@
   height: 120px;
 }
 .bead-ring svg { width: 100%; height: 100%; }
-.bead-ring .ring-bg { stroke: var(--gold-dim, #3a3425); }
+.bead-ring .ring-bg { stroke: var(--gold-dim); }
 .bead-ring .ring-fill {
-  stroke: var(--gold, #c9a14a);
+  stroke: var(--gold);
   transition: stroke-dashoffset 0.3s ease;
 }
 .bead-ring button {
@@ -266,7 +266,7 @@
 .bead-ring .bead-num {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--gold-bright, #e2c06e);
+  color: var(--gold-bright);
   line-height: 1;
 }
 .bead-ring .bead-total {
@@ -282,10 +282,10 @@
 .bead-dot {
   width: 10px; height: 10px;
   border-radius: 50%;
-  background: var(--gold-dim, #3a3425);
+  background: var(--gold-dim);
   transition: background 0.2s;
 }
-.bead-dot.filled { background: var(--gold, #c9a14a); }
+.bead-dot.filled { background: var(--gold); }
 .bead-label {
   font-size: 0.8125rem;
   color: var(--ink-soft);
@@ -306,13 +306,13 @@
 .progress-track {
   height: 0.5rem;
   border-radius: 0.25rem;
-  background: var(--gold-dim, #3a3425);
+  background: var(--gold-dim);
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
   border-radius: 0.25rem;
-  background: var(--gold, #c9a14a);
+  background: var(--gold);
   transition: width 0.5s ease;
 }
 
@@ -332,7 +332,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border: 1px solid var(--gold-dim);
   border-radius: 0.75rem;
   padding: 0.5rem 0.75rem;
@@ -359,14 +359,14 @@
   border: none;
 }
 .pray-nav .btn-back {
-  background: var(--cream-dim, #1a1a2e);
+  background: rgba(245,241,232,0.03);
   border: 1px solid var(--gold-dim);
   color: var(--ink-soft);
 }
 .pray-nav .btn-back:hover { background: var(--gold-soft); }
 .pray-nav .btn-next {
-  background: var(--gold, #c9a14a);
-  color: var(--ink-deep, #0d0d1a);
+  background: var(--gold);
+  color: var(--ink-deep);
   font-weight: 600;
 }
 .pray-nav .btn-next:hover { background: var(--gold-bright); }
@@ -377,8 +377,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--gold, #c9a14a);
-  color: var(--ink-deep, #0d0d1a);
+  background: var(--gold);
+  color: var(--ink-deep);
   border: none;
   padding: 0.875rem 2rem;
   border-radius: 0.75rem;
@@ -393,7 +393,7 @@
 
 /* Completion */
 .completion-card {
-  background: linear-gradient(135deg, var(--gold-dim, #3a3425), var(--ink-deep, #0d0d1a));
+  background: linear-gradient(135deg, var(--gold-dim), var(--ink-deep));
   border: 1px solid var(--gold);
   border-radius: 1rem;
   padding: 2rem;
@@ -429,7 +429,7 @@
 }
 .btn-log:hover { background: var(--gold-bright); }
 .btn-pray-again {
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border: 1px solid var(--gold-dim) !important;
   color: var(--gold);
 }
@@ -473,7 +473,7 @@
 }
 .litany-full {
   grid-column: 1 / -1;
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   text-align: center;
@@ -491,9 +491,9 @@
   margin: 0.75rem 0;
 }
 .litany-nav button {
-  background: var(--cream-dim);
-  border: 1px solid var(--gold-dim);
-  color: var(--ink-soft);
+  background: rgba(245,241,232,0.04);
+  border: 1px solid var(--cream-line);
+  color: var(--cream-mute);
   padding: 0.375rem 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
@@ -514,7 +514,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border: none;
   color: var(--gold);
   font-size: 0.875rem;
@@ -579,7 +579,7 @@
   margin-top: 0.125rem;
 }
 .learn-schedule {
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border-radius: 0.75rem;
   padding: 1.25rem;
   text-align: center;
@@ -596,7 +596,7 @@
 
 /* What to choose cards */
 .wtc-card {
-  background: var(--cream-dim, rgba(26,26,46,0.6));
+  background: rgba(245,241,232,0.03);
   border: 1px solid var(--gold-dim);
   border-radius: 0.75rem;
   padding: 1.25rem;
@@ -645,7 +645,7 @@
 }
 .wtc-list.skip-list .dot { background: var(--ink-soft); }
 .wtc-tip {
-  background: var(--gold-soft, rgba(201,161,74,0.1));
+  background: var(--gold-soft);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   margin-top: 0.75rem;
@@ -666,7 +666,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 1rem 1.25rem;
-  background: var(--cream-dim, rgba(26,26,46,0.6));
+  background: rgba(245,241,232,0.03);
   border: none;
   cursor: pointer;
   text-align: left;
@@ -698,7 +698,7 @@
   border-radius: 0.5rem;
   transition: background 0.15s;
 }
-.mystery-item:hover { background: var(--gold-soft, rgba(201,161,74,0.1)); }
+.mystery-item:hover { background: var(--gold-soft); }
 .mystery-num {
   flex-shrink: 0;
   width: 1.5rem; height: 1.5rem;
@@ -747,6 +747,31 @@
 @media (max-width: 640px) {
   .litany-grid { grid-template-columns: 1fr; }
   .litany-response { padding-left: 1rem; }
+}
+
+/* Light mode */
+html[data-theme="light"] .rosary-options,
+html[data-theme="light"] .prayer-card,
+html[data-theme="light"] .wtc-card,
+html[data-theme="light"] .mystery-set-btn {
+  background: rgba(26,26,46,0.03);
+  border-color: var(--cream-line);
+}
+html[data-theme="light"] .mystery-select,
+html[data-theme="light"] .intention-input {
+  background: rgba(26,26,46,0.04);
+  border-color: var(--cream-line);
+}
+html[data-theme="light"] .litany-nav button,
+html[data-theme="light"] .pray-nav .btn-back {
+  background: rgba(26,26,46,0.04);
+  border-color: var(--cream-line);
+}
+html[data-theme="light"] .text-size-btns button {
+  background: rgba(26,26,46,0.06);
+}
+html[data-theme="light"] .completion-card {
+  background: linear-gradient(135deg, rgba(158,124,46,0.08), rgba(26,26,46,0.03));
 }
 </style>
 </head>
@@ -1719,6 +1744,7 @@ function escHtml(s) {
 }
 </script>
 
+<button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 <script src="script.js"></script>
 </body>
 </html>
