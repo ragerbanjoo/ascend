@@ -273,16 +273,29 @@
 
 .editor-top-bar {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
+  flex-direction: column;
+  padding: 0 max(var(--space-4), env(safe-area-inset-right, var(--space-4)));
+  padding-left: max(var(--space-4), env(safe-area-inset-left, var(--space-4)));
+  padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--cream-line);
   flex-shrink: 0;
+  gap: var(--space-1);
 }
-.editor-top-bar .btn { white-space: nowrap; }
+.editor-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.editor-actions-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.editor-top-bar .btn { white-space: nowrap; flex-shrink: 0; }
 .editor-title-input {
-  flex: 1;
+  width: 100%;
   background: none;
   border: none;
   color: var(--cream);
@@ -290,7 +303,8 @@
   font-size: 1.25rem;
   font-weight: 600;
   outline: none;
-  padding: 0.25rem 0;
+  padding: 0.2rem 0 0.3rem;
+  min-width: 0;
 }
 .editor-title-input::placeholder { color: var(--cream-mute); }
 
@@ -478,7 +492,7 @@ html[data-theme="light"] .journal-type-badge.talk_note {
   .journal-header-actions { flex-wrap: wrap; }
   .journal-card { padding: var(--space-4); min-height: 40vh; }
   .rt-body { padding: var(--space-3); font-size: 0.9375rem; }
-  .editor-top-bar { padding: var(--space-2) env(safe-area-inset-right, var(--space-3)) var(--space-2) env(safe-area-inset-left, var(--space-3)); padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px)); }
+  .editor-title-input { font-size: 1.1rem; }
   .rt-toolbar { padding: var(--space-2) var(--space-3); }
   .draw-canvas { height: 220px; }
   .editor-talk-fields { flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
@@ -574,14 +588,18 @@ html[data-theme="light"] .journal-type-badge.talk_note {
 
 <!-- ═══ Editor overlay (injected into DOM, starts hidden) ═══ -->
 <div class="journal-editor-overlay" data-journal-editor style="display:none;">
-  <!-- Top bar -->
+  <!-- Top bar: 2-row on mobile (actions row + title row) -->
   <div class="editor-top-bar">
-    <button type="button" class="btn btn-ghost btn-sm" data-editor-cancel>Cancel</button>
+    <div class="editor-actions-row">
+      <button type="button" class="btn btn-ghost btn-sm" data-editor-cancel>Cancel</button>
+      <div class="editor-actions-right">
+        <button type="button" class="btn btn-ghost btn-sm" data-editor-delete style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-editor-save>Save</button>
+      </div>
+    </div>
     <input type="text" class="editor-title-input" data-editor-title placeholder="Title...">
-    <button type="button" class="btn btn-ghost btn-sm" data-editor-delete style="display:none;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-    </button>
-    <button type="button" class="btn btn-primary btn-sm" data-editor-save>Save</button>
   </div>
 
   <!-- Talk note metadata (hidden for regular entries) -->
