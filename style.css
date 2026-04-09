@@ -699,10 +699,17 @@ section { padding: var(--space-9) 0; position: relative; }
   background: rgba(201,161,74,0.05);
   transform: translateY(-4px);
 }
-.tile .emoji {
-  font-size: 1.75rem;
+.tile .icon {
+  width: 1.75rem;
+  height: 1.75rem;
   display: block;
   margin-bottom: var(--space-3);
+  color: var(--gold-bright);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   filter: drop-shadow(0 0 20px rgba(229,192,106,0.3));
 }
 .tile h4 {
@@ -746,8 +753,13 @@ section { padding: var(--space-9) 0; position: relative; }
   color: var(--cream);
 }
 .quicklink:hover::after { transform: translateX(6px); }
-.quicklink .emoji { font-size: 1.75rem; display: block; margin-bottom: var(--space-3); }
+.quicklink .icon { width: 1.75rem; height: 1.75rem; display: block; margin-bottom: var(--space-3); color: var(--gold-bright); fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .quicklink h4 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; margin: 0 0 var(--space-2); }
+
+/* Inline sheet / footer / wall SVG icons */
+.si { width: 1.125em; height: 1.125em; display: inline-block; vertical-align: -0.15em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.fh { width: 0.9em; height: 0.9em; display: inline-block; vertical-align: -0.1em; fill: var(--sacred-bright, #c94a4a); stroke: none; }
+.live-dot { display: inline-block; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--live); vertical-align: 0.1em; margin-right: 0.3em; animation: blinkSoft 1.8s ease-in-out infinite; }
 .quicklink p { font-size: 0.875rem; color: var(--cream-dim); margin: 0; }
 
 /* ---------- 9. Home hero ---------- */
@@ -1013,8 +1025,12 @@ textarea.field {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
   filter: drop-shadow(0 0 12px rgba(229,192,106,0.35));
+}
+.saint-icon svg {
+  width: 24px; height: 24px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
 }
 
 /* Attendee wall */
@@ -1039,7 +1055,8 @@ textarea.field {
   font-size: 1.1rem;
   animation: wallRise 0.9s var(--ease-out) both;
 }
-.wall-item .icon { font-size: 1rem; }
+.wall-item .icon { display: flex; align-items: center; }
+.wall-item .icon svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .wall-empty {
   font-style: italic;
   color: var(--cream-mute);
@@ -1159,7 +1176,7 @@ textarea.field {
   box-shadow: 0 0 0 1px var(--gold), 0 20px 50px -20px rgba(229, 192, 106, 0.4);
 }
 .option-card[aria-pressed="true"]::before {
-  content: "✓ Selected";
+  content: "Selected";
   position: absolute;
   top: var(--space-4);
   right: var(--space-4);
@@ -1168,8 +1185,8 @@ textarea.field {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
-  background: rgba(201,161,74,0.16);
-  padding: 0.4em 0.8em;
+  background: rgba(201,161,74,0.16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a14a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") no-repeat 0.5em center / 0.7em 0.7em;
+  padding: 0.4em 0.8em 0.4em 1.6em;
   border-radius: var(--r-pill);
   border: 1px solid var(--gold);
 }
@@ -1349,13 +1366,12 @@ textarea.field {
 }
 .stop.past .stop-dot { background: var(--gold); border-color: var(--gold); }
 .stop.past .stop-dot::after {
-  content: "✓";
+  content: "";
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--ink);
-  font-size: 0.6rem;
-  font-weight: bold;
+  width: 10px; height: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a1228' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .stop.current .stop-dot {
   background: var(--gold-bright);
@@ -2070,14 +2086,14 @@ textarea.field {
 }
 .list-gold li:last-child { border-bottom: none; }
 .list-check li::before {
-  content: "✓";
+  content: "";
   position: absolute;
   left: 0.2em;
-  top: 0.75em;
-  width: auto; height: auto;
+  top: 0.85em;
+  width: 0.75em; height: 0.75em;
   border: none;
   transform: none;
-  background: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a14a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
   color: var(--gold);
   font-weight: bold;
 }

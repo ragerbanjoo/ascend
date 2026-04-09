@@ -16,6 +16,19 @@
     label:     'May 16–17, 2026'
   };
 
+  // SVG icon map — replaces emoji throughout the site
+  const ICONS = {
+    rose:   '<svg viewBox="0 0 24 24"><path d="M12 3c-2 3-5 5-5 9a5 5 0 0 0 10 0c0-4-3-6-5-9z"/><path d="M12 16v5"/><path d="M9 18.5c1.5-1 4.5-1 6 0"/></svg>',
+    sun:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>',
+    shield: '<svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5z"/></svg>',
+    flower: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="7.5" r="2.5"/><circle cx="16.33" cy="9.75" r="2.5"/><circle cx="14.85" cy="14.75" r="2.5"/><circle cx="9.15" cy="14.75" r="2.5"/><circle cx="7.67" cy="9.75" r="2.5"/></svg>',
+    cross:  '<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="9" x2="19" y2="9"/></svg>',
+    heart:  '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    star:   '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z"/></svg>',
+  };
+  const SVG_VAN = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17V6h12v11M15 9h4l3 4v4M1 17h22"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>';
+  const SVG_PRAYER = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>';
+
   // -------------------------------------------------------
   // 2. Storage wrapper — uses window.storage if present,
   //    falls back to localStorage. Supports shared/user scopes.
@@ -89,15 +102,15 @@
         text = formatCompact(TRIP.departPT - now);
         cls  = '';
       } else if (now < TRIP.returnPT) {
-        text = 'ON PILGRIMAGE 🚐';
+        text = 'ON PILGRIMAGE ' + SVG_VAN;
         cls  = 'during';
       } else {
-        text = 'Deo gratias 🙏';
+        text = 'Deo gratias ' + SVG_PRAYER;
         cls  = 'after';
       }
 
       chips.forEach(chip => {
-        chip.querySelector('.chip-value').textContent = text;
+        chip.querySelector('.chip-value').innerHTML = text;
         chip.classList.remove('during', 'after');
         if (cls) chip.classList.add(cls);
       });
@@ -146,10 +159,10 @@
         });
       } else if (now < TRIP.returnPT) {
         if (cellBox)  cellBox.hidden = true;
-        if (stateBox) { stateBox.hidden = false; stateBox.textContent = 'On Pilgrimage 🚐'; }
+        if (stateBox) { stateBox.hidden = false; stateBox.innerHTML = 'On Pilgrimage ' + SVG_VAN; }
       } else {
         if (cellBox)  cellBox.hidden = true;
-        if (stateBox) { stateBox.hidden = false; stateBox.textContent = 'Deo gratias 🙏'; }
+        if (stateBox) { stateBox.hidden = false; stateBox.innerHTML = 'Deo gratias ' + SVG_PRAYER; }
       }
     }
     tick();
@@ -320,7 +333,7 @@
         const el = document.createElement('div');
         el.className = 'wall-item';
         el.style.animationDelay = (i * 60) + 'ms';
-        el.innerHTML = `<span class="icon">${it.icon || '✦'}</span><span>${escapeHTML(it.name)}</span>`;
+        el.innerHTML = `<span class="icon">${ICONS[it.icon] || ICONS.star}</span><span>${escapeHTML(it.name)}</span>`;
         wall.appendChild(el);
       });
     }
@@ -613,7 +626,7 @@
       body:  'I-5 S → I-90 E → I-82 E → US-12 E. ~2h 30m.',
     },
     { id: 29, day: 'sun', time: '19:30',
-      title: 'Arrive home — Deo gratias 🙏',
+      title: 'Arrive home — Deo gratias',
       body:  'Blessed be God in His angels and in His saints.',
     }
   ];
@@ -719,7 +732,7 @@
 
         const time = formatStopTime(stop, option);
         const rel  = state === 'upcoming' ? relativeLabel(stop, option, now) : '';
-        const statusLabel = state === 'current' ? '🔴 Happening now'
+        const statusLabel = state === 'current' ? '<span class="live-dot"></span>Happening now'
                           : state === 'past'    ? 'Completed'
                           : rel || 'Upcoming';
 
@@ -776,10 +789,10 @@
         `;
       } else if (now < TRIP.returnPT) {
         banner.hidden = false;
-        banner.innerHTML = `<h4 style="color: var(--live);">🔴 On pilgrimage now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
+        banner.innerHTML = `<h4 style="color: var(--live);"><span class="live-dot"></span>On pilgrimage now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
       } else {
         banner.hidden = false;
-        banner.innerHTML = `<h4>Pilgrimage complete — <span class="italic">Deo gratias</span> 🙏</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
+        banner.innerHTML = `<h4>Pilgrimage complete — <span class="italic">Deo gratias</span> ${SVG_PRAYER}</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
       }
 
       // Auto-scroll to current / first upcoming (only on first render, no jump-thrash)
