@@ -275,32 +275,6 @@
       if (e.key === 'Escape') { close(); closeSched(); }
     });
 
-    // Swipe-to-close for sheet
-    let touchStartY = 0;
-    let touchDeltaY = 0;
-    sheet.addEventListener('touchstart', (e) => {
-      if (sheet.scrollTop > 0) return;
-      touchStartY = e.touches[0].clientY;
-      touchDeltaY = 0;
-      sheet.style.transition = 'none';
-    }, { passive: true });
-    sheet.addEventListener('touchmove', (e) => {
-      if (!touchStartY) return;
-      touchDeltaY = e.touches[0].clientY - touchStartY;
-      if (touchDeltaY > 0) {
-        sheet.style.transform = `translateY(${touchDeltaY}px)`;
-      }
-    }, { passive: true });
-    sheet.addEventListener('touchend', () => {
-      sheet.style.transition = '';
-      if (touchDeltaY > 80) {
-        close();
-      }
-      sheet.style.transform = '';
-      touchStartY = 0;
-      touchDeltaY = 0;
-    });
-
     // --- Theme toggle ---
     $$('[data-theme-toggle]').forEach(btn => {
       btn.addEventListener('click', async () => {
