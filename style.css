@@ -725,6 +725,22 @@ section { padding: var(--space-9) 0; position: relative; }
   color: var(--cream-dim);
   margin: 0;
 }
+.tile::after {
+  content: "\2192";
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  font-size: 1.125rem;
+  color: var(--cream-mute);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all var(--dur-med) var(--ease-out);
+}
+.tile:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--gold);
+}
 
 /* Quick links */
 .quicklink {
@@ -774,6 +790,13 @@ section { padding: var(--space-9) 0; position: relative; }
   isolation: isolate;
   padding: var(--space-9) var(--space-4);
   background: var(--ink-deep);
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  z-index: -3;
+  background: url('public/images/juan-diego-confirmation-60.jpg') center center / cover no-repeat;
+  opacity: 0.18;
+  filter: saturate(0.3);
 }
 @media (max-width: 880px) {
   .hero { min-height: 100vh; padding-bottom: calc(var(--space-8) + var(--mnav-h)); }
@@ -1242,6 +1265,24 @@ textarea.field {
   font-style: italic;
   margin-top: var(--space-4);
 }
+/* Tap-to-select hint on unselected option cards */
+.option-card[aria-pressed="false"]::after {
+  content: "Tap to select";
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-mute);
+  opacity: 0.6;
+  transition: opacity var(--dur-fast);
+}
+.option-card[aria-pressed="false"]:hover::after {
+  opacity: 1;
+  color: var(--gold);
+}
 
 .why-times {
   background: rgba(245, 241, 232, 0.03);
@@ -1391,6 +1432,10 @@ textarea.field {
 .stop-card:hover {
   border-color: var(--gold-soft);
   transform: translateY(-2px);
+  cursor: pointer;
+}
+.stop-card:active {
+  transform: translateY(0);
 }
 .stop-head {
   display: block;
@@ -1402,6 +1447,27 @@ textarea.field {
   cursor: pointer;
   color: inherit;
   font: inherit;
+  position: relative;
+  padding-right: 2rem;
+}
+/* Chevron expand indicator */
+.stop-head::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0.5rem;
+  width: 10px; height: 10px;
+  border-right: 2px solid var(--cream-mute);
+  border-bottom: 2px solid var(--cream-mute);
+  transform: rotate(45deg);
+  transition: transform var(--dur-med) var(--ease-out), border-color var(--dur-med);
+}
+.stop-card.open .stop-head::after {
+  transform: rotate(-135deg);
+  border-color: var(--gold);
+}
+.stop-head:hover::after {
+  border-color: var(--gold-bright);
 }
 .stop-head:focus-visible {
   outline: 2px solid var(--gold-bright);
@@ -1455,6 +1521,23 @@ textarea.field {
 .stop.past .stop-status {
   color: var(--gold-dim);
 }
+/* Timeline hint */
+.timeline-hint {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--cream-mute);
+  margin: 0 0 var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border: 1px dashed var(--cream-line);
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+  justify-content: center;
+}
+
 .stop-detail {
   color: var(--cream-dim);
   font-size: 0.9375rem;

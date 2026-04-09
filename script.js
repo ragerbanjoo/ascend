@@ -797,23 +797,23 @@
         `;
       } else if (now < TRIP.returnPT) {
         banner.hidden = false;
-        banner.innerHTML = `<h4 style="color: var(--live);"><span class="live-dot"></span>On retreat now</h4><p class="text-dim">Times update live. Scroll below for where we are right now.</p>`;
+        banner.innerHTML = `<h4 style="color: var(--live);"><span class="live-dot"></span>On retreat now</h4><p class="text-dim">Times update live.</p><button type="button" class="btn btn-outline btn-sm" data-jump-current style="margin-top:0.5rem">Jump to current stop</button>`;
+        const jumpBtn = banner.querySelector('[data-jump-current]');
+        if (jumpBtn) {
+          jumpBtn.addEventListener('click', () => {
+            const target = list.querySelector('.stop.current') || list.querySelector('.stop.upcoming');
+            if (target) {
+              const y = target.getBoundingClientRect().top + window.scrollY - 140;
+              window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? 'auto' : 'smooth' });
+            }
+          });
+        }
       } else {
         banner.hidden = false;
         banner.innerHTML = `<h4>Retreat complete — <span class="italic">Deo gratias</span> ${SVG_PRAYER}</h4><p class="text-dim">Thank you for walking with us. Blessed be God in His angels and in His saints.</p>`;
       }
 
-      // Auto-scroll to current / first upcoming (only on first render, no jump-thrash)
-      if (!render._scrolled) {
-        render._scrolled = true;
-        const target = currentStopEl || list.querySelector('.stop.upcoming');
-        if (target) {
-          setTimeout(() => {
-            const y = target.getBoundingClientRect().top + window.scrollY - 140;
-            window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? 'auto' : 'smooth' });
-          }, 500);
-        }
-      }
+      // No auto-scroll — let users read the option cards first
     }
 
     setOption(option, false);
