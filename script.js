@@ -199,10 +199,33 @@
       if (href === path) a.setAttribute('aria-current', 'page');
     });
 
+    // --- Schedule submenu ---
+    const schedBtn = $('[data-open-schedule]');
+    const schedSub = $('.mnav-sub');
+    const schedBackdrop = $('.mnav-sub-backdrop');
+    function closeSched() {
+      if (!schedSub) return;
+      schedSub.classList.remove('open');
+      if (schedBackdrop) schedBackdrop.classList.remove('open');
+      schedSub.setAttribute('aria-hidden', 'true');
+    }
+    if (schedBtn && schedSub) {
+      function openSched() {
+        schedSub.classList.add('open');
+        if (schedBackdrop) schedBackdrop.classList.add('open');
+        schedSub.setAttribute('aria-hidden', 'false');
+      }
+      schedBtn.addEventListener('click', () => {
+        schedSub.classList.contains('open') ? closeSched() : openSched();
+      });
+      if (schedBackdrop) schedBackdrop.addEventListener('click', closeSched);
+    }
+
+    // --- More sheet ---
     const sheet = $('.sheet');
     const backdrop = $('.sheet-backdrop');
     const openBtn = $('[data-open-sheet]');
-    const closeBtn = $('[data-close-sheet]');
+    const closeBtns = $$('[data-close-sheet]');
     if (!sheet || !openBtn) return;
 
     function open() {
@@ -216,10 +239,35 @@
       sheet.setAttribute('aria-hidden', 'true');
     }
     openBtn.addEventListener('click', open);
-    if (closeBtn) closeBtn.addEventListener('click', close);
-    if (backdrop) backdrop.addEventListener('click', close);
+    closeBtns.forEach(btn => btn.addEventListener('click', close));
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') { close(); closeSched(); }
+    });
+
+    // Swipe-to-close for sheet
+    let touchStartY = 0;
+    let touchDeltaY = 0;
+    sheet.addEventListener('touchstart', (e) => {
+      if (sheet.scrollTop > 0) return;
+      touchStartY = e.touches[0].clientY;
+      touchDeltaY = 0;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+    sheet.addEventListener('touchmove', (e) => {
+      if (!touchStartY) return;
+      touchDeltaY = e.touches[0].clientY - touchStartY;
+      if (touchDeltaY > 0) {
+        sheet.style.transform = `translateY(${touchDeltaY}px)`;
+      }
+    }, { passive: true });
+    sheet.addEventListener('touchend', () => {
+      sheet.style.transition = '';
+      if (touchDeltaY > 80) {
+        close();
+      }
+      sheet.style.transform = '';
+      touchStartY = 0;
+      touchDeltaY = 0;
     });
   }
 
