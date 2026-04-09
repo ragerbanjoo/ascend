@@ -311,13 +311,17 @@
 /* Rich text toolbar */
 .rt-toolbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
   gap: 2px;
   padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid var(--cream-line);
   flex-shrink: 0;
   align-items: center;
+  -webkit-overflow-scrolling: touch;
 }
+.rt-toolbar::-webkit-scrollbar { display: none; }
 .rt-toolbar .rt-sep {
   width: 1px;
   height: 1.25rem;
@@ -475,7 +479,7 @@ html[data-theme="light"] .journal-type-badge.talk_note {
   .journal-card { padding: var(--space-4); min-height: 40vh; }
   .rt-body { padding: var(--space-3); font-size: 0.9375rem; }
   .editor-top-bar { padding: var(--space-2) env(safe-area-inset-right, var(--space-3)) var(--space-2) env(safe-area-inset-left, var(--space-3)); padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px)); }
-  .rt-toolbar { padding: var(--space-2) var(--space-3); gap: 4px; }
+  .rt-toolbar { padding: var(--space-2) var(--space-3); }
   .draw-canvas { height: 220px; }
   .editor-talk-fields { flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
   .rt-font-select { max-width: 5rem; font-size: 0.7rem; }
@@ -1226,7 +1230,16 @@ html[data-theme="light"] .journal-type-badge.talk_note {
 
     insertBtn.addEventListener('click', () => {
       if (!drawingCtx) return;
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      // Composite drawing onto a white background before JPEG export
+      // (JPEG has no transparency — bare canvas would export black)
+      const offscreen = document.createElement('canvas');
+      offscreen.width = canvas.width;
+      offscreen.height = canvas.height;
+      const ctx2 = offscreen.getContext('2d');
+      ctx2.fillStyle = '#ffffff';
+      ctx2.fillRect(0, 0, offscreen.width, offscreen.height);
+      ctx2.drawImage(canvas, 0, 0);
+      const dataUrl = offscreen.toDataURL('image/jpeg', 0.75);
       rtBody.focus();
       document.execCommand('insertImage', false, dataUrl);
       // Clear canvas after inserting
