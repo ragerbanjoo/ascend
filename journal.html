@@ -562,7 +562,7 @@ html[data-theme="light"] .journal-type-badge.talk_note {
 </main>
 
 <!-- ═══ Editor overlay (injected into DOM, starts hidden) ═══ -->
-<div class="journal-editor-overlay" data-journal-editor>
+<div class="journal-editor-overlay" data-journal-editor style="display:none;">
   <!-- Top bar -->
   <div class="editor-top-bar">
     <button type="button" class="btn btn-ghost btn-sm" data-editor-cancel>Cancel</button>
@@ -1082,7 +1082,7 @@ html[data-theme="light"] .journal-type-badge.talk_note {
   function closeEditor() {
     clearTimeout(autosaveTimer);
     editor.classList.remove('open');
-    setTimeout(() => { editor.style.display = ''; }, 250);
+    setTimeout(() => { editor.style.display = 'none'; }, 250);
     editingId = null;
   }
 
