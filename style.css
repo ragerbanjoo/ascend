@@ -1259,7 +1259,11 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   filter: saturate(0.35) brightness(0.9);
 }
 @media (max-width: 880px) {
-  .hero { min-height: 100vh; padding-bottom: calc(var(--space-8) + var(--mnav-h)); }
+  .hero {
+    min-height: calc(100vh - var(--mnav-h) - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100svh - var(--mnav-h) - env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--space-8) + var(--mnav-h) + env(safe-area-inset-bottom, 0px));
+  }
 }
 .hero canvas {
   position: absolute; inset: 0;
@@ -1417,7 +1421,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   width: 16px; height: 16px;
   stroke: var(--gold);
 }
-@media (max-width: 880px) { .scroll-indicator { bottom: calc(var(--mnav-h) + var(--space-4)); } }
+@media (max-width: 880px) { .scroll-indicator { bottom: calc(var(--mnav-h) + var(--space-4) + env(safe-area-inset-bottom, 0px)); } }
 
 /* ---------- 10. Forms — RSVP, intentions ---------- */
 .form-wrap {
