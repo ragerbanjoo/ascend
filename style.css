@@ -36,7 +36,7 @@
 
   /* Typography */
   --font-display: "Cormorant Garamond", "Playfair Display", "EB Garamond", Georgia, serif;
-  --font-body:    "Inter", "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:    "Lora", "Georgia", "Cambria", serif;
 
   /* Modular scale — bumped for readability */
   --fs-xxs:   0.8125rem;   /* 13 */
@@ -272,7 +272,7 @@ body {
   margin: 0;
   font-family: var(--font-body);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.65;
   color: var(--cream);
   background: var(--ink);
@@ -336,20 +336,20 @@ h3 { font-size: clamp(1.5rem, 3.5vw, var(--fs-2xl)); }
 h4 { font-size: var(--fs-xl); }
 h5 { font-size: var(--fs-lg); }
 
-p { margin: 0 0 var(--space-4); color: var(--cream-dim); font-weight: 600; }
+p { margin: 0 0 var(--space-4); color: var(--cream-dim); font-weight: 500; }
 p:last-child { margin-bottom: 0; }
-li { font-weight: 600; }
+li { font-weight: 500; }
 
 .display-xl {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(3.5rem, 10vw, var(--fs-6xl));
   line-height: 0.96;
   letter-spacing: -0.022em;
 }
 .display-lg {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(2.75rem, 7.5vw, var(--fs-5xl));
   line-height: 1;
   letter-spacing: -0.018em;
@@ -368,7 +368,7 @@ li { font-weight: 600; }
 
 .lede {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.25rem, 2.2vw, 1.625rem);
   line-height: 1.45;
   color: var(--cream);
@@ -559,7 +559,7 @@ section.section-hero { padding-bottom: var(--space-5); }
 .brand .x {
   color: var(--gold);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 600;
   opacity: 0.9;
 }
 .brand .ornament {
@@ -822,7 +822,7 @@ html[data-theme="light"] .btn-scroll-top:hover {
   text-overflow: ellipsis;
   min-width: 0;
 }
-.mtop-brand .x { color: var(--gold); margin: 0 0.15em; font-weight: 400; }
+.mtop-brand .x { color: var(--gold); margin: 0 0.15em; font-weight: 600; }
 .mtop .countdown-chip {
   margin-left: auto;
   font-size: var(--fs-xxs);
@@ -1305,7 +1305,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
 .hero-title {
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 8vw, 6rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 0.95;
   letter-spacing: -0.018em;
   color: var(--cream);
@@ -1314,13 +1314,13 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
 .hero-title .amp {
   font-style: italic;
   color: var(--gold);
-  font-weight: 400;
+  font-weight: 600;
   padding: 0 0.08em;
 }
 .hero-subtitle {
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.125rem, 2.2vw, 1.5rem);
   color: var(--cream-dim);
   margin: 0 0 var(--space-7);
@@ -1365,7 +1365,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
 }
 .countdown-num {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(2rem, 6vw, 3.75rem);
   line-height: 1;
   color: var(--gold-bright);
@@ -2301,7 +2301,7 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   font-family: var(--font-display);
   font-size: 4.5rem;
   color: var(--gold);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.02em;
   opacity: 0.28;
 }
@@ -3669,7 +3669,7 @@ html[data-theme="light"] .intentions-empty {
   font-size: 2.25rem;
   color: var(--gold);
   line-height: 1;
-  font-weight: 400;
+  font-weight: 600;
 }
 .leg h4 {
   font-family: var(--font-display);
