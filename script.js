@@ -1660,7 +1660,7 @@
         const { error: insertErr } = await sb.from('profiles').upsert(profileData, { onConflict: 'id' });
         if (insertErr) {
           console.error('Profile repair failed:', insertErr);
-          throw new Error('Could not set up your account profile. Please contact Alex.');
+          throw new Error('Account repair failed: ' + insertErr.message + ' (code: ' + insertErr.code + '). Delete this user from Supabase Auth and sign up again.');
         }
         await sb.from('sharing_preferences').upsert({ user_id: data.user.id }, { onConflict: 'user_id' });
         Crypto.setCEK(cek);
