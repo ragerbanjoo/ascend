@@ -3609,7 +3609,11 @@ html[data-theme="light"] .intentions-empty {
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
 }
-@media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+@media (max-width: 720px) {
+  .two-col { grid-template-columns: 1fr; }
+  .info-card { border-left: 1px solid var(--cream-line); border-top: 3px solid var(--gold-dim); }
+  .info-card:hover { border-left-color: var(--cream-line); border-top-color: var(--gold); }
+}
 
 .pill {
   display: inline-block;
