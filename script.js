@@ -2311,20 +2311,20 @@
       // Parse markdown into reading sections for the reader modal
       const readingSections = markdown ? parseReadingsMarkdown(markdown) : [];
 
-      // Read Now button (only if we have parsed content)
+      // Actions row: Read Now + USCCB link
+      const usccbLink = readings?.usccbLink || `${USCCB_BASE}/${usccbDate}.cfm`;
+      html += `<div class="readings-actions">`;
       if (readingSections.length > 0) {
         html += `<button type="button" class="btn btn-primary btn-sm readings-read-now" data-open-reader>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           Read Now
         </button>`;
       }
-
-      // USCCB link
-      const usccbLink = readings?.usccbLink || `${USCCB_BASE}/${usccbDate}.cfm`;
       html += `<a href="${usccbLink}" target="_blank" rel="noopener" class="readings-usccb">
         Read on USCCB
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>`;
+      html += `</div>`;
 
       container.innerHTML = html;
 

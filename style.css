@@ -2693,7 +2693,11 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .readings-usccb svg { width: 14px; height: 14px; }
 .readings-read-now {
   display: inline-flex; align-items: center; gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-right: var(--space-4); margin-bottom: var(--space-2);
+}
+.readings-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 .readings-error {
   color: var(--cream-mute); font-size: var(--fs-xs); padding: var(--space-2) 0;
