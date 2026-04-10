@@ -285,6 +285,14 @@
         });
       });
     });
+
+    // --- Mobile top bar profile ---
+    $$('[data-mtop-profile]').forEach(el => {
+      if (!Auth.isGuest && Auth.displayName) {
+        const name = Auth.displayName;
+        el.textContent = name.charAt(0).toUpperCase();
+      }
+    });
   }
 
   // -------------------------------------------------------
