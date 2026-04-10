@@ -440,16 +440,22 @@
         stage.innerHTML = '<div class="intentions-empty">Be the first to share a prayer intention. It will drift gently across the night sky for all to pray with.</div>';
         return;
       }
-      list.slice().reverse().slice(0, 14).forEach((it, idx) => {
+      const variants = ['', 'bubble-right', 'bubble-top', '', 'bubble-right', ''];
+      list.slice().reverse().slice(0, 12).forEach((it, idx) => {
         const el = document.createElement('div');
-        el.className = 'intention-card';
-        const top = 10 + ((idx * 73) % 72);
-        const left = 4 + ((idx * 109) % 84);
-        el.style.top = top + '%';
-        el.style.left = left + '%';
-        el.style.animationDelay = -(idx * 2.4) + 's';
-        el.style.animationDuration = (18 + (idx % 6) * 2) + 's';
-        el.textContent = '“' + it.text + '”';
+        el.className = 'intention-card ' + variants[idx % variants.length];
+        // Spread cards across stage, avoid corners
+        const cols = 3, rows = 4;
+        const col = idx % cols, row = Math.floor(idx / cols) % rows;
+        const left = 4 + col * 30 + ((idx * 7) % 14);
+        const top  = 6 + row * 22 + ((idx * 11) % 10);
+        el.style.left = Math.min(left, 72) + '%';
+        el.style.top  = Math.min(top, 76) + '%';
+        const rot = ((idx * 7) % 11) - 5;
+        el.style.setProperty('--rot', rot + 'deg');
+        el.style.setProperty('--dur', (15 + (idx % 5) * 2.5) + 's');
+        el.style.setProperty('--delay', -(idx * 3.1) + 's');
+        el.textContent = it.text;
         stage.appendChild(el);
       });
     }
@@ -789,6 +795,7 @@
         if (stop.day !== lastDay) {
           const marker = document.createElement('div');
           marker.className = 'day-marker';
+          marker.id = stop.day === 'sat' ? 'timeline-saturday' : 'timeline-sunday';
           marker.innerHTML = `<span>${stop.day === 'sat' ? 'Saturday · May 16, 2026' : 'Sunday · May 17, 2026'}</span>`;
           list.appendChild(marker);
           lastDay = stop.day;
@@ -1487,7 +1494,7 @@
       const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
 
       // 7. Sign up with Supabase
-      const email = `${uname}@sjd-yag.local`;
+      const email = `${uname}@pilgrim.sjdyag.com`;
       const { data: authData, error: authError } = await sb.auth.signUp({ email, password });
       if (authError) throw new Error(authError.message);
 
@@ -1528,7 +1535,7 @@
         throw new Error('Account temporarily locked. Try again in 15 minutes.');
       }
 
-      const email = `${uname}@sjd-yag.local`;
+      const email = `${uname}@pilgrim.sjdyag.com`;
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) {
         await this.recordFailedLogin(uname);

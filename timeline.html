@@ -126,6 +126,17 @@
 
   <section style="padding-top: 0;">
     <div class="container-narrow">
+      <!-- Day jump nav -->
+      <div class="day-jump" aria-label="Jump to day">
+        <button type="button" class="day-jump-btn active" onclick="jumpToDay('saturday', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Saturday
+        </button>
+        <button type="button" class="day-jump-btn" onclick="jumpToDay('sunday', this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          Sunday
+        </button>
+      </div>
       <p class="timeline-hint" data-reveal>
         <svg class="si" viewBox="0 0 24 24" aria-hidden="true" style="stroke:var(--gold);vertical-align:-0.15em"><path d="M15 15l-2 5L9 9l11 4-5 2z"/><path d="M15 15l5 5"/></svg>
         Tap any stop to expand it for details, directions, and what to bring.
@@ -133,6 +144,18 @@
       <div class="timeline" data-timeline-list></div>
     </div>
   </section>
+
+  <script>
+  function jumpToDay(day, btn) {
+    document.querySelectorAll('.day-jump-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = document.getElementById('timeline-' + day);
+    if (!target) return;
+    const offset = 80; // account for fixed nav
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+  </script>
 </main>
 
 <!-- ===================== FOOTER ===================== -->

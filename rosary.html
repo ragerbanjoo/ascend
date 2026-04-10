@@ -79,7 +79,7 @@
 }
 .opt-row .opt-desc {
   font-size: 0.75rem;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
   margin-top: 0.125rem;
 }
 
@@ -143,7 +143,7 @@
 .text-size-btns button {
   background: var(--gold-dim);
   border: none;
-  color: var(--ink);
+  color: var(--cream);
   width: 32px; height: 32px;
   border-radius: 0.375rem;
   cursor: pointer;
@@ -210,12 +210,12 @@
 }
 .mystery-announce .scripture-ref {
   font-size: 0.8125rem;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
 }
 .mystery-announce .meditation {
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--ink);
+  color: var(--cream);
   margin-top: 0.75rem;
   max-width: 28rem;
   margin-inline: auto;
@@ -272,7 +272,7 @@
 }
 .bead-ring .bead-total {
   font-size: 0.75rem;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
 }
 .bead-dots {
   display: flex;
@@ -289,7 +289,7 @@
 .bead-dot.filled { background: var(--gold); }
 .bead-label {
   font-size: 0.8125rem;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
   text-align: center;
 }
 
@@ -301,7 +301,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
   margin-bottom: 0.25rem;
 }
 .progress-track {
@@ -406,7 +406,7 @@
   color: var(--gold-bright);
   margin-top: 0.75rem;
 }
-.completion-card p { color: var(--ink); font-size: 0.875rem; margin-top: 0.5rem; }
+.completion-card p { color: var(--cream); font-size: 0.875rem; margin-top: 0.5rem; }
 .completion-btns {
   display: flex;
   flex-direction: column;
@@ -463,7 +463,7 @@
 .litany-leader {
   padding: 0.375rem 0;
   font-size: 0.875rem;
-  color: var(--ink);
+  color: var(--cream);
 }
 .litany-response {
   padding: 0.375rem 0;
@@ -480,7 +480,7 @@
   text-align: center;
   font-size: 0.875rem;
   line-height: 1.6;
-  color: var(--ink);
+  color: var(--cream);
 }
 .litany-spacer {
   grid-column: 1 / -1;
@@ -535,12 +535,12 @@
 .scripture-body p {
   font-size: 0.875rem;
   line-height: 1.6;
-  color: var(--ink);
+  color: var(--cream);
 }
 .scripture-body .scripture-ref {
   font-size: 0.75rem;
   font-style: italic;
-  color: var(--ink-soft);
+  color: var(--cream-dim);
   margin-top: 0.5rem;
 }
 
@@ -750,29 +750,48 @@
   .litany-response { padding-left: 1rem; }
 }
 
-/* Light mode */
+/* Light mode overrides */
 html[data-theme="light"] .rosary-options,
-html[data-theme="light"] .prayer-card,
-html[data-theme="light"] .wtc-card,
-html[data-theme="light"] .mystery-set-btn {
-  background: rgba(26,26,46,0.03);
-  border-color: var(--cream-line);
+html[data-theme="light"] .prayer-card {
+  background: #ffffff;
+  border-color: rgba(26,26,46,0.14);
+  box-shadow: 0 1px 4px rgba(26,26,46,0.07);
 }
 html[data-theme="light"] .mystery-select,
 html[data-theme="light"] .intention-input {
-  background: rgba(26,26,46,0.04);
-  border-color: var(--cream-line);
+  background: #ffffff;
+  border-color: rgba(26,26,46,0.2);
+  color: var(--cream);
 }
 html[data-theme="light"] .litany-nav button,
 html[data-theme="light"] .pray-nav .btn-back {
-  background: rgba(26,26,46,0.04);
-  border-color: var(--cream-line);
+  background: rgba(26,26,46,0.06);
+  border-color: rgba(26,26,46,0.16);
+  color: var(--cream);
 }
 html[data-theme="light"] .text-size-btns button {
-  background: rgba(26,26,46,0.06);
+  background: rgba(26,26,46,0.08);
+  color: var(--cream);
+}
+html[data-theme="light"] .text-size-btns button.active {
+  background: var(--gold);
+  color: #fff;
+}
+html[data-theme="light"] .progress-track {
+  background: rgba(26,26,46,0.12);
 }
 html[data-theme="light"] .completion-card {
-  background: linear-gradient(135deg, rgba(158,124,46,0.08), rgba(26,26,46,0.03));
+  background: linear-gradient(135deg, rgba(158,124,46,0.1), rgba(26,26,46,0.04));
+}
+html[data-theme="light"] .scripture-panel {
+  border-color: rgba(26,26,46,0.15);
+}
+html[data-theme="light"] .scripture-toggle {
+  background: rgba(201,161,74,0.12);
+  color: var(--gold);
+}
+html[data-theme="light"] .opt-row {
+  border-bottom-color: rgba(26,26,46,0.08);
 }
 </style>
 </head>
@@ -825,15 +844,8 @@ html[data-theme="light"] .completion-card {
         <div class="gold-rule center"></div>
       </div>
 
-      <!-- Tab navigation -->
-      <div class="rosary-tabs" role="tablist">
-        <button class="rosary-tab active" role="tab" data-tab="pray" aria-selected="true">Pray</button>
-        <button class="rosary-tab" role="tab" data-tab="learn" aria-selected="false">Learn</button>
-        <button class="rosary-tab" role="tab" data-tab="mysteries" aria-selected="false">Mysteries</button>
-      </div>
-
-      <!-- ═══ PRAY TAB ═══ -->
-      <div class="rosary-panel active" id="panel-pray">
+      <!-- ═══ PRAY ═══ -->
+      <div id="panel-pray">
         <div id="pray-setup">
           <div class="rosary-options">
             <h3>Options</h3>
@@ -898,8 +910,8 @@ html[data-theme="light"] .completion-card {
         </div>
       </div>
 
-      <!-- ═══ LEARN TAB ═══ -->
-      <div class="rosary-panel" id="panel-learn">
+      <!-- LEARN/MYSTERIES REMOVED -->
+      <div class="rosary-panel" id="panel-learn" style="display:none!important">
         <nav class="learn-quicknav" aria-label="Jump to section">
           <a href="#learn-what">What is it?</a>
           <a href="#learn-why">Why pray it?</a>
@@ -988,8 +1000,7 @@ html[data-theme="light"] .completion-card {
         </section>
       </div>
 
-      <!-- ═══ MYSTERIES TAB ═══ -->
-      <div class="rosary-panel" id="panel-mysteries">
+      <div class="rosary-panel" id="panel-mysteries" style="display:none!important">
         <div style="text-align:center;margin-bottom:1.5rem;">
           <h2 style="font-family:var(--f-display);font-size:1.5rem;font-weight:700;color:var(--gold-bright);">Explore the Mysteries</h2>
           <p style="font-size:0.875rem;color:var(--ink-soft);margin-top:0.5rem;">Learn more about each set of mysteries and the individual meditations within them.</p>
@@ -1355,24 +1366,6 @@ const state = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════
-// TAB NAVIGATION
-// ═══════════════════════════════════════════════════════════════════════
-
-document.querySelectorAll('.rosary-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tab = btn.dataset.tab;
-    state.tab = tab;
-    document.querySelectorAll('.rosary-tab').forEach(b => {
-      b.classList.toggle('active', b.dataset.tab === tab);
-      b.setAttribute('aria-selected', b.dataset.tab === tab);
-    });
-    document.querySelectorAll('.rosary-panel').forEach(p => {
-      p.classList.toggle('active', p.id === 'panel-' + tab);
-    });
-  });
-});
-
-// ═══════════════════════════════════════════════════════════════════════
 // OPTIONS SETUP
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -1428,6 +1421,7 @@ function startPrayer() {
   state.praying = true;
   praySetup.style.display = 'none';
   prayActive.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   renderStep();
 }
 
@@ -1502,8 +1496,8 @@ function renderStep() {
       renderLitany(); break;
   }
 
-  // Scroll to top of prayer card
-  prayerCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Scroll to top so progress bar and full card are visible
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function escHtml(s) {
