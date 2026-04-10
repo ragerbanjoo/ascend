@@ -433,31 +433,85 @@
     const stage = $('[data-intention-stage]');
     const error = form.querySelector('[data-intention-error]');
 
+    let cancelPhysics = null;
+
+    function startPhysics(els) {
+      if (cancelPhysics) cancelPhysics();
+      const sw = stage.clientWidth, sh = stage.clientHeight;
+      const variants = ['', 'bubble-right', 'bubble-top', '', 'bubble-right', ''];
+      const bubbles = els.map((el, i) => {
+        const w = el.offsetWidth || 150, h = el.offsetHeight || 50;
+        const x = Math.random() * Math.max(1, sw - w);
+        const y = Math.random() * Math.max(1, sh - h);
+        const speed = 0.28 + Math.random() * 0.22;
+        const angle = Math.random() * Math.PI * 2;
+        const rot = ((i * 7) % 11) - 5;
+        el.style.transform = `rotate(${rot}deg)`;
+        el.style.left = x + 'px';
+        el.style.top  = y + 'px';
+        return { el, x, y, w, h, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed };
+      });
+
+      let rafId;
+      function step() {
+        const sw2 = stage.clientWidth, sh2 = stage.clientHeight;
+        // Move
+        for (const b of bubbles) {
+          b.x += b.vx; b.y += b.vy;
+          if (b.x <= 0)          { b.x = 0;          b.vx =  Math.abs(b.vx); }
+          if (b.x + b.w >= sw2)  { b.x = sw2 - b.w;  b.vx = -Math.abs(b.vx); }
+          if (b.y <= 0)          { b.y = 0;          b.vy =  Math.abs(b.vy); }
+          if (b.y + b.h >= sh2)  { b.y = sh2 - b.h;  b.vy = -Math.abs(b.vy); }
+        }
+        // Collide
+        const pad = 6;
+        for (let i = 0; i < bubbles.length; i++) {
+          for (let j = i + 1; j < bubbles.length; j++) {
+            const a = bubbles[i], c = bubbles[j];
+            if (a.x < c.x + c.w + pad && a.x + a.w + pad > c.x &&
+                a.y < c.y + c.h + pad && a.y + a.h + pad > c.y) {
+              const tmpVx = a.vx, tmpVy = a.vy;
+              a.vx = c.vx; a.vy = c.vy;
+              c.vx = tmpVx; c.vy = tmpVy;
+              // Separate to avoid sticky collisions
+              const dx = (a.x + a.w / 2) - (c.x + c.w / 2);
+              const dy = (a.y + a.h / 2) - (c.y + c.h / 2);
+              const d = Math.sqrt(dx * dx + dy * dy) || 1;
+              const push = 3;
+              a.x += (dx / d) * push; a.y += (dy / d) * push;
+              c.x -= (dx / d) * push; c.y -= (dy / d) * push;
+            }
+          }
+        }
+        // Apply
+        for (const b of bubbles) {
+          b.el.style.left = b.x + 'px';
+          b.el.style.top  = b.y + 'px';
+        }
+        rafId = requestAnimationFrame(step);
+      }
+      rafId = requestAnimationFrame(step);
+      cancelPhysics = () => cancelAnimationFrame(rafId);
+    }
+
     async function render() {
+      if (cancelPhysics) { cancelPhysics(); cancelPhysics = null; }
       const list = await Storage.get('intentions:list', []);
       stage.innerHTML = '';
       if (!list.length) {
-        stage.innerHTML = '<div class="intentions-empty">Be the first to share a prayer intention. It will drift gently across the night sky for all to pray with.</div>';
+        stage.innerHTML = '<div class="intentions-empty">Be the first — your intention will float here for the whole group to pray with.</div>';
         return;
       }
       const variants = ['', 'bubble-right', 'bubble-top', '', 'bubble-right', ''];
-      list.slice().reverse().slice(0, 12).forEach((it, idx) => {
+      const els = list.slice().reverse().slice(0, 12).map((it, idx) => {
         const el = document.createElement('div');
         el.className = 'intention-card ' + variants[idx % variants.length];
-        // Spread cards across stage, avoid corners
-        const cols = 3, rows = 4;
-        const col = idx % cols, row = Math.floor(idx / cols) % rows;
-        const left = 4 + col * 30 + ((idx * 7) % 14);
-        const top  = 6 + row * 22 + ((idx * 11) % 10);
-        el.style.left = Math.min(left, 72) + '%';
-        el.style.top  = Math.min(top, 76) + '%';
-        const rot = ((idx * 7) % 11) - 5;
-        el.style.setProperty('--rot', rot + 'deg');
-        el.style.setProperty('--dur', (15 + (idx % 5) * 2.5) + 's');
-        el.style.setProperty('--delay', -(idx * 3.1) + 's');
         el.textContent = it.text;
         stage.appendChild(el);
+        return el;
       });
+      // Let browser lay out the cards before reading sizes
+      requestAnimationFrame(() => requestAnimationFrame(() => startPhysics(els)));
     }
 
     form.addEventListener('submit', async (e) => {
@@ -466,7 +520,6 @@
       error.textContent = '';
       if (!text) { error.textContent = 'Please enter an intention.'; return; }
       if (text.length > 240) { error.textContent = 'Please keep it under 240 characters.'; return; }
-
       const list = await Storage.get('intentions:list', []);
       list.push({ text, timestamp: Date.now() });
       await Storage.set('intentions:list', list, { shared: true });

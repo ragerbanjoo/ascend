@@ -1479,20 +1479,21 @@ textarea.field {
 }
 .intention-card {
   position: absolute;
-  max-width: 190px;
-  padding: 0.6rem 0.875rem;
-  background: rgba(245, 241, 232, 0.07);
-  border: 1px solid rgba(201, 161, 74, 0.32);
+  max-width: 180px;
+  padding: 0.55rem 0.875rem;
+  background: rgba(245, 241, 232, 0.09);
+  border: 1px solid rgba(201, 161, 74, 0.38);
   border-radius: 1.125rem 1.125rem 1.125rem 0.3rem;
-  color: var(--cream);
+  /* always light text — stage is always dark */
+  color: #f0ebe0;
   font-family: var(--font-display);
   font-style: italic;
   font-size: 0.9375rem;
   line-height: 1.42;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 0 0 0.5px rgba(201,161,74,0.1);
-  animation: floatBubble var(--dur, 17s) ease-in-out infinite var(--delay, 0s);
-  transform-origin: center bottom;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(201,161,74,0.12);
+  will-change: left, top;
+  user-select: none;
 }
 .intention-card::after {
   content: '';
@@ -2761,6 +2762,31 @@ html[data-theme="light"] .hub-quicknav a:hover {
   color: #fff;
 }
 
+/* Intentions section always renders dark regardless of theme */
+html[data-theme="light"] .intentions-section,
+html[data-theme="light"] .intentions-section h1,
+html[data-theme="light"] .intentions-section h2,
+html[data-theme="light"] .intentions-section h3,
+html[data-theme="light"] .intentions-section p,
+html[data-theme="light"] .intentions-section .eyebrow,
+html[data-theme="light"] .intentions-section .lede,
+html[data-theme="light"] .intentions-section .help,
+html[data-theme="light"] .intentions-section .label {
+  color: #f5f1e8;
+}
+html[data-theme="light"] .intentions-section .field {
+  background: rgba(245,241,232,0.07);
+  border-color: rgba(245,241,232,0.18);
+  color: #f5f1e8;
+}
+html[data-theme="light"] .intentions-section .field::placeholder {
+  color: rgba(245,241,232,0.4);
+}
+html[data-theme="light"] .intentions-section .btn-outline {
+  border-color: rgba(201,161,74,0.6);
+  color: #c9a14a;
+}
+
 html[data-theme="light"] .day-jump {
   background: var(--ink);
 }
@@ -2801,13 +2827,9 @@ html[data-theme="light"] .day-jump {
   from { opacity: 0; transform: translateY(16px) scale(0.96); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes floatBubble {
-  0%   { transform: translateY(0px) rotate(var(--rot, 0deg)); }
-  20%  { transform: translateY(-14px) rotate(var(--rot, 0deg)); }
-  45%  { transform: translateY(-6px) rotate(var(--rot, 0deg)); }
-  65%  { transform: translateY(-18px) rotate(var(--rot, 0deg)); }
-  85%  { transform: translateY(-4px) rotate(var(--rot, 0deg)); }
-  100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+@keyframes wallRiseOnly {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Reveal on scroll — applied to any [data-reveal] element */
