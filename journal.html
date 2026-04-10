@@ -326,26 +326,23 @@
 /* Rich text toolbar */
 .rt-toolbar {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
   gap: 2px;
   padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid var(--cream-line);
   flex-shrink: 0;
   align-items: center;
-  -webkit-overflow-scrolling: touch;
 }
-.rt-toolbar::-webkit-scrollbar { display: none; }
 .rt-toolbar .rt-sep {
   width: 1px;
   height: 1.25rem;
   background: var(--cream-line);
   margin: 0 0.25rem;
+  flex-shrink: 0;
 }
 .rt-btn {
-  min-width: 2rem;
-  height: 2rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
   border: none;
   border-radius: 6px;
   background: transparent;
@@ -357,10 +354,11 @@
   justify-content: center;
   transition: background 0.15s, color 0.15s;
   padding: 0 0.4rem;
+  flex-shrink: 0;
 }
 .rt-btn:hover { background: rgba(245,241,232,0.08); color: var(--cream); }
 .rt-btn.active { background: rgba(201,161,74,0.2); color: var(--gold-bright); }
-.rt-btn svg { width: 16px; height: 16px; }
+.rt-btn svg { width: 18px; height: 18px; }
 
 .rt-color-input {
   width: 1.75rem;
@@ -372,22 +370,56 @@
   background: none;
   -webkit-appearance: none;
   appearance: none;
+  flex-shrink: 0;
 }
 .rt-color-input::-webkit-color-swatch-wrapper { padding: 0; }
 .rt-color-input::-webkit-color-swatch { border: none; border-radius: 50%; }
 .rt-color-input::-moz-color-swatch { border: none; border-radius: 50%; }
 
-.rt-font-select {
-  background: transparent;
-  border: 1px solid var(--cream-line);
-  border-radius: 6px;
-  color: var(--cream-dim);
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  max-width: 6rem;
+/* Heading dropdown */
+.rt-dropdown { position: relative; display: inline-flex; flex-shrink: 0; }
+.rt-dropdown-trigger {
+  gap: 0.25rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0 0.5rem;
+  min-width: 2.75rem;
 }
-.rt-font-select option { background: var(--ink); color: var(--cream); }
+.rt-dropdown-trigger .rt-dd-caret {
+  width: 8px; height: 8px; opacity: 0.5; margin-left: 2px;
+}
+.rt-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  background: var(--ink-deep, var(--ink));
+  border: 1px solid var(--cream-line);
+  border-radius: 8px;
+  padding: var(--space-1) 0;
+  min-width: 10rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.rt-dropdown.open .rt-dropdown-menu { display: block; }
+.rt-dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  background: none;
+  color: var(--cream-dim);
+  font-family: var(--f-body);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.rt-dropdown-item:hover { background: rgba(201,161,74,0.12); color: var(--cream); }
+.rt-dropdown-item.active { color: var(--gold-bright); background: rgba(201,161,74,0.1); }
+.rt-dropdown-item[data-format-block="h1"] { font-size: 1.2rem; font-weight: 700; font-family: var(--f-display); }
+.rt-dropdown-item[data-format-block="h2"] { font-size: 1.05rem; font-weight: 600; font-family: var(--f-display); }
+.rt-dropdown-item[data-format-block="h3"] { font-size: 0.95rem; font-weight: 600; font-family: var(--f-display); }
 
 /* Contenteditable body */
 .rt-body {
@@ -415,6 +447,20 @@
 .rt-body b, .rt-body strong { font-weight: 700; }
 .rt-body i, .rt-body em { font-style: italic; }
 .rt-body u { text-decoration: underline; }
+.rt-body s, .rt-body strike { text-decoration: line-through; }
+.rt-body h1 { font-family: var(--f-display); font-size: 1.75rem; font-weight: 700; margin: 0.75em 0 0.25em; color: var(--cream); }
+.rt-body h2 { font-family: var(--f-display); font-size: 1.375rem; font-weight: 600; margin: 0.75em 0 0.25em; color: var(--cream); }
+.rt-body h3 { font-family: var(--f-display); font-size: 1.125rem; font-weight: 600; margin: 0.5em 0 0.25em; color: var(--cream); }
+.rt-body blockquote {
+  border-left: 3px solid var(--gold);
+  padding-left: var(--space-3);
+  margin: 0.75em 0;
+  color: var(--cream-dim);
+  font-style: italic;
+}
+.rt-body hr { border: none; border-top: 1px solid var(--cream-line); margin: 1.25em 0; }
+.rt-body ol, .rt-body ul { padding-left: 1.5em; margin: 0.5em 0; }
+.rt-body ol li, .rt-body ul li { margin: 0.25em 0; }
 
 /* ═══ Drawing panel ═══ */
 .draw-panel {
@@ -480,6 +526,13 @@ html[data-theme="light"] .draw-canvas-wrap {
 html[data-theme="light"] .rt-color-input {
   border-color: rgba(26,26,46,0.15);
 }
+html[data-theme="light"] .rt-dropdown-menu {
+  background: #fff;
+  border-color: rgba(26,26,46,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+html[data-theme="light"] .rt-dropdown-item { color: var(--cream-dim); }
+html[data-theme="light"] .rt-dropdown-item:hover { background: rgba(201,161,74,0.08); }
 html[data-theme="light"] .journal-type-badge.talk_note {
   background: rgba(40,100,180,0.12);
   color: #2b6cb0;
@@ -497,7 +550,6 @@ html[data-theme="light"] .journal-type-badge.talk_note {
   .rt-toolbar { padding: var(--space-2) var(--space-3); }
   .draw-canvas { height: 220px; }
   .editor-talk-fields { flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
-  .rt-font-select { max-width: 5rem; font-size: 0.7rem; }
 }
 </style>
 </head>
@@ -626,29 +678,86 @@ html[data-theme="light"] .journal-type-badge.talk_note {
 
   <!-- Rich text toolbar -->
   <div class="rt-toolbar">
-    <button type="button" class="rt-btn" data-cmd="bold" title="Bold"><b>B</b></button>
-    <button type="button" class="rt-btn" data-cmd="italic" title="Italic"><i>I</i></button>
-    <button type="button" class="rt-btn" data-cmd="underline" title="Underline"><u>U</u></button>
-    <span class="rt-sep"></span>
-    <select class="rt-font-select" data-cmd-font title="Font">
-      <option value="Inter">Sans</option>
-      <option value="Cormorant Garamond">Serif</option>
-      <option value="Georgia">Georgia</option>
-      <option value="monospace">Mono</option>
-    </select>
-    <select class="rt-font-select" data-cmd-size title="Size">
-      <option value="3">Normal</option>
-      <option value="1">Small</option>
-      <option value="5">Large</option>
-      <option value="7">Huge</option>
-    </select>
-    <span class="rt-sep"></span>
-    <input type="color" class="rt-color-input" data-cmd-color value="#f5f1e8" title="Text color">
-    <span class="rt-sep"></span>
-    <button type="button" class="rt-btn" data-cmd="insertUnorderedList" title="Bullet list">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+    <!-- Undo / Redo -->
+    <button type="button" class="rt-btn" data-cmd="undo" title="Undo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="redo" title="Redo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
     </button>
     <span class="rt-sep"></span>
+
+    <!-- Heading dropdown -->
+    <div class="rt-dropdown" data-heading-dropdown>
+      <button type="button" class="rt-btn rt-dropdown-trigger" title="Heading">
+        <span>H</span>
+        <svg class="rt-dd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="rt-dropdown-menu">
+        <button type="button" class="rt-dropdown-item" data-format-block="p">Normal text</button>
+        <button type="button" class="rt-dropdown-item" data-format-block="h1">Heading 1</button>
+        <button type="button" class="rt-dropdown-item" data-format-block="h2">Heading 2</button>
+        <button type="button" class="rt-dropdown-item" data-format-block="h3">Heading 3</button>
+      </div>
+    </div>
+    <span class="rt-sep"></span>
+
+    <!-- Text formatting -->
+    <button type="button" class="rt-btn" data-cmd="bold" title="Bold (Ctrl+B)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="italic" title="Italic (Ctrl+I)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="underline" title="Underline (Ctrl+U)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="strikeThrough" title="Strikethrough">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c-.5-1.5-2.5-3-5-3C8 1 6 3 6 5.5c0 2 1.5 3.5 4 4.5"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M8 20c.5 1.5 2.5 3 5 3 3 0 5-2 5-4.5 0-2-1.5-3.5-4-4.5"/></svg>
+    </button>
+    <span class="rt-sep"></span>
+
+    <!-- Highlight & Color -->
+    <button type="button" class="rt-btn" data-cmd-highlight title="Highlight">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4.5 20.3l.7.7h13.6l.7-.7L12 2z"/><line x1="5" y1="21" x2="19" y2="21"/><line x1="8" y1="14" x2="16" y2="14" stroke="#ffdd57" stroke-width="3"/></svg>
+    </button>
+    <input type="color" class="rt-color-input" data-cmd-color value="#f5f1e8" title="Text color">
+    <span class="rt-sep"></span>
+
+    <!-- Lists -->
+    <button type="button" class="rt-btn" data-cmd="insertUnorderedList" title="Bullet list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="insertOrderedList" title="Numbered list">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 5.5V3l-1 .5" stroke-width="1.5"/><path d="M3 10h2l-1.5 2H5" stroke-width="1.5" fill="none"/><path d="M3 16.5h2l-1 1.5H5" stroke-width="1.5" fill="none"/></svg>
+    </button>
+    <span class="rt-sep"></span>
+
+    <!-- Alignment -->
+    <button type="button" class="rt-btn" data-cmd="justifyLeft" title="Align left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="justifyCenter" title="Align center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="justifyRight" title="Align right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="rt-sep"></span>
+
+    <!-- Block elements -->
+    <button type="button" class="rt-btn" data-cmd-blockquote title="Blockquote">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="4" x2="3" y2="20"/><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="18" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="insertHorizontalRule" title="Horizontal rule">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/></svg>
+    </button>
+    <button type="button" class="rt-btn" data-cmd="removeFormat" title="Clear formatting">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/><line x1="18" y1="5" x2="5" y2="19" stroke-width="2.5"/></svg>
+    </button>
+    <span class="rt-sep"></span>
+
+    <!-- Drawing toggle -->
     <button type="button" class="rt-btn" data-toggle-draw title="Draw / Sketch">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
     </button>
@@ -869,26 +978,45 @@ html[data-theme="light"] .journal-type-badge.talk_note {
     document.querySelector('[data-editor-save]').addEventListener('click', saveEntry);
     deleteBtn.addEventListener('click', deleteEntry);
 
-    // Rich text toolbar
+    // Rich text toolbar — prevent focus loss on ALL toolbar buttons
+    document.querySelectorAll('.rt-toolbar button, .rt-toolbar .rt-dropdown-item').forEach(btn => {
+      btn.addEventListener('mousedown', (e) => e.preventDefault());
+    });
+
+    // Generic execCommand buttons
     document.querySelectorAll('.rt-btn[data-cmd]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        document.execCommand(btn.dataset.cmd, false, null);
+        try {
+          document.execCommand(btn.dataset.cmd, false, null);
+        } catch (err) {
+          console.warn('execCommand failed:', btn.dataset.cmd, err);
+        }
         rtBody.focus();
         updateToolbarState();
       });
     });
 
-    // Font select
-    document.querySelector('[data-cmd-font]').addEventListener('change', (e) => {
-      document.execCommand('fontName', false, e.target.value);
+    // Highlight toggle (hiliteColor)
+    document.querySelector('[data-cmd-highlight]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sel = window.getSelection();
+      let isHighlighted = false;
+      if (sel.rangeCount) {
+        const parent = sel.getRangeAt(0).commonAncestorContainer;
+        const el = parent.nodeType === 3 ? parent.parentElement : parent;
+        if (el && rtBody.contains(el)) {
+          const bg = window.getComputedStyle(el).backgroundColor;
+          isHighlighted = bg === 'rgb(255, 255, 0)' || bg.includes('255, 255, 0');
+        }
+      }
+      try {
+        document.execCommand('hiliteColor', false, isHighlighted ? 'transparent' : '#ffff00');
+      } catch (err) {
+        try { document.execCommand('backColor', false, isHighlighted ? 'transparent' : '#ffff00'); } catch (e2) {}
+      }
       rtBody.focus();
-    });
-
-    // Size select
-    document.querySelector('[data-cmd-size]').addEventListener('change', (e) => {
-      document.execCommand('fontSize', false, e.target.value);
-      rtBody.focus();
+      updateToolbarState();
     });
 
     // Color picker
@@ -897,11 +1025,39 @@ html[data-theme="light"] .journal-type-badge.talk_note {
       rtBody.focus();
     });
 
-    // Bullet list
-    document.querySelector('[data-cmd="insertUnorderedList"]')?.addEventListener('click', (e) => {
+    // Blockquote toggle
+    document.querySelector('[data-cmd-blockquote]')?.addEventListener('click', (e) => {
       e.preventDefault();
-      document.execCommand('insertUnorderedList', false, null);
+      try {
+        const current = document.queryCommandValue('formatBlock').toLowerCase();
+        document.execCommand('formatBlock', false, current === 'blockquote' ? '<p>' : '<blockquote>');
+      } catch (err) {
+        console.warn('blockquote failed:', err);
+      }
       rtBody.focus();
+      updateToolbarState();
+    });
+
+    // Heading dropdown
+    const headingDropdown = document.querySelector('[data-heading-dropdown]');
+    headingDropdown?.querySelector('.rt-dropdown-trigger')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      headingDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', () => headingDropdown?.classList.remove('open'));
+    headingDropdown?.querySelectorAll('[data-format-block]').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        try {
+          document.execCommand('formatBlock', false, '<' + item.dataset.formatBlock + '>');
+        } catch (err) {
+          console.warn('formatBlock failed:', err);
+        }
+        headingDropdown.classList.remove('open');
+        rtBody.focus();
+        updateToolbarState();
+      });
     });
 
     // Drawing toggle
@@ -1172,14 +1328,57 @@ html[data-theme="light"] .journal-type-badge.talk_note {
   }
 
   // ═══ Toolbar State ═══
+  const toggleCmds = ['bold','italic','underline','strikeThrough',
+    'insertUnorderedList','insertOrderedList','justifyLeft','justifyCenter','justifyRight'];
+
   function updateToolbarState() {
     if (!editor.classList.contains('open')) return;
+
+    // Toggle-state commands
     document.querySelectorAll('.rt-btn[data-cmd]').forEach(btn => {
+      const cmd = btn.dataset.cmd;
+      if (!toggleCmds.includes(cmd)) return;
       try {
-        const active = document.queryCommandState(btn.dataset.cmd);
-        btn.classList.toggle('active', active);
+        btn.classList.toggle('active', document.queryCommandState(cmd));
       } catch (e) { /* ignore */ }
     });
+
+    // Highlight active state
+    const highlightBtn = document.querySelector('[data-cmd-highlight]');
+    if (highlightBtn) {
+      const sel = window.getSelection();
+      let isHL = false;
+      if (sel.rangeCount) {
+        const parent = sel.getRangeAt(0).commonAncestorContainer;
+        const el = parent.nodeType === 3 ? parent.parentElement : parent;
+        if (el && rtBody.contains(el)) {
+          const bg = window.getComputedStyle(el).backgroundColor;
+          isHL = bg === 'rgb(255, 255, 0)' || bg.includes('255, 255, 0');
+        }
+      }
+      highlightBtn.classList.toggle('active', isHL);
+    }
+
+    // Blockquote active state
+    const bqBtn = document.querySelector('[data-cmd-blockquote]');
+    if (bqBtn) {
+      try {
+        bqBtn.classList.toggle('active', document.queryCommandValue('formatBlock').toLowerCase() === 'blockquote');
+      } catch (e) { /* ignore */ }
+    }
+
+    // Heading dropdown label
+    const hTrigger = document.querySelector('[data-heading-dropdown] .rt-dropdown-trigger span');
+    if (hTrigger) {
+      try {
+        const val = document.queryCommandValue('formatBlock').toLowerCase();
+        const labels = { h1: 'H1', h2: 'H2', h3: 'H3' };
+        hTrigger.textContent = labels[val] || 'H';
+        document.querySelectorAll('[data-format-block]').forEach(item => {
+          item.classList.toggle('active', item.dataset.formatBlock === val);
+        });
+      } catch (e) { /* ignore */ }
+    }
   }
 
   // ═══ Drawing ═══
