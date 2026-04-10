@@ -2910,29 +2910,27 @@ html[data-theme="light"] .hub-jumpnav-menu a:hover {
   color: var(--gold);
 }
 
-/* Intentions section always renders dark regardless of theme */
-html[data-theme="light"] .intentions-section,
-html[data-theme="light"] .intentions-section h1,
-html[data-theme="light"] .intentions-section h2,
-html[data-theme="light"] .intentions-section h3,
-html[data-theme="light"] .intentions-section p,
-html[data-theme="light"] .intentions-section .eyebrow,
-html[data-theme="light"] .intentions-section .lede,
-html[data-theme="light"] .intentions-section .help,
-html[data-theme="light"] .intentions-section .label {
-  color: #f5f1e8;
+/* Intentions stage — light mode */
+html[data-theme="light"] .intentions-stage {
+  background: radial-gradient(ellipse at 50% 35%, rgba(245,235,210,0.9) 0%, rgba(240,230,215,1) 70%);
+  border-color: rgba(26,26,46,0.1);
+  box-shadow: inset 0 0 60px rgba(201,161,74,0.08);
 }
-html[data-theme="light"] .intentions-section .field {
-  background: rgba(245,241,232,0.07);
-  border-color: rgba(245,241,232,0.18);
-  color: #f5f1e8;
+html[data-theme="light"] .intention-card {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(201,161,74,0.3);
+  color: #1a1a2e;
+  box-shadow: 0 2px 12px rgba(26,26,46,0.1), 0 0 0 0.5px rgba(201,161,74,0.15);
 }
-html[data-theme="light"] .intentions-section .field::placeholder {
-  color: rgba(245,241,232,0.4);
+html[data-theme="light"] .intention-card::after {
+  border-top-color: rgba(201,161,74,0.3);
 }
-html[data-theme="light"] .intentions-section .btn-outline {
-  border-color: rgba(201,161,74,0.6);
-  color: #c9a14a;
+html[data-theme="light"] .intention-card.bubble-top::after {
+  border-top-color: transparent;
+  border-bottom-color: rgba(201,161,74,0.3);
+}
+html[data-theme="light"] .intentions-empty {
+  color: rgba(26,26,46,0.45);
 }
 
 /* ---------- 17. Animation keyframes ---------- */
