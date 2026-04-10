@@ -2617,6 +2617,74 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .hub-tile-links { margin-top: var(--space-3); }
 
 .encrypted-badge { font-size: 0.85rem; opacity: 0.7; }
+
+/* ─── Daily Readings tile ─── */
+.readings-loading {
+  display: flex; align-items: center; gap: var(--space-2);
+  color: var(--cream-mute); font-size: 0.875rem; padding: var(--space-3) 0;
+}
+.readings-spinner {
+  width: 16px; height: 16px; border: 2px solid var(--cream-line);
+  border-top-color: var(--gold); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.readings-date {
+  font-size: 0.75rem; color: var(--gold); text-transform: uppercase;
+  letter-spacing: 0.05em; font-weight: 600; margin-bottom: var(--space-2);
+}
+.readings-celebration {
+  font-family: var(--f-display); font-size: 1.1rem; font-weight: 600;
+  color: var(--cream); margin-bottom: var(--space-1);
+}
+.readings-season {
+  font-size: 0.75rem; color: var(--cream-mute); margin-bottom: var(--space-3);
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.readings-season-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+  flex-shrink: 0;
+}
+.readings-saint-quote {
+  font-style: italic; color: var(--cream-dim); font-size: 0.875rem;
+  border-left: 2px solid var(--gold); padding-left: var(--space-3);
+  margin-bottom: var(--space-3); line-height: 1.6;
+}
+.readings-saint-desc {
+  color: var(--cream-dim); font-size: 0.8125rem; line-height: 1.5;
+  margin-bottom: var(--space-3);
+}
+.readings-list {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.readings-item {
+  display: flex; align-items: baseline; gap: var(--space-2);
+  font-size: 0.8125rem;
+}
+.readings-label {
+  color: var(--gold); font-weight: 600; font-size: 0.6875rem;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  min-width: 4.5rem; flex-shrink: 0;
+}
+.readings-ref {
+  color: var(--cream); font-weight: 500;
+}
+.readings-usccb {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  font-size: 0.8125rem; color: var(--gold); font-weight: 500;
+}
+.readings-usccb:hover { color: var(--gold-bright); }
+.readings-usccb svg { width: 14px; height: 14px; }
+.readings-error {
+  color: var(--cream-mute); font-size: 0.8125rem; padding: var(--space-2) 0;
+}
+
+/* Light mode */
+html[data-theme="light"] .readings-celebration { color: var(--cream); }
+html[data-theme="light"] .readings-saint-quote { border-left-color: var(--gold); }
+html[data-theme="light"] .readings-ref { color: var(--cream); }
 .hub-tile-encrypted { border-left: 3px solid var(--gold-dim); }
 
 .hub-privacy-links { list-style: none; padding: 0; }

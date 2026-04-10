@@ -2210,6 +2210,7 @@
     });
 
     // Init sub-features
+    initHubReadings();
     await initHubPacking();
     await initHubJournal();
     await initHubIntentions();
@@ -2228,6 +2229,74 @@
   }
 
   // Hub sub-feature inits
+
+  function initHubReadings() {
+    const container = document.querySelector('[data-readings-content]');
+    if (!container) return;
+
+    const API_BASE = 'https://cpbjr.github.io/catholic-readings-api';
+    const now = new Date();
+    const year = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${year}/${mm}-${dd}`;
+
+    const dateDisplay = now.toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+
+    Promise.all([
+      fetch(`${API_BASE}/readings/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_BASE}/liturgical-calendar/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null)
+    ]).then(([readings, calendar]) => {
+      if (!readings && !calendar) {
+        container.innerHTML = '<p class="readings-error">Could not load today\'s readings. Check back later.</p>';
+        return;
+      }
+
+      let html = `<div class="readings-date">${dateDisplay}</div>`;
+
+      // Celebration / Saint
+      if (calendar?.celebration) {
+        const c = calendar.celebration;
+        html += `<div class="readings-celebration">${escapeHtml(c.name)}</div>`;
+        const typeLabel = c.type && c.type !== 'FERIA' ? c.type.charAt(0) + c.type.slice(1).toLowerCase() : '';
+        html += `<div class="readings-season">`;
+        html += `<span class="readings-season-dot"></span>`;
+        html += escapeHtml(calendar.season || '');
+        if (typeLabel) html += ` &middot; ${escapeHtml(typeLabel)}`;
+        html += `</div>`;
+        if (c.quote) {
+          html += `<div class="readings-saint-quote">&ldquo;${escapeHtml(c.quote)}&rdquo;</div>`;
+        }
+        if (c.description) {
+          html += `<div class="readings-saint-desc">${escapeHtml(c.description)}</div>`;
+        }
+      }
+
+      // Reading references
+      if (readings?.readings) {
+        const r = readings.readings;
+        html += '<div class="readings-list">';
+        if (r.firstReading) html += `<div class="readings-item"><span class="readings-label">1st Reading</span><span class="readings-ref">${escapeHtml(r.firstReading)}</span></div>`;
+        if (r.psalm) html += `<div class="readings-item"><span class="readings-label">Psalm</span><span class="readings-ref">${escapeHtml(r.psalm)}</span></div>`;
+        if (r.secondReading) html += `<div class="readings-item"><span class="readings-label">2nd Reading</span><span class="readings-ref">${escapeHtml(r.secondReading)}</span></div>`;
+        if (r.gospel) html += `<div class="readings-item"><span class="readings-label">Gospel</span><span class="readings-ref">${escapeHtml(r.gospel)}</span></div>`;
+        html += '</div>';
+      }
+
+      // USCCB link
+      if (readings?.usccbLink) {
+        html += `<a href="${readings.usccbLink}" target="_blank" rel="noopener" class="readings-usccb">
+          Read full text
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>`;
+      }
+
+      container.innerHTML = html;
+    });
+  }
+
   async function initHubPacking() {
     const container = document.querySelector('[data-hub-packing]');
     if (!container) return;
