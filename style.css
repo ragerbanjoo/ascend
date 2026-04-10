@@ -3939,7 +3939,7 @@ html[data-theme="light"] .recovery-warning { color: #dc2626; }
 html[data-theme="light"] .recovery-actions .btn {
   background: rgba(26, 26, 46, 0.05);
   border-color: rgba(26, 26, 46, 0.12);
-  color: var(--ink);
+  color: var(--cream);
 }
 html[data-theme="light"] .recovery-phrase-screen h3 { color: var(--cream); }
 html[data-theme="light"] .password-meter { background: rgba(26, 26, 46, 0.08); }
