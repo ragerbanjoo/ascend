@@ -291,6 +291,7 @@
       if (!Auth.isGuest && Auth.displayName) {
         const name = Auth.displayName;
         el.textContent = name.charAt(0).toUpperCase();
+        el.href = 'account.html';
       }
     });
   }
@@ -1474,6 +1475,13 @@
       if (session?.user) {
         this._user = session.user;
         await this._loadProfile();
+        // If auth exists but profile is missing (broken signup), sign out
+        if (!this._profile) {
+          console.warn('Auth session exists but no profile found — signing out broken account');
+          this._user = null;
+          await sb.auth.signOut();
+          return;
+        }
         await this._updateLastSeen();
       }
 
@@ -1571,7 +1579,11 @@
         cek_phrase_iv: phraseWrap.iv,
         phrase_salt: Crypto._toBase64(phraseSalt),
       });
-      if (profileError) throw new Error(profileError.message);
+      if (profileError) {
+        // Clean up: sign out so user isn't stuck with auth but no profile
+        await sb.auth.signOut();
+        throw new Error(profileError.message);
+      }
 
       // 9. Insert default sharing prefs
       await sb.from('sharing_preferences').insert({ user_id: authData.user.id });
