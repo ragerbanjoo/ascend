@@ -926,7 +926,7 @@
         banner.innerHTML = `
           <h4>Retreat begins in</h4>
           <div class="banner-countdown" data-banner-countdown>${formatCompact(TRIP.departPT - now)}</div>
-          <p class="text-mute" style="font-size:0.8125rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'With Confession &amp; Adoration' : 'Without Confession &amp; Adoration'}</p>
+          <p class="text-mute" style="font-size:1rem; margin-top:0.5rem;">Times below reflect Option ${option} · ${option === 'A' ? 'With Confession &amp; Adoration' : 'Without Confession &amp; Adoration'}</p>
         `;
       } else if (now < TRIP.returnPT) {
         banner.hidden = false;
@@ -2607,7 +2607,7 @@
           <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" data-size="compact"></div>
           <p class="auth-error" data-auth-error style="display:none"></p>
           <button type="submit" class="btn btn-primary btn-full">Sign in</button>
-          <p class="text-mute text-center" style="font-size:0.8rem;margin-top:var(--space-3)">
+          <p class="text-mute text-center" style="font-size:1rem;margin-top:var(--space-3)">
             Forgot password? <a href="mailto:alex@sjdyoungadults.com">Contact Alex</a> with your recovery phrase.
           </p>
         </form>
@@ -2627,7 +2627,7 @@
           <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" data-honeypot>
           <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" data-size="compact"></div>
           <p class="auth-error" data-auth-error style="display:none"></p>
-          <p class="text-mute" style="font-size:0.8rem">No email needed. Your journal and private intentions are encrypted end-to-end. Only you can read them.</p>
+          <p class="text-mute" style="font-size:1rem">No email needed. Your journal and private intentions are encrypted end-to-end. Only you can read them.</p>
           <button type="submit" class="btn btn-primary btn-full">Create account</button>
         </form>
       </div>
