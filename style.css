@@ -2850,11 +2850,11 @@ html[data-theme="light"] .reader-header { border-color: rgba(0, 0, 0, 0.08); }
 html[data-theme="light"] .reader-footer { border-color: rgba(0, 0, 0, 0.08); }
 html[data-theme="light"] .reader-dot { background: rgba(0, 0, 0, 0.12); }
 html[data-theme="light"] .reader-close { color: rgba(0, 0, 0, 0.4); }
-html[data-theme="light"] .reader-close:hover { color: var(--ink); }
+html[data-theme="light"] .reader-close:hover { color: var(--cream); }
 html[data-theme="light"] .reader-page-label { color: var(--gold); }
 html[data-theme="light"] .reader-page-ref { color: rgba(6, 13, 26, 0.5); }
 html[data-theme="light"] .reader-page-body { color: rgba(6, 13, 26, 0.75); }
-html[data-theme="light"] .reader-page-body strong { color: var(--ink); }
+html[data-theme="light"] .reader-page-body strong { color: var(--cream); }
 html[data-theme="light"] .reader-counter { color: rgba(6, 13, 26, 0.4); }
 .hub-tile-encrypted { border-left: 3px solid var(--gold-dim); }
 
@@ -3887,7 +3887,7 @@ html[data-theme="light"] .guide-inner {
   background: var(--parchment);
   border-color: rgba(0, 0, 0, 0.1);
 }
-html[data-theme="light"] .guide-step h2 { color: var(--ink); }
+html[data-theme="light"] .guide-step h2 { color: var(--cream); }
 html[data-theme="light"] .guide-desc { color: rgba(6, 13, 26, 0.65); }
 html[data-theme="light"] .guide-dot { background: rgba(0, 0, 0, 0.12); }
 html[data-theme="light"] .guide-icon-btn {
@@ -3900,7 +3900,7 @@ html[data-theme="light"] .guide-icon-btn.selected {
   background: rgba(201, 161, 74, 0.12);
 }
 html[data-theme="light"] .guide-toggle-row { border-color: rgba(0, 0, 0, 0.08); }
-html[data-theme="light"] .guide-toggle-row strong { color: var(--ink); }
+html[data-theme="light"] .guide-toggle-row strong { color: var(--cream); }
 html[data-theme="light"] .guide-toggle-row small { color: rgba(6, 13, 26, 0.5); }
 html[data-theme="light"] .guide-counter { color: rgba(6, 13, 26, 0.4); }
 html[data-theme="light"] .guide-field label { color: rgba(6, 13, 26, 0.6); }
@@ -3925,7 +3925,7 @@ html[data-theme="light"] .recovery-words {
   background: rgba(26, 26, 46, 0.04);
   border: 1px solid rgba(26, 26, 46, 0.08);
 }
-html[data-theme="light"] .recovery-word { color: var(--ink); }
+html[data-theme="light"] .recovery-word { color: var(--cream); }
 html[data-theme="light"] .recovery-word em { color: var(--gold); }
 html[data-theme="light"] .recovery-warning { color: #dc2626; }
 html[data-theme="light"] .recovery-actions .btn {
@@ -3933,7 +3933,7 @@ html[data-theme="light"] .recovery-actions .btn {
   border-color: rgba(26, 26, 46, 0.12);
   color: var(--ink);
 }
-html[data-theme="light"] .recovery-phrase-screen h3 { color: var(--ink); }
+html[data-theme="light"] .recovery-phrase-screen h3 { color: var(--cream); }
 html[data-theme="light"] .password-meter { background: rgba(26, 26, 46, 0.08); }
 
 /* ---------- Light mode: Onboarding theme cards ---------- */
@@ -3955,11 +3955,11 @@ html[data-theme="light"] .hub-tile-badge {
   background: rgba(201, 161, 74, 0.1);
   color: var(--gold);
 }
-html[data-theme="light"] .hub-welcome-modal h2 { color: var(--ink); }
+html[data-theme="light"] .hub-welcome-modal h2 { color: var(--cream); }
 html[data-theme="light"] .hub-welcome-modal p { color: rgba(6, 13, 26, 0.65); }
-html[data-theme="light"] .modal h3 { color: var(--ink); }
+html[data-theme="light"] .modal h3 { color: var(--cream); }
 html[data-theme="light"] .modal-close { color: rgba(26, 26, 46, 0.4); }
-html[data-theme="light"] .modal-close:hover { color: var(--ink); }
+html[data-theme="light"] .modal-close:hover { color: var(--cream); }
 
 /* ---------- Light mode: Common surface patterns ---------- */
 html[data-theme="light"] .option-card { background: rgba(255, 255, 255, 0.6); }
