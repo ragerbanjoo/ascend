@@ -2251,7 +2251,7 @@
     Promise.all([
       fetch(`${API_BASE}/readings/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${API_BASE}/liturgical-calendar/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch(`${USCCB_BASE}/${usccbDate}.cfm.md`).then(r => r.ok ? r.text() : null).catch(() => null)
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(`${USCCB_BASE}/${usccbDate}.cfm.md`)}`).then(r => r.ok ? r.text() : null).catch(() => null)
     ]).then(([readings, calendar, markdown]) => {
       if (!readings && !calendar) {
         container.innerHTML = '<p class="readings-error">Could not load today\'s readings. Check back later.</p>';
