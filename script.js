@@ -1619,6 +1619,35 @@
       this._user = data.user;
       await this._loadProfile();
 
+      // Repair broken signup: auth exists but profile was never created
+      if (!this._profile) {
+        const passwordSalt = Crypto.getRandomBytes(16);
+        const passwordKey = await Crypto.deriveKey(password, passwordSalt);
+        const cek = await Crypto.generateCEK();
+        const phrase = await Crypto.generateRecoveryPhrase();
+        const phraseSalt = Crypto.getRandomBytes(16);
+        const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
+        const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
+        const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
+
+        await sb.from('profiles').insert({
+          id: data.user.id,
+          username: uname,
+          display_name: uname,
+          salt: Crypto._toBase64(passwordSalt),
+          cek_password_wrapped: passwordWrap.wrapped,
+          cek_password_iv: passwordWrap.iv,
+          cek_phrase_wrapped: phraseWrap.wrapped,
+          cek_phrase_iv: phraseWrap.iv,
+          phrase_salt: Crypto._toBase64(phraseSalt),
+        });
+        await sb.from('sharing_preferences').insert({ user_id: data.user.id });
+        Crypto.setCEK(cek);
+        await this._loadProfile();
+        this._notify();
+        return { user: data.user, recoveryPhrase: phrase, repaired: true };
+      }
+
       if (this._profile?.salt && this._profile?.cek_password_wrapped) {
         const salt = Crypto._fromBase64(this._profile.salt);
         const passwordKey = await Crypto.deriveKey(password, salt);
@@ -2363,6 +2392,40 @@
       });
     }
 
+    // Show recovery phrase screen (used by both signup and login-repair)
+    function showRecoveryPhrase(recoveryPhrase) {
+      modal.querySelector('.auth-modal').innerHTML = `
+        <div class="recovery-phrase-screen">
+          <h3>Your Recovery Phrase</h3>
+          <p>Your journal and private intentions are encrypted with your password. If you forget your password, this 12-word phrase is the <strong>only way</strong> to get them back.</p>
+          <div class="recovery-words">${recoveryPhrase.split(' ').map((w, i) => `<span class="recovery-word"><em>${i + 1}</em>${escapeHtml(w)}</span>`).join('')}</div>
+          <div class="recovery-actions">
+            <button type="button" class="btn btn-ghost" data-copy-phrase>Copy to clipboard</button>
+            <button type="button" class="btn btn-ghost" data-download-phrase>Download as text</button>
+          </div>
+          <p class="recovery-warning">Write this down somewhere safe. Screenshot it. Email it to yourself. Alex cannot recover this for you. If you lose both your password AND this phrase, your journal is gone forever.</p>
+          <button type="button" class="btn btn-primary btn-full" data-phrase-continue disabled>I've saved this somewhere safe — continue</button>
+        </div>
+      `;
+      const continueBtn = modal.querySelector('[data-phrase-continue]');
+      setTimeout(() => { continueBtn.disabled = false; }, 10000);
+      modal.querySelector('[data-copy-phrase]')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(recoveryPhrase).then(() => showToast('Copied!'));
+      });
+      modal.querySelector('[data-download-phrase]')?.addEventListener('click', () => {
+        const blob = new Blob([`ASCEND Recovery Phrase for @${Auth.username}\n\n${recoveryPhrase}\n\nKeep this safe. Do not share it.`], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `ascend-recovery-${Auth.username}.txt`;
+        a.click();
+      });
+      continueBtn.addEventListener('click', async () => {
+        await migrateGuestDataToAccount();
+        modal.classList.remove('open');
+        setTimeout(() => { modal.remove(); location.reload(); }, 300);
+      });
+    }
+
     // Login form
     modal.querySelector('[data-auth-form="login"]').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -2374,9 +2437,14 @@
       try {
         const user = e.target.querySelector('#login-user').value;
         const pass = e.target.querySelector('#login-pass').value;
-        await Auth.login(user, pass);
-        modal.classList.remove('open');
-        setTimeout(() => { modal.remove(); location.reload(); }, 300);
+        const result = await Auth.login(user, pass);
+        // If login repaired a broken account, show recovery phrase
+        if (result?.repaired) {
+          showRecoveryPhrase(result.recoveryPhrase);
+        } else {
+          modal.classList.remove('open');
+          setTimeout(() => { modal.remove(); location.reload(); }, 300);
+        }
       } catch (err) {
         errEl.textContent = err.message;
         errEl.style.display = '';
@@ -2408,43 +2476,7 @@
       try {
         const user = e.target.querySelector('#signup-user').value;
         const { recoveryPhrase } = await Auth.signup(user, pass);
-
-        // Show recovery phrase screen
-        modal.querySelector('.auth-modal').innerHTML = `
-          <div class="recovery-phrase-screen">
-            <h3>Your Recovery Phrase</h3>
-            <p>Your journal and private intentions are encrypted with your password. If you forget your password, this 12-word phrase is the <strong>only way</strong> to get them back.</p>
-            <div class="recovery-words">${recoveryPhrase.split(' ').map((w, i) => `<span class="recovery-word"><em>${i + 1}</em>${escapeHtml(w)}</span>`).join('')}</div>
-            <div class="recovery-actions">
-              <button type="button" class="btn btn-ghost" data-copy-phrase>Copy to clipboard</button>
-              <button type="button" class="btn btn-ghost" data-download-phrase>Download as text</button>
-            </div>
-            <p class="recovery-warning">Write this down somewhere safe. Screenshot it. Email it to yourself. Alex cannot recover this for you. If you lose both your password AND this phrase, your journal is gone forever.</p>
-            <button type="button" class="btn btn-primary btn-full" data-phrase-continue disabled>I've saved this somewhere safe — continue</button>
-          </div>
-        `;
-
-        // Enable continue after 10 seconds
-        const continueBtn = modal.querySelector('[data-phrase-continue]');
-        setTimeout(() => { continueBtn.disabled = false; }, 10000);
-
-        modal.querySelector('[data-copy-phrase]')?.addEventListener('click', () => {
-          navigator.clipboard.writeText(recoveryPhrase).then(() => showToast('Copied!'));
-        });
-
-        modal.querySelector('[data-download-phrase]')?.addEventListener('click', () => {
-          const blob = new Blob([`ASCEND Recovery Phrase for @${Auth.username}\n\n${recoveryPhrase}\n\nKeep this safe. Do not share it.`], { type: 'text/plain' });
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = `ascend-recovery-${Auth.username}.txt`;
-          a.click();
-        });
-
-        continueBtn.addEventListener('click', async () => {
-          await migrateGuestDataToAccount();
-          modal.classList.remove('open');
-          setTimeout(() => { modal.remove(); location.reload(); }, 300);
-        });
+        showRecoveryPhrase(recoveryPhrase);
       } catch (err) {
         errEl.textContent = err.message;
         errEl.style.display = '';
