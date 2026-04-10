@@ -2518,11 +2518,13 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
 .group-rules {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-3);
-  max-width: 42rem;
   margin: 0 auto;
   text-align: left;
+}
+@media (max-width: 640px) {
+  .group-rules { grid-template-columns: 1fr; }
 }
 .group-rules li {
   display: flex;
@@ -2552,8 +2554,9 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
 }
 .rule-icon svg { width: 20px; height: 20px; }
 html[data-theme="light"] .group-rules li {
-  background: rgba(30,30,60,0.03);
-  border-color: rgba(30,30,60,0.1);
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(26,26,46,0.08);
+  box-shadow: 0 2px 10px -2px rgba(26,26,46,0.06);
 }
 html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.06); border-color: rgba(158,124,46,0.25); }
 
