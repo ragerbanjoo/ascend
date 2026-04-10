@@ -2182,7 +2182,7 @@
     // Update welcome text
     const welcomeEl = hubEl.querySelector('[data-hub-welcome]');
     if (welcomeEl) {
-      welcomeEl.textContent = `Welcome, ${Auth.isGuest ? 'pilgrim' : '@' + Auth.displayName}`;
+      welcomeEl.textContent = `Welcome, ${Auth.isGuest ? 'pilgrim' : Auth.displayName}`;
     }
 
     // Account pill
