@@ -2235,20 +2235,24 @@
     if (!container) return;
 
     const API_BASE = 'https://cpbjr.github.io/catholic-readings-api';
+    const USCCB_BASE = 'https://bible.usccb.org/bible/readings';
     const now = new Date();
     const year = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
     const dateStr = `${year}/${mm}-${dd}`;
+    const usccbDate = `${mm}${dd}${String(year).slice(-2)}`;
 
     const dateDisplay = now.toLocaleDateString('en-US', {
       weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
 
+    // Fetch API data + USCCB markdown in parallel
     Promise.all([
       fetch(`${API_BASE}/readings/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch(`${API_BASE}/liturgical-calendar/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null)
-    ]).then(([readings, calendar]) => {
+      fetch(`${API_BASE}/liturgical-calendar/${dateStr}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${USCCB_BASE}/${usccbDate}.cfm.md`).then(r => r.ok ? r.text() : null).catch(() => null)
+    ]).then(([readings, calendar, markdown]) => {
       if (!readings && !calendar) {
         container.innerHTML = '<p class="readings-error">Could not load today\'s readings. Check back later.</p>';
         return;
@@ -2285,16 +2289,204 @@
         html += '</div>';
       }
 
-      // USCCB link
-      if (readings?.usccbLink) {
-        html += `<a href="${readings.usccbLink}" target="_blank" rel="noopener" class="readings-usccb">
-          Read full text
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>`;
+      // Parse markdown into reading sections for the reader modal
+      const readingSections = markdown ? parseReadingsMarkdown(markdown) : [];
+
+      // Read Now button (only if we have parsed content)
+      if (readingSections.length > 0) {
+        html += `<button type="button" class="btn btn-primary btn-sm readings-read-now" data-open-reader>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Read Now
+        </button>`;
       }
 
+      // USCCB link
+      const usccbLink = readings?.usccbLink || `${USCCB_BASE}/${usccbDate}.cfm`;
+      html += `<a href="${usccbLink}" target="_blank" rel="noopener" class="readings-usccb">
+        Read on USCCB
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>`;
+
       container.innerHTML = html;
+
+      // Wire Read Now button
+      if (readingSections.length > 0) {
+        container.querySelector('[data-open-reader]')?.addEventListener('click', () => {
+          openReadingsReader(readingSections, usccbLink);
+        });
+      }
     });
+  }
+
+  /**
+   * Parse the USCCB markdown into reading sections.
+   * Returns array of { title, reference, body } objects.
+   */
+  function parseReadingsMarkdown(md) {
+    const sections = [];
+    // Split on ### headings
+    const parts = md.split(/^### /m);
+    for (const part of parts) {
+      if (!part.trim()) continue;
+      const lines = part.split('\n');
+      const rawTitle = lines[0].trim();
+
+      // Only keep actual reading sections
+      const titleLower = rawTitle.toLowerCase();
+      if (!titleLower.startsWith('reading') &&
+          !titleLower.startsWith('responsorial') &&
+          !titleLower.startsWith('gospel') &&
+          !titleLower.startsWith('alleluia') &&
+          !titleLower.startsWith('sequence')) continue;
+
+      // Skip Alleluia (usually just a short acclamation, not a full reading)
+      if (titleLower.startsWith('alleluia')) continue;
+
+      // Extract reference (usually on the line after the title, in brackets)
+      let reference = '';
+      let bodyStart = 1;
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const refMatch = line.match(/\[([^\]]+)\]/);
+        if (refMatch) {
+          reference = refMatch[1].trim();
+          bodyStart = i + 1;
+        }
+        break;
+      }
+
+      // Build body text — clean up markdown artifacts
+      let body = lines.slice(bodyStart).join('\n');
+      // Remove markdown links but keep text
+      body = body.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+      // Convert bold markdown to <strong>
+      body = body.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Convert italic markdown to <em>
+      body = body.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      // Convert line breaks (two trailing spaces or double newlines)
+      body = body.replace(/  \n/g, '<br>');
+      // Collapse runs of blank lines into paragraph breaks
+      body = body.replace(/\n{3,}/g, '\n\n');
+      // Convert remaining double newlines to paragraph breaks
+      body = body.replace(/\n\n/g, '</p><p>');
+      // Convert single newlines to line breaks
+      body = body.replace(/\n/g, '<br>');
+      // Wrap in paragraphs and clean up empty ones
+      body = '<p>' + body + '</p>';
+      body = body.replace(/<p>\s*<\/p>/g, '');
+      body = body.replace(/<p>\s*<br>\s*<\/p>/g, '');
+      // Clean up leading/trailing <br> in paragraphs
+      body = body.replace(/<p>\s*<br>/g, '<p>');
+      body = body.replace(/<br>\s*<\/p>/g, '</p>');
+
+      if (!body.replace(/<[^>]*>/g, '').trim()) continue;
+
+      // Friendly display title
+      let displayTitle = rawTitle;
+      if (titleLower.startsWith('reading 1')) displayTitle = 'First Reading';
+      else if (titleLower.startsWith('reading 2')) displayTitle = 'Second Reading';
+      else if (titleLower.startsWith('responsorial')) displayTitle = 'Responsorial Psalm';
+      else if (titleLower.startsWith('gospel')) displayTitle = 'Gospel';
+      else if (titleLower.startsWith('sequence')) displayTitle = 'Sequence';
+
+      sections.push({ title: displayTitle, reference, body });
+    }
+    return sections;
+  }
+
+  /**
+   * Open a paginated readings reader modal.
+   */
+  function openReadingsReader(sections, usccbLink) {
+    // Remove existing reader if any
+    document.querySelector('.reader-overlay')?.remove();
+
+    const total = sections.length;
+    const dotsHTML = sections.map((_, i) => `<span class="reader-dot${i === 0 ? ' active' : ''}"></span>`).join('');
+    const pagesHTML = sections.map((s, i) => `
+      <div class="reader-page${i === 0 ? ' active' : ''}" data-reader-page="${i}">
+        <div class="reader-page-label">${escapeHtml(s.title)}</div>
+        ${s.reference ? `<div class="reader-page-ref">${escapeHtml(s.reference)}</div>` : ''}
+        <div class="reader-page-body">${s.body}</div>
+      </div>
+    `).join('');
+
+    const overlay = document.createElement('div');
+    overlay.className = 'reader-overlay';
+    overlay.innerHTML = `
+      <div class="reader-modal">
+        <div class="reader-header">
+          <div class="reader-dots">${dotsHTML}</div>
+          <button type="button" class="reader-close" data-reader-close aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="reader-body">${pagesHTML}</div>
+        <div class="reader-footer">
+          <button type="button" class="btn btn-ghost btn-sm" data-reader-prev disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
+          <span class="reader-counter" data-reader-counter>1 / ${total}</span>
+          <button type="button" class="btn btn-ghost btn-sm" data-reader-next>
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <a href="${usccbLink}" target="_blank" rel="noopener" class="reader-usccb-link">
+          Read on USCCB
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('open'));
+
+    let current = 0;
+    const pages = overlay.querySelectorAll('.reader-page');
+    const dots = overlay.querySelectorAll('.reader-dot');
+    const prevBtn = overlay.querySelector('[data-reader-prev]');
+    const nextBtn = overlay.querySelector('[data-reader-next]');
+    const counter = overlay.querySelector('[data-reader-counter]');
+
+    function goTo(n) {
+      pages.forEach(p => p.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      pages[n].classList.add('active');
+      dots[n].classList.add('active');
+      current = n;
+      prevBtn.disabled = n === 0;
+      nextBtn.disabled = n === total - 1;
+      counter.textContent = `${n + 1} / ${total}`;
+      // Scroll reader body to top
+      overlay.querySelector('.reader-body').scrollTop = 0;
+    }
+
+    function close() {
+      overlay.classList.remove('open');
+      setTimeout(() => overlay.remove(), 350);
+    }
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target.matches('[data-reader-next]') || e.target.closest('[data-reader-next]')) {
+        if (current < total - 1) goTo(current + 1);
+      } else if (e.target.matches('[data-reader-prev]') || e.target.closest('[data-reader-prev]')) {
+        if (current > 0) goTo(current - 1);
+      } else if (e.target.matches('[data-reader-close]') || e.target.closest('[data-reader-close]')) {
+        close();
+      } else if (e.target === overlay) {
+        close();
+      }
+    });
+
+    // Keyboard navigation
+    function onKey(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+      else if (e.key === 'ArrowRight' && current < total - 1) goTo(current + 1);
+      else if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
+    }
+    document.addEventListener('keydown', onKey);
   }
 
   async function initHubPacking() {
@@ -2585,42 +2777,265 @@
   }
 
   // ============================================
-  // FIRST-VISIT HUB MODAL
+  // HUB TOUR GUIDE (first visit)
   // ============================================
   function initHubFirstVisit() {
     if (!document.querySelector('[data-hub]')) return;
-    const seen = Storage._lsGet('hub:welcome-seen', false);
+    const seen = Storage._lsGet('hub:tour-seen', false);
     if (seen || !Auth.isGuest) return;
 
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-      <div class="modal hub-welcome-modal">
-        <h2>Welcome, pilgrim.</h2>
-        <p>Save your packing list, journal, talk notes, and photos.</p>
-        <div class="hub-welcome-actions">
-          <button type="button" class="btn btn-primary" data-welcome-signup>Create a free account</button>
-          <button type="button" class="btn btn-ghost" data-welcome-guest>Continue as guest</button>
+    const steps = [
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+        title: 'Your Retreat Hub',
+        desc: 'This is your personal command center for the ASCEND 2026 retreat. Everything you need is right here — let\'s take a quick look.'
+      },
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+        title: 'Daily Readings',
+        desc: 'Start each day with the Mass readings, psalm, and gospel. If there\'s a saint of the day, you\'ll see their story and a quote.'
+      },
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>`,
+        title: 'Journal & Talk Notes',
+        desc: 'Write reflections, sketch drawings, and capture speaker notes with a rich text editor. Everything is encrypted — only you can read it.'
+      },
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>`,
+        title: 'Rosary & Intentions',
+        desc: 'Pray the Holy Rosary with a guided experience, and keep a private list of prayer intentions that are encrypted end-to-end.'
+      },
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 21h16"/><rect x="9" y="14" width="6" height="3" rx=".5"/></svg>`,
+        title: 'Packing & More',
+        desc: 'Check off your packing list, review confession prep, find emergency contacts, and see the full retreat schedule.'
+      },
+      {
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+        title: 'Create an Account',
+        desc: 'Save your data across devices with a free account. Just a username and password — no email needed. Your journal and intentions stay encrypted.',
+        cta: true
+      }
+    ];
+
+    const totalSteps = steps.length;
+    const dotsHTML = steps.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('');
+    const stepsHTML = steps.map((s, i) => `
+      <div class="guide-step${i === 0 ? ' active' : ''}" data-guide-step="${i}">
+        <div class="guide-icon">${s.icon}</div>
+        <h2>${s.title}</h2>
+        <p class="guide-desc">${s.desc}</p>
+        <div class="guide-actions">
+          ${i > 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-back>Back</button>' : ''}
+          ${s.cta ? `
+            <button type="button" class="btn btn-primary" data-guide-signup>Create Account</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-guide-close>Continue as Guest</button>
+          ` : `
+            <button type="button" class="btn btn-primary" data-guide-next>${i === 0 ? 'Show Me Around' : 'Next'}</button>
+            ${i === 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-close>Skip</button>' : ''}
+          `}
         </div>
-        <p class="text-mute" style="font-size:0.8rem;margin-top:var(--space-4)">
-          Accounts use a username and password — no email needed.<br>
-          Your journal and private intentions are encrypted end-to-end. Only you can read them.
-        </p>
+        <div class="guide-counter">${i + 1} / ${totalSteps}</div>
+      </div>
+    `).join('');
+
+    const guide = document.createElement('div');
+    guide.className = 'guide-overlay';
+    guide.innerHTML = `
+      <div class="guide-inner">
+        <div class="guide-dots">${dotsHTML}</div>
+        ${stepsHTML}
       </div>
     `;
-    document.body.appendChild(modal);
-    requestAnimationFrame(() => modal.classList.add('open'));
+    document.body.appendChild(guide);
+    requestAnimationFrame(() => guide.classList.add('open'));
 
-    modal.querySelector('[data-welcome-signup]').addEventListener('click', () => {
-      Storage._lsSet('hub:welcome-seen', true);
-      modal.classList.remove('open');
-      setTimeout(() => { modal.remove(); openAuthModal('signup'); }, 300);
+    let current = 0;
+    const allSteps = guide.querySelectorAll('.guide-step');
+    const allDots = guide.querySelectorAll('.guide-dot');
+
+    function goTo(n) {
+      allSteps.forEach(s => s.classList.remove('active'));
+      allDots.forEach(d => d.classList.remove('active'));
+      allSteps[n].classList.add('active');
+      allDots[n].classList.add('active');
+      current = n;
+    }
+
+    function close() {
+      Storage._lsSet('hub:tour-seen', true);
+      guide.classList.remove('open');
+      setTimeout(() => guide.remove(), 400);
+    }
+
+    guide.addEventListener('click', (e) => {
+      if (e.target.matches('[data-guide-next]')) goTo(current + 1);
+      else if (e.target.matches('[data-guide-back]')) goTo(current - 1);
+      else if (e.target.matches('[data-guide-close]')) close();
+      else if (e.target.matches('[data-guide-signup]')) {
+        close();
+        setTimeout(() => openAuthModal('signup'), 400);
+      }
     });
+  }
 
-    modal.querySelector('[data-welcome-guest]').addEventListener('click', () => {
-      Storage._lsSet('hub:welcome-seen', true);
-      modal.classList.remove('open');
-      setTimeout(() => modal.remove(), 300);
+  // ============================================
+  // ACCOUNT SETUP GUIDE (after first signup)
+  // ============================================
+  function showAccountSetupGuide() {
+    const seen = Storage._lsGet('acct:setup-seen', false);
+    if (seen) return;
+
+    const iconKeys = typeof PROFILE_ICONS !== 'undefined' ? Object.keys(PROFILE_ICONS) : [];
+    const iconGridHTML = iconKeys.map(key => {
+      const svg = typeof renderProfileIcon === 'function' ? renderProfileIcon(key, 40) : '';
+      return `<button type="button" class="guide-icon-btn" data-pick-icon="${key}" title="${key}">${svg}</button>`;
+    }).join('');
+
+    const steps = [
+      {
+        html: `
+          <div class="guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <h2>Account Created!</h2>
+          <p class="guide-desc">Welcome to ASCEND. Let's set up your profile so other retreat attendees can recognize you.</p>
+        `
+      },
+      {
+        html: `
+          <h2>What should we call you?</h2>
+          <p class="guide-desc">This is how you'll appear to other attendees.</p>
+          <div class="guide-field">
+            <label for="setup-display-name">Display Name</label>
+            <input type="text" id="setup-display-name" class="field" placeholder="Your name" maxlength="30" value="${escapeHtml(Auth.displayName || '')}">
+          </div>
+        `
+      },
+      {
+        html: `
+          <h2>Pick a Profile Icon</h2>
+          <p class="guide-desc">Choose a symbol that represents you.</p>
+          <div class="guide-icon-grid">${iconGridHTML}</div>
+        `
+      },
+      {
+        html: `
+          <h2>Sharing Preferences</h2>
+          <p class="guide-desc">Control what other retreat attendees can see.</p>
+          <div class="guide-toggles">
+            <label class="guide-toggle-row">
+              <span>
+                <strong>Share Profile</strong>
+                <small>Others can see your name and icon</small>
+              </span>
+              <input type="checkbox" data-setup-share-profile checked>
+            </label>
+            <label class="guide-toggle-row">
+              <span>
+                <strong>Share Packing Progress</strong>
+                <small>Others can see your packing checklist</small>
+              </span>
+              <input type="checkbox" data-setup-share-packing>
+            </label>
+          </div>
+        `
+      },
+      {
+        html: `
+          <h2>Choose Your Theme</h2>
+          <p class="guide-desc">You can always change this later in settings.</p>
+          <div class="ob-theme-cards">
+            <button type="button" class="ob-theme-choice" data-setup-theme="dark" aria-pressed="true">
+              <div class="ob-theme-preview ob-preview-dark">Aa</div>
+              <span>Dark</span>
+            </button>
+            <button type="button" class="ob-theme-choice" data-setup-theme="light" aria-pressed="false">
+              <div class="ob-theme-preview ob-preview-light">Aa</div>
+              <span>Light</span>
+            </button>
+          </div>
+        `
+      },
+      {
+        html: `
+          <div class="guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h2>You're All Set!</h2>
+          <p class="guide-desc">Your profile is saved. You can update any of these settings anytime from the account page.</p>
+        `
+      }
+    ];
+
+    const totalSteps = steps.length;
+    const dotsHTML = steps.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('');
+    const stepsHTML = steps.map((s, i) => `
+      <div class="guide-step${i === 0 ? ' active' : ''}" data-guide-step="${i}">
+        ${s.html}
+        <div class="guide-actions">
+          ${i > 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-back>Back</button>' : ''}
+          <button type="button" class="btn btn-primary" data-guide-next>${i === totalSteps - 1 ? 'Done' : i === 0 ? 'Set Up Profile' : 'Next'}</button>
+        </div>
+        <div class="guide-counter">${i + 1} / ${totalSteps}</div>
+      </div>
+    `).join('');
+
+    const guide = document.createElement('div');
+    guide.className = 'guide-overlay';
+    guide.innerHTML = `<div class="guide-inner">${stepsHTML}<div class="guide-dots">${dotsHTML}</div></div>`;
+    document.body.appendChild(guide);
+    requestAnimationFrame(() => guide.classList.add('open'));
+
+    let current = 0;
+    let selectedIcon = Auth.profile?.saint_icon || '';
+    const allSteps = guide.querySelectorAll('.guide-step');
+    const allDots = guide.querySelectorAll('.guide-dot');
+
+    function goTo(n) {
+      allSteps.forEach(s => s.classList.remove('active'));
+      allDots.forEach(d => d.classList.remove('active'));
+      allSteps[n].classList.add('active');
+      allDots[n].classList.add('active');
+      current = n;
+    }
+
+    async function finish() {
+      // Save display name + icon
+      const nameInput = guide.querySelector('#setup-display-name');
+      const displayName = nameInput ? nameInput.value.trim() : '';
+      const shareProfile = guide.querySelector('[data-setup-share-profile]')?.checked ?? true;
+      const sharePacking = guide.querySelector('[data-setup-share-packing]')?.checked ?? false;
+
+      if (displayName || selectedIcon) {
+        const update = {};
+        if (displayName) update.display_name = displayName;
+        if (selectedIcon) update.saint_icon = selectedIcon;
+        try { await Auth.updateProfile(update); } catch (e) { console.warn('Profile update failed:', e); }
+      }
+
+      try {
+        await DataStore.updateSharingPrefs({ share_profile: shareProfile, share_packing: sharePacking });
+      } catch (e) { console.warn('Sharing prefs failed:', e); }
+
+      Storage._lsSet('acct:setup-seen', true);
+      guide.classList.remove('open');
+      setTimeout(() => { guide.remove(); location.reload(); }, 400);
+    }
+
+    guide.addEventListener('click', (e) => {
+      if (e.target.matches('[data-guide-next]')) {
+        if (current === totalSteps - 1) finish();
+        else goTo(current + 1);
+      } else if (e.target.matches('[data-guide-back]')) {
+        goTo(current - 1);
+      } else if (e.target.closest('[data-pick-icon]')) {
+        const btn = e.target.closest('[data-pick-icon]');
+        guide.querySelectorAll('.guide-icon-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedIcon = btn.dataset.pickIcon;
+      } else if (e.target.closest('[data-setup-theme]')) {
+        const btn = e.target.closest('[data-setup-theme]');
+        guide.querySelectorAll('[data-setup-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        Theme.set(btn.dataset.setupTheme);
+      }
     });
   }
 
@@ -2735,6 +3150,7 @@
 
     // Hub page
     initHubFirstVisit();
+    if (!Auth.isGuest) showAccountSetupGuide();
     initHub().catch(console.warn);
 
     // Admin page
