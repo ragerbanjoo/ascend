@@ -2696,7 +2696,7 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .auth-tab.active { background: var(--gold-soft); color: var(--gold-bright); border-color: var(--gold-dim); }
 .auth-form .field-group { margin-bottom: var(--space-4); }
 .auth-form label { display: block; color: var(--cream-dim); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: var(--space-1); }
-.field { width: 100%; padding: var(--space-2) var(--space-3); background: var(--surface-2, rgba(245,241,232,0.04)); border: 1px solid var(--cream-line); border-radius: var(--r-md); color: var(--cream); font-size: 0.9rem; }
+.field { width: 100%; padding: var(--space-2) var(--space-3); background: var(--surface-2, rgba(245,241,232,0.04)); border: 1px solid var(--cream-line); border-radius: var(--r-md); color: var(--cream); font-size: max(1rem, 16px); }
 .field:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
 .field-hint { color: var(--cream-mute); font-size: 0.75rem; margin-top: 0.25rem; }
 .btn-full { width: 100%; }
