@@ -1555,7 +1555,7 @@
       const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
 
       // 7. Sign up with Supabase
-      const email = `${uname}@pilgrim.sjdyag.com`;
+      const email = `${uname}@example.com`;
       const { data: authData, error: authError } = await sb.auth.signUp({ email, password });
       if (authError) throw new Error(authError.message);
 
@@ -1596,7 +1596,7 @@
         throw new Error('Account temporarily locked. Try again in 15 minutes.');
       }
 
-      const email = `${uname}@pilgrim.sjdyag.com`;
+      const email = `${uname}@example.com`;
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) {
         await this.recordFailedLogin(uname);

@@ -150,11 +150,13 @@ html[data-theme="light"] .quicklink:hover {
   box-shadow: 0 0 24px -4px rgba(158,124,46,0.15), 0 8px 28px -8px rgba(26,26,46,0.12);
 }
 html[data-theme="light"] .info-card {
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.7) !important;
   border-color: rgba(26,26,46,0.08);
+  box-shadow: 0 2px 12px -2px rgba(26,26,46,0.06);
 }
 html[data-theme="light"] .info-card:hover {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.85) !important;
+  box-shadow: 0 4px 20px -4px rgba(26,26,46,0.09);
 }
 html[data-theme="light"] .note-box {
   background: linear-gradient(155deg, rgba(158,124,46,0.08), rgba(158,124,46,0.02));
@@ -166,13 +168,41 @@ html[data-theme="light"] .countdown-cell {
   background: rgba(26, 26, 46, 0.06);
 }
 html[data-theme="light"] .stop-card {
-  background: rgba(26, 26, 46, 0.03);
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(26,26,46,0.08);
+  box-shadow: 0 2px 12px -2px rgba(26,26,46,0.07);
+}
+html[data-theme="light"] .stop-card:hover {
+  border-color: rgba(201,161,74,0.35);
+  box-shadow: 0 4px 20px -4px rgba(26,26,46,0.1);
 }
 html[data-theme="light"] .stop-card.open {
-  background: rgba(26, 26, 46, 0.05);
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(201,161,74,0.25);
+  box-shadow: 0 4px 24px -4px rgba(26,26,46,0.1);
+}
+html[data-theme="light"] .stop.current .stop-card {
+  background: rgba(255,255,255,0.9);
+  border-color: var(--gold);
+  box-shadow: 0 8px 30px -8px rgba(201,161,74,0.2);
 }
 html[data-theme="light"] .option-card {
-  background: rgba(26, 26, 46, 0.03);
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(26,26,46,0.08);
+  box-shadow: 0 2px 12px -2px rgba(26,26,46,0.06);
+}
+html[data-theme="light"] .option-card[aria-pressed="true"] {
+  background: rgba(255,255,255,0.9);
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px -4px rgba(201,161,74,0.15);
+}
+html[data-theme="light"] .speaker-back {
+  background: linear-gradient(155deg, rgba(158,124,46,0.08), rgba(255,255,255,0.85));
+}
+html[data-theme="light"] .hero-card {
+  background: linear-gradient(155deg, rgba(158,124,46,0.06), rgba(255,255,255,0.7));
+  border-color: rgba(26,26,46,0.08);
+  box-shadow: 0 2px 16px -4px rgba(26,26,46,0.08);
 }
 html[data-theme="light"] .field {
   background: rgba(26, 26, 46, 0.04);
