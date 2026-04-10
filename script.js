@@ -2895,7 +2895,7 @@
             <button type="button" class="btn btn-ghost btn-sm" data-guide-close>Continue as Guest</button>
           ` : `
             <button type="button" class="btn btn-primary" data-guide-next>${i === 0 ? 'Show Me Around' : 'Next'}</button>
-            ${i === 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-close>Skip</button>' : ''}
+            ${i === 0 ? '<a href="parents.html" class="btn btn-ghost btn-sm" data-guide-parent>I\'m a Parent</a><button type="button" class="btn btn-ghost btn-sm" data-guide-close>Skip</button>' : ''}
           `}
         </div>
         <div class="guide-counter">${i + 1} / ${totalSteps}</div>
@@ -2935,7 +2935,10 @@
       if (e.target.matches('[data-guide-next]')) goTo(current + 1);
       else if (e.target.matches('[data-guide-back]')) goTo(current - 1);
       else if (e.target.matches('[data-guide-close]')) close();
-      else if (e.target.matches('[data-guide-signup]')) {
+      else if (e.target.matches('[data-guide-parent]')) {
+        Storage._lsSet('hub:tour-seen', true);
+        // navigation happens via href
+      } else if (e.target.matches('[data-guide-signup]')) {
         close();
         setTimeout(() => openAuthModal('signup'), 400);
       }

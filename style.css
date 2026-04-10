@@ -2384,7 +2384,8 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   color: var(--cream);
   margin: 0 0 var(--space-4);
 }
-.info-card .label-row {
+.info-card .label-row,
+.hero-card .label-row {
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: var(--space-3);
@@ -2392,8 +2393,10 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   border-bottom: 1px dashed var(--cream-line);
   font-size: var(--fs-base);
 }
-.info-card .label-row:last-child { border-bottom: none; }
-.info-card .label-row dt {
+.info-card .label-row:last-child,
+.hero-card .label-row:last-child { border-bottom: none; }
+.info-card .label-row dt,
+.hero-card .label-row dt {
   font-family: var(--font-body);
   font-size: var(--fs-xs);
   text-transform: uppercase;
@@ -2401,12 +2404,14 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   color: var(--gold);
   margin: 0;
 }
-.info-card .label-row dd {
+.info-card .label-row dd,
+.hero-card .label-row dd {
   margin: 0;
   color: var(--cream);
 }
 @media (max-width: 560px) {
-  .info-card .label-row { grid-template-columns: 1fr; gap: var(--space-1); }
+  .info-card .label-row,
+  .hero-card .label-row { grid-template-columns: 1fr; gap: var(--space-1); }
 }
 
 .warn-box {
