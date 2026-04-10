@@ -2624,6 +2624,10 @@
             <div class="password-meter" data-pw-meter><div class="password-meter-fill"></div></div>
             <p class="field-hint" data-pw-hint>Minimum 10 characters</p>
           </div>
+          <div class="field-group">
+            <label for="signup-pass-confirm">Confirm Password</label>
+            <input type="password" id="signup-pass-confirm" class="field" autocomplete="new-password" minlength="10" required>
+          </div>
           <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" data-honeypot>
           <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" data-size="compact"></div>
           <p class="auth-error" data-auth-error style="display:none"></p>
@@ -2744,8 +2748,16 @@
       // Honeypot check
       if (e.target.querySelector('[data-honeypot]').value) return;
 
-      // zxcvbn check
+      // Password match check
       const pass = e.target.querySelector('#signup-pass').value;
+      const confirmPass = e.target.querySelector('#signup-pass-confirm').value;
+      if (pass !== confirmPass) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.style.display = '';
+        return;
+      }
+
+      // zxcvbn check
       if (typeof zxcvbn === 'function' && zxcvbn(pass).score < 3) {
         errEl.textContent = 'Please choose a stronger password.';
         errEl.style.display = '';
