@@ -2065,6 +2065,28 @@
     const hubEl = document.querySelector('[data-hub]');
     if (!hubEl) return;
 
+    // --- Jump-nav dropdown ---
+    const jumpBtn = hubEl.querySelector('.hub-jumpnav-btn');
+    const jumpNav = hubEl.querySelector('.hub-jumpnav');
+    if (jumpBtn && jumpNav) {
+      jumpBtn.addEventListener('click', () => {
+        const open = jumpNav.classList.toggle('open');
+        jumpBtn.setAttribute('aria-expanded', open);
+      });
+      jumpNav.querySelectorAll('.hub-jumpnav-menu a').forEach(a => {
+        a.addEventListener('click', () => {
+          jumpNav.classList.remove('open');
+          jumpBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (!jumpNav.contains(e.target)) {
+          jumpNav.classList.remove('open');
+          jumpBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
     // Check for scheduled deletion banner
     if (!Auth.isGuest) {
       const deletion = await DataStore.getScheduledDeletion();
