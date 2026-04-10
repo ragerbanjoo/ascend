@@ -1621,11 +1621,11 @@
 
       // Repair broken signup: auth exists but profile was never created
       if (!this._profile) {
-        const passwordSalt = Crypto.getRandomBytes(16);
+        const passwordSalt = Crypto.generateSalt();
         const passwordKey = await Crypto.deriveKey(password, passwordSalt);
         const cek = await Crypto.generateCEK();
         const phrase = await Crypto.generateRecoveryPhrase();
-        const phraseSalt = Crypto.getRandomBytes(16);
+        const phraseSalt = Crypto.generateSalt();
         const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
         const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
         const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
