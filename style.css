@@ -788,7 +788,7 @@ html[data-theme="light"] .btn-scroll-top {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: var(--z-nav);
-  height: 48px;
+  height: calc(48px + env(safe-area-inset-top, 0px));
   padding: env(safe-area-inset-top, 0px) var(--space-4) 0;
   background: var(--ink-glass);
   backdrop-filter: blur(18px) saturate(140%);
@@ -2718,7 +2718,7 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .recovery-phrase-screen h3 { text-align: center; }
 .recovery-phrase-screen p { color: var(--cream-dim); font-size: 0.875rem; text-align: center; }
 .recovery-words {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2);
   margin: var(--space-5) 0; padding: var(--space-4);
   background: var(--ink-soft); border-radius: var(--r-md);
 }
@@ -2730,6 +2730,7 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .recovery-word em { font-style: normal; color: var(--gold-dim); font-size: 0.7rem; min-width: 1.2rem; }
 .recovery-actions { display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-4); }
 .recovery-warning { color: #fca5a5; font-size: 0.8rem; text-align: center; margin-bottom: var(--space-5); }
+.recovery-phrase-screen { padding-bottom: var(--space-4); }
 
 /* Hub welcome modal */
 .hub-welcome-modal { text-align: center; }

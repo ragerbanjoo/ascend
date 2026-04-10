@@ -1645,7 +1645,8 @@
         const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
         const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
 
-        await sb.from('profiles').insert({
+        // Try insert first, fall back to upsert if row already exists
+        const profileData = {
           id: data.user.id,
           username: uname,
           display_name: uname,
@@ -1655,8 +1656,13 @@
           cek_phrase_wrapped: phraseWrap.wrapped,
           cek_phrase_iv: phraseWrap.iv,
           phrase_salt: Crypto._toBase64(phraseSalt),
-        });
-        await sb.from('sharing_preferences').insert({ user_id: data.user.id });
+        };
+        const { error: insertErr } = await sb.from('profiles').upsert(profileData, { onConflict: 'id' });
+        if (insertErr) {
+          console.error('Profile repair failed:', insertErr);
+          throw new Error('Could not set up your account profile. Please contact Alex.');
+        }
+        await sb.from('sharing_preferences').upsert({ user_id: data.user.id }, { onConflict: 'user_id' });
         Crypto.setCEK(cek);
         await this._loadProfile();
         this._notify();
