@@ -3200,7 +3200,7 @@
 
     const loadingEl = adminEl.querySelector('[data-admin-loading]');
     const deniedEl = adminEl.querySelector('[data-admin-denied]');
-    const dashEl = adminEl.querySelector('[data-admin-dashboard]');
+    const dashEl = adminEl.querySelector('[data-admin-content]');
 
     if (!Auth.user || !Auth.isAdmin) {
       if (loadingEl) loadingEl.style.display = 'none';
