@@ -2540,6 +2540,7 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-3);
   margin: 0 auto;
+  padding: 0;
   text-align: left;
 }
 @media (max-width: 640px) {
