@@ -632,9 +632,9 @@
   const STOPS = [
     // ── Saturday ──
     { id: 1,  day: 'sat', timeA: '03:45', timeB: '05:30',
-      title: 'Meet at St. Juan Diego Parish, Tieton',
-      addr:  'St. Juan Diego Parish, Tieton, WA',
-      map:   'https://www.google.com/maps/search/?api=1&query=St.+Juan+Diego+Parish+Tieton+WA',
+      title: 'Meet in Tieton',
+      addr:  'Tieton, WA (exact location TBA)',
+      map:   'https://www.google.com/maps/search/?api=1&query=Tieton+WA',
       body:  'Morning prayer, roll call, load vehicles, final restroom break before the road. Please arrive on time — we leave together.',
       bring: 'Everything you packed. Coffee optional but recommended.'
     },
@@ -1173,7 +1173,7 @@
           <div class="ob-time-blocks">
             <div class="ob-time-block">
               <span class="ob-time">3:45 AM</span>
-              <span class="ob-time-label">Depart from St. Juan Diego Parish, Tieton</span>
+              <span class="ob-time-label">Depart from Tieton</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">6:30 AM</span>
@@ -1201,7 +1201,7 @@
           <div class="ob-time-blocks">
             <div class="ob-time-block">
               <span class="ob-time">5:30 AM</span>
-              <span class="ob-time-label">Depart from St. Juan Diego Parish, Tieton</span>
+              <span class="ob-time-label">Depart from Tieton</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">8:15 AM</span>
