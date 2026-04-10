@@ -1847,10 +1847,12 @@
       };
       if (id) {
         row.updated_at = new Date().toISOString();
-        await sb.from('journal_entries').update(row).eq('id', id).eq('user_id', Auth.user.id);
+        const { error } = await sb.from('journal_entries').update(row).eq('id', id).eq('user_id', Auth.user.id);
+        if (error) throw new Error('Failed to save journal: ' + error.message);
       } else {
         row.user_id = Auth.user.id;
-        await sb.from('journal_entries').insert(row);
+        const { error } = await sb.from('journal_entries').insert(row);
+        if (error) throw new Error('Failed to save journal: ' + error.message);
       }
     },
 
@@ -1929,9 +1931,10 @@
       }
       const sb = getSupabase();
       const enc = await Crypto.encrypt(text);
-      await sb.from('private_intentions').insert({
+      const { error } = await sb.from('private_intentions').insert({
         user_id: Auth.user.id, text_ciphertext: enc.ciphertext, text_iv: enc.iv
       });
+      if (error) throw new Error('Failed to save intention: ' + error.message);
     },
 
     async toggleIntentionAnswered(id, answered) {
@@ -2059,36 +2062,52 @@
     const userId = Auth.user?.id;
     if (!userId) return;
 
+    let migrated = 0;
+    let failed = 0;
+
     // Packing
-    const packing = Storage._lsGet('hub:packing', {});
-    for (const [key, checked] of Object.entries(packing)) {
-      await DataStore.setPackingItem(key, checked);
-    }
+    try {
+      const packing = Storage._lsGet('hub:packing', {});
+      for (const [key, checked] of Object.entries(packing)) {
+        await DataStore.setPackingItem(key, checked);
+      }
+      if (Object.keys(packing).length) migrated++;
+    } catch (e) { console.error('Migration: packing failed', e); failed++; }
 
-    // Journal (encrypt)
-    const journal = Storage._lsGet('hub:journal', []);
-    for (const entry of journal) {
-      await DataStore.saveJournalEntry(null, entry.title || '', entry.body || '');
-    }
-
-    // Talk notes
-    const notes = Storage._lsGet('hub:talknotes', []);
-    for (const note of notes) {
-      await DataStore.saveTalkNote(null, note.speaker, note.talk_title, note.notes);
-    }
+    // Journal + talk notes (encrypt)
+    try {
+      const journal = Storage._lsGet('hub:journal', []);
+      for (const entry of journal) {
+        await DataStore.saveJournalEntry(null, entry.title || '', entry.body || '', {
+          entryType: entry.entry_type || 'journal',
+          speaker: entry.speaker || '',
+          talkTitle: entry.talkTitle || ''
+        });
+      }
+      if (journal.length) migrated++;
+    } catch (e) { console.error('Migration: journal failed', e); failed++; }
 
     // Intentions (encrypt)
-    const intentions = Storage._lsGet('hub:intentions', []);
-    for (const item of intentions) {
-      await DataStore.saveIntention(item.text);
-    }
+    try {
+      const intentions = Storage._lsGet('hub:intentions', []);
+      for (const item of intentions) {
+        if (item.text) {
+          await DataStore.saveIntention(item.text);
+        }
+      }
+      if (intentions.length) migrated++;
+    } catch (e) { console.error('Migration: intentions failed', e); failed++; }
 
-    // Clear localStorage hub data
+    // Clear localStorage hub data only for sections that didn't fail
     ['hub:packing', 'hub:journal', 'hub:talknotes', 'hub:intentions', 'hub:photos'].forEach(k => {
       try { localStorage.removeItem(k); } catch (e) {}
     });
 
-    showToast('Saved! Your journey is now safe across all your devices.');
+    if (failed > 0) {
+      showToast(`Some data couldn't be migrated (${failed} section${failed > 1 ? 's' : ''}). Check console for details.`, 'error');
+    } else {
+      showToast('Saved! Your journey is now safe across all your devices.');
+    }
   }
 
   // ============================================
