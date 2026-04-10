@@ -3114,8 +3114,22 @@ html[data-theme="light"] .intentions-empty {
 .ob-step .lede {
   color: var(--cream-dim);
   font-size: var(--fs-md);
-  margin: 0 0 var(--space-6);
+  margin: 0 0 var(--space-4);
   line-height: 1.6;
+}
+.ob-welcome-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+  color: var(--gold);
+  opacity: 0.85;
+}
+.ob-welcome-detail {
+  color: var(--cream-dim);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  margin: 0 0 var(--space-6);
+  opacity: 0.75;
 }
 
 /* Instructions (Add to Home Screen) */

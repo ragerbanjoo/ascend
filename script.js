@@ -1124,14 +1124,27 @@
         </div>`;
     }
 
-    const totalSteps = isStandalone ? 4 : 5;
+    const totalSteps = isStandalone ? 5 : 6;
     let stepNum = 0;
 
-    const installStep = isStandalone ? '' : `
+    const welcomeStep = `
         <div class="ob-step active" data-ob-step="${++stepNum}">
+          <div class="ob-welcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z"/><path d="M12 8v4"/><path d="M9 18l3-2 3 2"/></svg>
+          </div>
+          <h2>Welcome to ASCEND 2026</h2>
+          <p class="lede">This is your personal retreat companion for the St. Juan Diego Young Adult Group Eucharistic Revival, May 16-17 in Bellevue, WA.</p>
+          <p class="ob-welcome-detail">Inside you'll find the full schedule, speaker info, a personal journal, packing list, talk notes, and more -- everything you need for the retreat, right in your pocket.</p>
+          <div class="ob-actions">
+            <button type="button" class="btn btn-primary" data-ob-next>Get Started</button>
+          </div>
+        </div>`;
+
+    const installStep = isStandalone ? '' : `
+        <div class="ob-step" data-ob-step="${++stepNum}">
           <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Add to your home screen</h2>
-          <p class="lede">This site is your retreat guide. Pin it to your home screen for quick access all weekend.</p>
+          <p class="lede">Pin it to your home screen for quick access all weekend.</p>
           ${installHTML}
           <div class="ob-actions">
             <button type="button" class="btn btn-ghost" data-ob-next>Skip</button>
@@ -1149,9 +1162,11 @@
           ${dotsHTML}
         </div>
 
+        ${welcomeStep}
+
         ${installStep}
 
-        <div class="ob-step${isStandalone ? ' active' : ''}" data-ob-step="${++stepNum}">
+        <div class="ob-step" data-ob-step="${++stepNum}">
           <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
           <h2>Option A: With Confession &amp; Adoration</h2>
           <div class="ob-time-blocks">
