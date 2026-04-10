@@ -1410,8 +1410,29 @@
       return new TextDecoder().decode(pt);
     },
 
-    setCEK(key) { this._cek = key; },
-    clearCEK() { this._cek = null; },
+    async setCEK(key) {
+      this._cek = key;
+      try {
+        const raw = await crypto.subtle.exportKey('raw', key);
+        sessionStorage.setItem('_cek', this._toBase64(new Uint8Array(raw)));
+      } catch (e) { /* best-effort */ }
+    },
+    clearCEK() {
+      this._cek = null;
+      try { sessionStorage.removeItem('_cek'); } catch (e) {}
+    },
+    async restoreCEK() {
+      if (this._cek) return true;
+      try {
+        const stored = sessionStorage.getItem('_cek');
+        if (!stored) return false;
+        const raw = this._fromBase64(stored);
+        this._cek = await crypto.subtle.importKey(
+          'raw', raw, { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']
+        );
+        return true;
+      } catch (e) { return false; }
+    },
 
     _toBase64(buf) { return btoa(String.fromCharCode(...buf)); },
     _fromBase64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)); },
@@ -1498,6 +1519,7 @@
           return;
         }
         await this._updateLastSeen();
+        await Crypto.restoreCEK();
       }
 
       sb.auth.onAuthStateChange(async (event, session) => {
@@ -1603,8 +1625,8 @@
       // 9. Insert default sharing prefs
       await sb.from('sharing_preferences').insert({ user_id: authData.user.id });
 
-      // 10. Set CEK in memory
-      Crypto.setCEK(cek);
+      // 10. Set CEK in memory + sessionStorage
+      await Crypto.setCEK(cek);
       this._user = authData.user;
       await this._loadProfile();
       this._notify();
@@ -1663,7 +1685,7 @@
           throw new Error('Account repair failed: ' + insertErr.message + ' (code: ' + insertErr.code + '). Delete this user from Supabase Auth and sign up again.');
         }
         await sb.from('sharing_preferences').upsert({ user_id: data.user.id }, { onConflict: 'user_id' });
-        Crypto.setCEK(cek);
+        await Crypto.setCEK(cek);
         await this._loadProfile();
         this._notify();
         return { user: data.user, recoveryPhrase: phrase, repaired: true };
@@ -1677,7 +1699,7 @@
           this._profile.cek_password_iv,
           passwordKey
         );
-        Crypto.setCEK(cek);
+        await Crypto.setCEK(cek);
       }
 
       await this._updateLastSeen();
@@ -2064,48 +2086,58 @@
 
     let migrated = 0;
     let failed = 0;
+    const succeeded = [];
 
     // Packing
     try {
       const packing = Storage._lsGet('hub:packing', {});
-      for (const [key, checked] of Object.entries(packing)) {
-        await DataStore.setPackingItem(key, checked);
+      if (Object.keys(packing).length) {
+        for (const [key, checked] of Object.entries(packing)) {
+          await DataStore.setPackingItem(key, checked);
+        }
+        migrated++;
+        succeeded.push('hub:packing');
       }
-      if (Object.keys(packing).length) migrated++;
     } catch (e) { console.error('Migration: packing failed', e); failed++; }
 
     // Journal + talk notes (encrypt)
     try {
       const journal = Storage._lsGet('hub:journal', []);
-      for (const entry of journal) {
-        await DataStore.saveJournalEntry(null, entry.title || '', entry.body || '', {
-          entryType: entry.entry_type || 'journal',
-          speaker: entry.speaker || '',
-          talkTitle: entry.talkTitle || ''
-        });
+      if (journal.length) {
+        for (const entry of journal) {
+          await DataStore.saveJournalEntry(null, entry.title || '', entry.body || '', {
+            entryType: entry.entry_type || 'journal',
+            speaker: entry.speaker || '',
+            talkTitle: entry.talkTitle || ''
+          });
+        }
+        migrated++;
+        succeeded.push('hub:journal', 'hub:talknotes');
       }
-      if (journal.length) migrated++;
     } catch (e) { console.error('Migration: journal failed', e); failed++; }
 
     // Intentions (encrypt)
     try {
       const intentions = Storage._lsGet('hub:intentions', []);
-      for (const item of intentions) {
-        if (item.text) {
-          await DataStore.saveIntention(item.text);
+      if (intentions.length) {
+        for (const item of intentions) {
+          if (item.text) {
+            await DataStore.saveIntention(item.text);
+          }
         }
+        migrated++;
+        succeeded.push('hub:intentions');
       }
-      if (intentions.length) migrated++;
     } catch (e) { console.error('Migration: intentions failed', e); failed++; }
 
-    // Clear localStorage hub data only for sections that didn't fail
-    ['hub:packing', 'hub:journal', 'hub:talknotes', 'hub:intentions', 'hub:photos'].forEach(k => {
+    // Only clear localStorage for sections that actually migrated
+    for (const k of succeeded) {
       try { localStorage.removeItem(k); } catch (e) {}
-    });
+    }
 
     if (failed > 0) {
       showToast(`Some data couldn't be migrated (${failed} section${failed > 1 ? 's' : ''}). Check console for details.`, 'error');
-    } else {
+    } else if (migrated > 0) {
       showToast('Saved! Your journey is now safe across all your devices.');
     }
   }
