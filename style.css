@@ -266,7 +266,7 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   background: var(--ink);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -1860,11 +1860,13 @@ textarea.field {
 
 /* Day jump — segmented control */
 .day-jump {
+  position: -webkit-sticky;
   position: sticky;
   top: calc(var(--nav-h, 60px) + 8px);
   z-index: 10;
   margin: 0 0 var(--space-5);
-  padding: 0.5rem 0;
+  padding: 0.75rem 0;
+  background: var(--ink);
 }
 @media (max-width: 880px) {
   .day-jump { top: calc(48px + env(safe-area-inset-top, 0px) + 8px); }
@@ -1925,6 +1927,7 @@ textarea.field {
 .day-jump-btn:not(.active):hover {
   color: var(--cream);
 }
+html[data-theme="light"] .day-jump { background: var(--ink); }
 html[data-theme="light"] .day-jump-track {
   background: rgba(255,255,255,0.85);
   border-color: rgba(26,26,46,0.1);
