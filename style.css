@@ -3130,29 +3130,21 @@ html[data-theme="light"] .hub-guest-banner {
 .footer-inner {
   max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--space-5);
+  padding: 0 var(--space-7);
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: var(--space-7);
-  text-align: left;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  text-align: center;
 }
-@media (max-width: 720px) {
-  .footer .footer-inner {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-    padding: 0 var(--space-7);
-    text-align: center;
+.footer-inner * { text-align: center; }
+@media (min-width: 721px) {
+  .footer-inner {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: var(--space-7);
+    padding: 0 var(--space-5);
+    text-align: left;
   }
-  .footer .footer-inner *,
-  .footer .footer-inner p,
-  .footer .footer-inner h5,
-  .footer .footer-inner li,
-  .footer .footer-inner a {
-    text-align: center;
-  }
-  .footer .footer-bottom {
-    padding: var(--space-5) var(--space-7) 0;
-  }
+  .footer-inner * { text-align: left; }
 }
 .footer-brand {
   font-family: var(--font-display);
