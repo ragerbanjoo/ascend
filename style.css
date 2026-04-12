@@ -865,10 +865,10 @@ html[data-theme="light"] .btn-scroll-top:hover {
 
 /* Schedule submenu (pops above bottom nav) */
 .mnav-sub {
-  position: absolute;
-  bottom: calc(100% + 8px);
+  position: fixed;
+  bottom: calc(var(--mnav-h) + 8px);
   left: 50%;
-  transform: translateX(-70%) scale(0.95);
+  transform: translateX(-50%) scale(0.95);
   transform-origin: bottom center;
   display: flex;
   gap: 2px;
@@ -884,7 +884,7 @@ html[data-theme="light"] .btn-scroll-top:hover {
 .mnav-sub.open {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-70%) scale(1);
+  transform: translateX(-50%) scale(1);
 }
 .mnav-sub a {
   display: flex;
@@ -3125,20 +3125,15 @@ html[data-theme="light"] .hub-guest-banner {
 @media (max-width: 720px) {
   .footer-inner {
     grid-template-columns: 1fr;
+    text-align: center;
     gap: var(--space-6);
     padding: 0 var(--space-7);
   }
-  .footer-inner > div {
-    text-align: center;
-  }
-  .footer ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .footer ul li {
-    text-align: center;
-  }
+  .footer-inner > div { text-align: center; }
+  .footer ul { text-align: center; }
+  .footer ul li { text-align: center; }
+  .footer-brand { text-align: center; }
+  .footer-tag { text-align: center; }
   .footer-bottom {
     padding: var(--space-5) var(--space-7) 0;
   }
