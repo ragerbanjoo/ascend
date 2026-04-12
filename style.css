@@ -2147,6 +2147,20 @@ html[data-theme="light"] .timeline-hint {
   overflow: hidden;
   transition: max-height var(--dur-slow) var(--ease-out), padding-top var(--dur-slow) var(--ease-out);
 }
+.stop-places {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+}
+.stop-places li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--cream-line);
+}
+.stop-places li:last-child { border-bottom: none; }
+.stop-places a {
+  color: var(--gold);
+  font-weight: 600;
+}
 .stop-card.open .stop-detail {
   max-height: 800px;
   padding-top: var(--space-4);

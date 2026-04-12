@@ -719,13 +719,14 @@
     },
     { id: 9,  day: 'sat', time: '12:00',
       title: 'Lunch — Downtown Bellevue',
-      body:  'Grab lunch on your own at one of these walkable spots near the center:<br><br>' +
-             '<a href="https://maps.apple.com/?address=10246%20Main%20St%2C%20Bellevue%2C%20WA%2098004" target="_blank" rel="noopener"><strong>Facing East Noodle & Bar</strong></a> — Taiwanese · ~8 min walk<br>' +
-             '<a href="https://maps.app.goo.gl/6N25foCX5QCTqRNs5" target="_blank" rel="noopener"><strong>Semicolon Cafe</strong></a> — Coffee & bites · ~5 min walk<br>' +
-             '<a href="https://maps.app.goo.gl/XckiSZt9m9jmeds58" target="_blank" rel="noopener"><strong>Pagliacci Pizza</strong></a> — Pizza · ~6 min walk<br>' +
-             '<a href="https://maps.app.goo.gl/da8zZRYzLcqi6NnbA" target="_blank" rel="noopener"><strong>The Cheesecake Factory</strong></a> — American · ~10 min walk<br>' +
-             '<a href="https://maps.app.goo.gl/F48HfbK5d127khc99" target="_blank" rel="noopener"><strong>Mendocino Farms</strong></a> — Sandwiches & salads · ~5 min walk<br><br>' +
-             '<em>These are just recommendations within walking distance. You\'re more than welcome to find anything else the group wants in the moment.</em>',
+      body:  'The group will pick a spot together. Here are some recommendations within walking distance of the center — but you can always change your mind once you\'re there and go wherever the group is feeling.',
+      places: [
+        { name: 'Facing East Noodle & Bar', desc: 'Taiwanese', walk: '~8 min', url: 'https://maps.apple.com/?address=10246%20Main%20St%2C%20Bellevue%2C%20WA%2098004' },
+        { name: 'Semicolon Cafe', desc: 'Coffee & bites', walk: '~5 min', url: 'https://maps.app.goo.gl/6N25foCX5QCTqRNs5' },
+        { name: 'Pagliacci Pizza', desc: 'Pizza', walk: '~6 min', url: 'https://maps.app.goo.gl/XckiSZt9m9jmeds58' },
+        { name: 'The Cheesecake Factory', desc: 'American', walk: '~10 min', url: 'https://maps.app.goo.gl/da8zZRYzLcqi6NnbA' },
+        { name: 'Mendocino Farms', desc: 'Sandwiches & salads', walk: '~5 min', url: 'https://maps.app.goo.gl/F48HfbK5d127khc99' },
+      ],
       map:   'https://www.google.com/maps/search/?api=1&query=restaurants+near+Meydenbauer+Center+Bellevue+WA',
     },
     { id: 10, day: 'sat', time: '13:30',
@@ -945,6 +946,9 @@
           <div class="stop-detail" id="${detailId}" role="region" aria-labelledby="${headerId}">
             ${stop.addr ? `<span class="addr">${escapeHTML(stop.addr)}</span>` : ''}
             <p>${escapeHTML(stop.body)}</p>
+            ${stop.places ? `<ul class="stop-places">${stop.places.map(p =>
+              `<li><a href="${p.url}" target="_blank" rel="noopener">${escapeHTML(p.name)}</a><span class="text-dim"> — ${escapeHTML(p.desc)} · ${escapeHTML(p.walk)} walk</span></li>`
+            ).join('')}</ul>` : ''}
             ${stop.bring ? `<p><strong class="text-gold">Bring:</strong> ${escapeHTML(stop.bring)}</p>` : ''}
             ${stop.map ? `<a class="map-link" href="${stop.map}" target="_blank" rel="noopener">Open in Google Maps →</a>` : ''}
           </div>
