@@ -718,8 +718,15 @@
       body:  'Recommended for our group: the Youth Breakout with Dr. Andrew & Sarah Swafford. Other options: Dr. Tim Gray (English) or Deacon Charlie Echeverry (Spanish).',
     },
     { id: 9,  day: 'sat', time: '12:00',
-      title: 'Lunch at local Bellevue restaurants',
-      body:  '[PLACEHOLDER: list 3–4 walkable options + group meet-back time + note whether the group covers this meal or members pay their own — Bright Minds to clarify]',
+      title: 'Lunch — Downtown Bellevue',
+      body:  'Grab lunch on your own at one of these walkable spots near the center:<br><br>' +
+             '<a href="https://maps.apple.com/?address=10246%20Main%20St%2C%20Bellevue%2C%20WA%2098004" target="_blank" rel="noopener"><strong>Facing East Noodle & Bar</strong></a> — Taiwanese · ~8 min walk<br>' +
+             '<a href="https://maps.app.goo.gl/6N25foCX5QCTqRNs5" target="_blank" rel="noopener"><strong>Semicolon Cafe</strong></a> — Coffee & bites · ~5 min walk<br>' +
+             '<a href="https://maps.app.goo.gl/XckiSZt9m9jmeds58" target="_blank" rel="noopener"><strong>Pagliacci Pizza</strong></a> — Pizza · ~6 min walk<br>' +
+             '<a href="https://maps.app.goo.gl/da8zZRYzLcqi6NnbA" target="_blank" rel="noopener"><strong>The Cheesecake Factory</strong></a> — American · ~10 min walk<br>' +
+             '<a href="https://maps.app.goo.gl/F48HfbK5d127khc99" target="_blank" rel="noopener"><strong>Mendocino Farms</strong></a> — Sandwiches & salads · ~5 min walk<br><br>' +
+             '<em>These are just recommendations within walking distance. You\'re more than welcome to find anything else the group wants in the moment.</em>',
+      map:   'https://www.google.com/maps/search/?api=1&query=restaurants+near+Meydenbauer+Center+Bellevue+WA',
     },
     { id: 10, day: 'sat', time: '13:30',
       title: 'Program resumes — Center Hall',
