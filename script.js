@@ -395,8 +395,19 @@
       });
     });
 
+    async function fetchRSVP() {
+      const sb = getSupabase();
+      if (sb) {
+        try {
+          const { data } = await sb.from('rsvp_wall').select('*').order('created_at', { ascending: true });
+          if (data) return data.map(r => ({ name: r.name, icon: r.saint_icon }));
+        } catch (e) { console.warn('RSVP fetch error:', e); }
+      }
+      return Storage._lsGet('rsvp:attendees', []);
+    }
+
     async function render() {
-      const list = await Storage.get('rsvp:attendees', []);
+      const list = await fetchRSVP();
       wall.innerHTML = '';
       if (!list.length) {
         wall.innerHTML = '<div class="wall-empty">Be the first to say <em>I\'m going</em> →</div>';
@@ -419,9 +430,21 @@
       if (name.length > 32) { error.textContent = 'Name is a little long — try a shorter version.'; return; }
       if (!selectedIcon)    { error.textContent = 'Pick a saint icon to represent you.'; return; }
 
-      const list = await Storage.get('rsvp:attendees', []);
-      list.push({ name, icon: selectedIcon, timestamp: Date.now() });
-      await Storage.set('rsvp:attendees', list, { shared: true });
+      const sb = getSupabase();
+      if (sb) {
+        try {
+          const { error: err } = await sb.from('rsvp_wall').insert({ name, saint_icon: selectedIcon });
+          if (err) throw err;
+        } catch (e) {
+          console.warn('RSVP insert error:', e);
+          error.textContent = 'Something went wrong. Please try again.';
+          return;
+        }
+      } else {
+        const list = Storage._lsGet('rsvp:attendees', []);
+        list.push({ name, icon: selectedIcon, timestamp: Date.now() });
+        Storage._lsSet('rsvp:attendees', list);
+      }
       nameInput.value = '';
       iconsWrap.querySelectorAll('.saint').forEach(b => b.setAttribute('aria-pressed', 'false'));
       selectedIcon = null;
@@ -503,9 +526,20 @@
       cancelPhysics = () => cancelAnimationFrame(rafId);
     }
 
+    async function fetchIntentions() {
+      const sb = getSupabase();
+      if (sb) {
+        try {
+          const { data } = await sb.from('shared_intentions').select('*').order('created_at', { ascending: true });
+          if (data) return data.map(r => ({ text: r.intention }));
+        } catch (e) { console.warn('Intentions fetch error:', e); }
+      }
+      return Storage._lsGet('intentions:list', []);
+    }
+
     async function render() {
       if (cancelPhysics) { cancelPhysics(); cancelPhysics = null; }
-      const list = await Storage.get('intentions:list', []);
+      const list = await fetchIntentions();
       stage.innerHTML = '';
       if (!list.length) {
         stage.innerHTML = '<div class="intentions-empty">Be the first — your intention will float here for the whole group to pray with.</div>';
@@ -529,9 +563,22 @@
       error.textContent = '';
       if (!text) { error.textContent = 'Please enter an intention.'; return; }
       if (text.length > 240) { error.textContent = 'Please keep it under 240 characters.'; return; }
-      const list = await Storage.get('intentions:list', []);
-      list.push({ text, timestamp: Date.now() });
-      await Storage.set('intentions:list', list, { shared: true });
+
+      const sb = getSupabase();
+      if (sb) {
+        try {
+          const { error: err } = await sb.from('shared_intentions').insert({ intention: text });
+          if (err) throw err;
+        } catch (e) {
+          console.warn('Intention insert error:', e);
+          error.textContent = 'Something went wrong. Please try again.';
+          return;
+        }
+      } else {
+        const list = Storage._lsGet('intentions:list', []);
+        list.push({ text, timestamp: Date.now() });
+        Storage._lsSet('intentions:list', list);
+      }
       input.value = '';
       await render();
     });
