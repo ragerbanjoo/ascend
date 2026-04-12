@@ -3546,13 +3546,11 @@
     }
 
     // --- Audit Log ---
-    const auditSection = pageEl.querySelector('[data-acct-audit]');
     const auditEntries = pageEl.querySelector('[data-audit-entries]');
-    if (auditSection && auditEntries) {
+    if (auditEntries) {
       try {
         const log = await DataStore.getMyAuditLog();
         if (log && log.length > 0) {
-          auditSection.style.display = '';
           auditEntries.innerHTML = log.map(entry =>
             '<div class="audit-entry">' +
               '<span class="audit-time">' + new Date(entry.created_at).toLocaleString() + '</span>' +

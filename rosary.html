@@ -169,7 +169,7 @@ html[data-theme="light"] .toggle input:checked + .slider {
   font-size: 1rem;
   margin-top: 0.25rem;
 }
-.intention-input::placeholder { color: var(--ink-soft); }
+.intention-input::placeholder { color: var(--cream-mute); }
 
 /* Text size */
 .text-size-btns {
@@ -224,8 +224,9 @@ html[data-theme="light"] .toggle input:checked + .slider {
   white-space: pre-line;
   max-width: 32rem;
 }
-.prayer-card .prayer-text.text-sm { font-size: 1rem; }
-.prayer-card .prayer-text.text-lg { font-size: 1.125rem; }
+.prayer-card .prayer-text.text-sm { font-size: 0.9375rem; }
+.prayer-card .prayer-text.text-md { font-size: 1.0625rem; }
+.prayer-card .prayer-text.text-lg { font-size: 1.25rem; line-height: 1.8; }
 
 /* Mystery announcement */
 .mystery-announce { text-align: center; }
@@ -799,6 +800,7 @@ html[data-theme="light"] .intention-input {
   border-color: rgba(26,26,46,0.2);
   color: var(--cream);
 }
+html[data-theme="light"] .intention-input::placeholder { color: rgba(26,26,46,0.4); }
 html[data-theme="light"] .litany-nav button,
 html[data-theme="light"] .pray-nav .btn-back {
   background: rgba(26,26,46,0.06);
@@ -1440,6 +1442,11 @@ const state = {
     btn.addEventListener('click', () => {
       state.textSize = btn.dataset.size;
       document.querySelectorAll('.text-size-btns button').forEach(b => b.classList.toggle('active', b.dataset.size === state.textSize));
+      // Update visible prayer text immediately if mid-prayer
+      document.querySelectorAll('.prayer-text').forEach(el => {
+        el.classList.remove('text-sm', 'text-md', 'text-lg');
+        el.classList.add('text-' + state.textSize);
+      });
     });
   });
 })();

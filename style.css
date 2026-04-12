@@ -2539,7 +2539,32 @@ html[data-theme="light"] .day-jump-btn:not(.active):hover {
   filter: grayscale(0.25) brightness(0.8) contrast(1.05);
 }
 
-/* ---------- 15b. Group Rules ---------- */
+/* ---------- 15b. Trust Grid ---------- */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+@media (max-width: 600px) { .trust-grid { grid-template-columns: repeat(2, 1fr); } }
+.trust-card {
+  background: rgba(245,241,232,0.03);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-md);
+  padding: var(--space-4);
+  text-align: center;
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+.trust-card:hover { border-color: var(--gold-dim); background: rgba(201,161,74,0.04); }
+.trust-card strong { display: block; color: var(--gold); font-size: var(--fs-base); margin-bottom: 0.25rem; }
+.trust-card span { color: var(--cream-mute); font-size: var(--fs-xxs); line-height: 1.4; }
+html[data-theme="light"] .trust-card {
+  background: rgba(26,26,46,0.02);
+  border-color: rgba(26,26,46,0.1);
+}
+html[data-theme="light"] .trust-card:hover { background: rgba(158,124,46,0.06); border-color: rgba(158,124,46,0.25); }
+
+/* ---------- 15c. Group Rules ---------- */
 .group-rules-section {
   text-align: center;
 }
