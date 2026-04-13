@@ -199,7 +199,7 @@ html[data-theme="light"] .cost-total-value { color: #1a1a2e; }
 
   <section style="padding:0">
     <div class="container">
-      <div class="hub-jumpnav">
+      <div class="hub-jumpnav" data-reveal>
         <button type="button" class="hub-jumpnav-btn" aria-expanded="false" aria-controls="jumpnav-menu">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Jump to section
@@ -279,10 +279,10 @@ html[data-theme="light"] .cost-total-value { color: #1a1a2e; }
           <input type="number" id="cost-attendees" min="1" max="100" value="15" data-cost-attendees class="cost-input">
         </div>
 
-        <h4 class="cost-group-label">Registration &amp; Lodging <span class="text-dim" style="text-transform:none;letter-spacing:0">(group total)</span></h4>
+        <h4 class="cost-group-label">Registration &amp; Lodging</h4>
         <div class="cost-row">
-          <label>ASCEND registration <span class="text-dim">(total for all)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="490" data-cost-item="registration" data-cost-type="fixed" class="cost-input"></div>
+          <label>ASCEND registration <span class="text-dim">(per person)</span></label>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="35" data-cost-item="registration" data-cost-type="per-person" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Hotel rooms <span class="text-dim">(total for all rooms)</span></label>
@@ -333,7 +333,7 @@ html[data-theme="light"] .cost-total-value { color: #1a1a2e; }
 
         <div class="cost-totals">
           <div class="cost-total-row">
-            <span>Meals subtotal <span class="text-dim">(per person &times; attendees)</span></span>
+            <span>Per-person subtotal <span class="text-dim">(per person &times; attendees)</span></span>
             <span class="cost-total-value" data-cost-meals-total>$0.00</span>
           </div>
           <div class="cost-total-row">
