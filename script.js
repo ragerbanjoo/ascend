@@ -2984,11 +2984,22 @@
       });
     }
 
-    container.querySelector('[data-new-intention]')?.addEventListener('click', () => {
+    container.querySelector('[data-new-intention]')?.addEventListener('click', async () => {
       const input = container.querySelector('[data-intention-input]');
-      if (input && input.value.trim()) {
-        DataStore.saveIntention(input.value.trim()).then(render);
+      if (!input || !input.value.trim()) return;
+      const text = input.value.trim();
+      try {
+        await DataStore.saveIntention(text);
         input.value = '';
+        await render();
+      } catch (err) {
+        if (typeof showToast === 'function') {
+          if (err.message && err.message.includes('encryption key')) {
+            showToast('Encryption key not loaded. Try logging out and back in.', 'error');
+          } else {
+            showToast('Failed to save intention: ' + (err.message || 'Unknown error'), 'error');
+          }
+        }
       }
     });
 
