@@ -1,11 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="#0a1628"/>
-  <g fill="none" stroke="#c9a14a" stroke-width="22" stroke-linecap="round">
-    <!-- Vertical bar -->
-    <line x1="256" y1="72" x2="256" y2="440"/>
-    <!-- Upper shorter crossbar -->
-    <line x1="176" y1="168" x2="336" y2="168"/>
-    <!-- Lower longer crossbar -->
-    <line x1="148" y1="280" x2="364" y2="280"/>
+  <!-- Light rays behind cross -->
+  <g opacity="0.3">
+    <line x1="256" y1="280" x2="256" y2="52" stroke="#c9a14a" stroke-width="24" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="140" y2="68" stroke="#c9a14a" stroke-width="18" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="372" y2="68" stroke="#c9a14a" stroke-width="18" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="62" y2="120" stroke="#c9a14a" stroke-width="14" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="450" y2="120" stroke="#c9a14a" stroke-width="14" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="196" y2="56" stroke="#c9a14a" stroke-width="10" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="316" y2="56" stroke="#c9a14a" stroke-width="10" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="98" y2="88" stroke="#c9a14a" stroke-width="10" stroke-linecap="round"/>
+    <line x1="256" y1="280" x2="414" y2="88" stroke="#c9a14a" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <!-- Soft glow behind cross center -->
+  <radialGradient id="glow" cx="256" cy="220" r="160" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#c9a14a" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#c9a14a" stop-opacity="0"/>
+  </radialGradient>
+  <circle cx="256" cy="220" r="160" fill="url(#glow)"/>
+  <!-- Cross — thin regular cross -->
+  <g fill="none" stroke="#c9a14a" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="88" x2="256" y2="424"/>
+    <line x1="152" y1="200" x2="360" y2="200"/>
   </g>
 </svg>
