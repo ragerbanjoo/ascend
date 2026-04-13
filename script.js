@@ -18,11 +18,11 @@
 
   // SVG icon map — replaces emoji throughout the site
   const ICONS = {
-    cross:  '<svg viewBox="0 0 24 24"><path d="M12 2v20M5 8h14"/></svg>',
-    flame:  '<svg viewBox="0 0 24 24"><path d="M12 22c-4-2-7-6-7-10C5 7 8 2 12 2c1.5 3 3 5 3 8 0 1.5-.5 3-1.5 4 2-1 3.5-3 3.5-6 2 3 1 10-5 14z"/></svg>',
-    dove:   '<svg viewBox="0 0 24 24"><path d="M4 16s1-4 4-6c3-2 5-1 6 0s2 3 6 3c2 0 4-1 4-1s-1 4-5 5c-3 .8-5 0-7-1l-3 5"/><path d="M10 10c-1-2 0-4 1-5s3-1 3 1"/></svg>',
-    shield: '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4-8-11V5l8-3 8 3v6c0 7-8 11-8 11z"/><path d="M12 8v5M12 15.5v.5"/></svg>',
-    church: '<svg viewBox="0 0 24 24"><path d="M12 2v4M10 6h4M3 22v-8l4-4h10l4 4v8"/><path d="M9 22v-5a3 3 0 0 1 6 0v5"/><path d="M3 14h18"/></svg>',
+    crucifix: '<img src="public/icons/crucifix-64.png" alt="Crucifix">',
+    flame:    '<img src="public/icons/flame-64.png" alt="Holy Spirit Flame">',
+    dove:     '<img src="public/icons/dove-64.png" alt="Holy Spirit Dove">',
+    michael:  '<img src="public/icons/michael-64.png" alt="St. Michael">',
+    mary:     '<img src="public/icons/mary-64.png" alt="Virgin Mary">',
   };
   const SVG_VAN = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17V6h12v11M15 9h4l3 4v4M1 17h22"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>';
   const SVG_PRAYER = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>';
@@ -415,7 +415,7 @@
         const el = document.createElement('div');
         el.className = 'wall-item';
         el.style.animationDelay = (i * 60) + 'ms';
-        el.innerHTML = `<span class="icon">${ICONS[it.icon] || ICONS.cross}</span><span>${escapeHTML(it.name)}</span>`;
+        el.innerHTML = `<span class="icon">${ICONS[it.icon] || ICONS.crucifix}</span><span>${escapeHTML(it.name)}</span>`;
         wall.appendChild(el);
       });
     }
@@ -3478,8 +3478,9 @@
 
     const iconKeys = typeof PROFILE_ICONS !== 'undefined' ? Object.keys(PROFILE_ICONS) : [];
     const iconGridHTML = iconKeys.map(key => {
-      const svg = typeof renderProfileIcon === 'function' ? renderProfileIcon(key, 40) : '';
-      return `<button type="button" class="guide-icon-btn" data-pick-icon="${key}" title="${key}">${svg}</button>`;
+      const img = typeof renderProfileIcon === 'function' ? renderProfileIcon(key, 48) : '';
+      const label = PROFILE_ICONS[key]?.label || key;
+      return `<button type="button" class="guide-icon-btn" data-pick-icon="${key}" title="${label}">${img}</button>`;
     }).join('');
 
     const svgAttrs = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"';
@@ -3873,17 +3874,17 @@
   // ============================================
 
   const PROFILE_ICONS = {
-    cross:   '<path d="M12 2v20M5 8h14"/>',
-    flame:   '<path d="M12 22c-4-2-7-6-7-10C5 7 8 2 12 2c1.5 3 3 5 3 8 0 1.5-.5 3-1.5 4 2-1 3.5-3 3.5-6 2 3 1 10-5 14z"/>',
-    dove:    '<path d="M4 16s1-4 4-6c3-2 5-1 6 0s2 3 6 3c2 0 4-1 4-1s-1 4-5 5c-3 .8-5 0-7-1l-3 5"/><path d="M10 10c-1-2 0-4 1-5s3-1 3 1"/>',
-    shield:  '<path d="M12 22s-8-4-8-11V5l8-3 8 3v6c0 7-8 11-8 11z"/><path d="M12 8v5M12 15.5v.5"/>',
-    church:  '<path d="M12 2v4M10 6h4M3 22v-8l4-4h10l4 4v8"/><path d="M9 22v-5a3 3 0 0 1 6 0v5"/><path d="M3 14h18"/>'
+    crucifix: { src: 'public/icons/crucifix-200.png', label: 'Crucifix' },
+    flame:    { src: 'public/icons/flame-200.png',    label: 'Holy Spirit Flame' },
+    dove:     { src: 'public/icons/dove-200.png',     label: 'Holy Spirit Dove' },
+    michael:  { src: 'public/icons/michael-200.png',  label: 'St. Michael' },
+    mary:     { src: 'public/icons/mary-200.png',     label: 'Virgin Mary' },
   };
 
   function renderProfileIcon(key, size) {
-    const d = PROFILE_ICONS[key];
-    if (!d) return '';
-    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+    const icon = PROFILE_ICONS[key];
+    if (!icon) return '';
+    return `<img src="${icon.src}" alt="${icon.label}" width="${size}" height="${size}" style="object-fit:contain;">`;
   }
   window.PROFILE_ICONS = PROFILE_ICONS;
   window.renderProfileIcon = renderProfileIcon;
@@ -3917,11 +3918,12 @@
     let selectedIcon = Auth.profile?.saint_icon || '';
     if (iconGrid) {
       Object.keys(PROFILE_ICONS).forEach(key => {
+        const icon = PROFILE_ICONS[key];
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'icon-picker-btn' + (key === selectedIcon ? ' selected' : '');
-        btn.innerHTML = renderProfileIcon(key, 24);
-        btn.setAttribute('aria-label', 'Select ' + key + ' icon');
+        btn.innerHTML = renderProfileIcon(key, 48);
+        btn.setAttribute('aria-label', 'Select ' + icon.label);
         btn.addEventListener('click', () => {
           iconGrid.querySelectorAll('.icon-picker-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');

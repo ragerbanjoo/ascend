@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f4ec">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="public/images/icon-192.png">
-<link rel="icon" href="public/images/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="public/favicon/apple-touch-icon.png">
+<link rel="icon" href="public/favicon/favicon-32.png" type="image/png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ASCEND 2026">
@@ -162,12 +162,12 @@
 /* Icon picker */
 .icon-picker-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
 }
 .icon-picker-btn {
-  width: 52px;
-  height: 52px;
+  width: 100%;
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,6 +177,7 @@
   cursor: pointer;
   transition: all 0.2s;
   color: var(--cream-dim);
+  padding: 6px;
 }
 .icon-picker-btn:hover {
   border-color: var(--gold-dim);
@@ -188,6 +189,7 @@
   color: var(--gold-bright);
   box-shadow: 0 0 12px rgba(201,161,74,0.2);
 }
+.icon-picker-btn img { width: 100%; height: 100%; object-fit: contain; }
 .icon-picker-btn svg { width: 24px; height: 24px; }
 
 /* Friends grid */

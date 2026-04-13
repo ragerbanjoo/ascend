@@ -1493,7 +1493,7 @@ textarea.field {
 /* Saint picker */
 .saint-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--space-3);
   margin: var(--space-4) 0 var(--space-5);
 }
@@ -1501,7 +1501,7 @@ textarea.field {
 .saint {
   border: 1px solid var(--cream-line);
   border-radius: var(--r-md);
-  padding: var(--space-4) var(--space-2);
+  padding: var(--space-3) var(--space-2);
   background: rgba(245,241,232,0.03);
   cursor: pointer;
   text-align: center;
@@ -1510,7 +1510,7 @@ textarea.field {
   letter-spacing: 0.04em;
   color: var(--cream-dim);
   transition: all var(--dur-fast) var(--ease-out);
-  min-height: 92px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1529,11 +1529,15 @@ textarea.field {
   box-shadow: 0 0 0 2px rgba(201, 161, 74, 0.25);
 }
 .saint-icon {
-  width: 34px; height: 34px;
+  width: 56px; height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 0 12px rgba(229,192,106,0.35));
+}
+.saint-icon img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(229,192,106,0.25));
 }
 .saint-icon svg {
   width: 24px; height: 24px;
@@ -1565,6 +1569,7 @@ textarea.field {
 }
 .wall-item .icon { display: flex; align-items: center; }
 .wall-item .icon svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.wall-item .icon img { width: 1.25rem; height: 1.25rem; object-fit: contain; }
 .wall-empty {
   font-style: italic;
   color: var(--cream-mute);
@@ -4001,6 +4006,7 @@ html[data-theme="light"] .intentions-empty {
   border-color: var(--gold); background: var(--gold-soft);
   color: var(--gold-bright); transform: scale(1.08);
 }
+.guide-icon-btn img { width: 100%; height: 100%; object-fit: contain; }
 
 /* Sharing toggles */
 .guide-toggles { display: flex; flex-direction: column; margin-bottom: var(--space-5); text-align: left; }
