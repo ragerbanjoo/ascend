@@ -18,13 +18,11 @@
 
   // SVG icon map — replaces emoji throughout the site
   const ICONS = {
-    rose:   '<svg viewBox="0 0 24 24"><path d="M12 3c-2 3-5 5-5 9a5 5 0 0 0 10 0c0-4-3-6-5-9z"/><path d="M12 16v5"/><path d="M9 18.5c1.5-1 4.5-1 6 0"/></svg>',
-    sun:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>',
-    shield: '<svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5z"/></svg>',
-    flower: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="7.5" r="2.5"/><circle cx="16.33" cy="9.75" r="2.5"/><circle cx="14.85" cy="14.75" r="2.5"/><circle cx="9.15" cy="14.75" r="2.5"/><circle cx="7.67" cy="9.75" r="2.5"/></svg>',
-    cross:  '<svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="9" x2="19" y2="9"/></svg>',
-    heart:  '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
-    star:   '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z"/></svg>',
+    cross:  '<svg viewBox="0 0 24 24"><path d="M12 2v20M5 8h14"/></svg>',
+    flame:  '<svg viewBox="0 0 24 24"><path d="M12 22c-4-2-7-6-7-10C5 7 8 2 12 2c1.5 3 3 5 3 8 0 1.5-.5 3-1.5 4 2-1 3.5-3 3.5-6 2 3 1 10-5 14z"/></svg>',
+    dove:   '<svg viewBox="0 0 24 24"><path d="M4 16s1-4 4-6c3-2 5-1 6 0s2 3 6 3c2 0 4-1 4-1s-1 4-5 5c-3 .8-5 0-7-1l-3 5"/><path d="M10 10c-1-2 0-4 1-5s3-1 3 1"/></svg>',
+    shield: '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4-8-11V5l8-3 8 3v6c0 7-8 11-8 11z"/><path d="M12 8v5M12 15.5v.5"/></svg>',
+    church: '<svg viewBox="0 0 24 24"><path d="M12 2v4M10 6h4M3 22v-8l4-4h10l4 4v8"/><path d="M9 22v-5a3 3 0 0 1 6 0v5"/><path d="M3 14h18"/></svg>',
   };
   const SVG_VAN = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17V6h12v11M15 9h4l3 4v4M1 17h22"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>';
   const SVG_PRAYER = '<svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>';
@@ -417,7 +415,7 @@
         const el = document.createElement('div');
         el.className = 'wall-item';
         el.style.animationDelay = (i * 60) + 'ms';
-        el.innerHTML = `<span class="icon">${ICONS[it.icon] || ICONS.star}</span><span>${escapeHTML(it.name)}</span>`;
+        el.innerHTML = `<span class="icon">${ICONS[it.icon] || ICONS.cross}</span><span>${escapeHTML(it.name)}</span>`;
         wall.appendChild(el);
       });
     }
@@ -2376,6 +2374,9 @@
       const plainBlob = new Blob([plainBytes], { type: 'image/jpeg' });
       const { error: uploadErr } = await sb.storage.from('photos').upload(publicPath, plainBlob);
       if (uploadErr) throw new Error(uploadErr.message);
+      // Delete the old encrypted file + row (no need for both copies)
+      await sb.storage.from('photos').remove([photo.storage_path]);
+      await sb.from('photos').delete().eq('id', photo.id);
       // Insert group row
       await sb.from('photos').insert({
         user_id: Auth.user.id,
@@ -2385,16 +2386,39 @@
       });
     },
 
-    // Un-share a photo (delete group copies by this user)
+    // Un-share a photo: re-encrypt it and move back to private
     async unsharePhoto(photoId) {
       if (Auth.isGuest) return;
       const sb = getSupabase();
-      const { data: copies } = await sb.from('photos').select('*')
-        .eq('user_id', Auth.user.id).eq('visibility', 'group');
-      for (const copy of (copies || [])) {
-        await sb.storage.from('photos').remove([copy.storage_path]);
-        await sb.from('photos').delete().eq('id', copy.id);
-      }
+      const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
+      if (!photo || photo.visibility !== 'group') return;
+      // Download the plain file
+      const { data: signedData } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
+      const resp = await fetch(signedData.signedUrl);
+      const plainBytes = new Uint8Array(await resp.arrayBuffer());
+      // Re-encrypt: prepend IV to ciphertext
+      const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
+      const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
+      const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
+      combined.set(ivBytes, 0);
+      combined.set(ciphertext, ivBytes.length);
+      // Upload encrypted copy
+      const encPath = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
+      const blob = new Blob([combined], { type: 'application/octet-stream' });
+      const { error: uploadErr } = await sb.storage.from('photos').upload(encPath, blob);
+      if (uploadErr) throw new Error(uploadErr.message);
+      // Encrypt caption if present
+      const captionField = photo.caption ? await _encryptPacked(photo.caption) : '';
+      // Delete old group file + row
+      await sb.storage.from('photos').remove([photo.storage_path]);
+      await sb.from('photos').delete().eq('id', photo.id);
+      // Insert private row
+      await sb.from('photos').insert({
+        user_id: Auth.user.id,
+        storage_path: encPath,
+        caption: captionField,
+        visibility: 'private'
+      });
     },
 
     // Resolve user IDs to display names for group gallery
