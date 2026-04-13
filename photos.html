@@ -137,6 +137,10 @@
     <button class="lightbox-close" data-lightbox-close>&times;</button>
     <img class="lightbox-img" data-lightbox-img alt="">
     <div class="lightbox-info">
+      <div class="lightbox-uploader" data-lightbox-uploader style="display:none">
+        <div class="lightbox-uploader-icon" data-lightbox-uploader-icon></div>
+        <span class="lightbox-uploader-name" data-lightbox-uploader-name></span>
+      </div>
       <p class="lightbox-caption" data-lightbox-caption></p>
       <p class="lightbox-meta" data-lightbox-meta></p>
     </div>
@@ -246,6 +250,7 @@
   let currentTab = 'mine';
   let currentPhotos = [];
   let urlCache = new Map();
+  let uploaderCache = {};
   let lightboxIndex = -1;
 
   // DOM refs
@@ -265,6 +270,9 @@
   const lbCaption = document.querySelector('[data-lightbox-caption]');
   const lbMeta = document.querySelector('[data-lightbox-meta]');
   const lbActions = document.querySelector('[data-lightbox-actions]');
+  const lbUploader = document.querySelector('[data-lightbox-uploader]');
+  const lbUploaderIcon = document.querySelector('[data-lightbox-uploader-icon]');
+  const lbUploaderName = document.querySelector('[data-lightbox-uploader-name]');
 
   function init() {
     // Guest gate
@@ -339,6 +347,21 @@
 
     try {
       currentPhotos = await DataStore.getPhotos(currentTab === 'mine' ? 'mine' : 'group');
+
+      // Pre-fetch uploader profiles for group gallery
+      if (currentTab === 'group' && currentPhotos.length) {
+        const uids = [...new Set(currentPhotos.map(p => p.user_id))];
+        const names = await DataStore.getPhotoUploaderNames(uids);
+        Object.assign(uploaderCache, names);
+        // Also fetch their icons
+        try {
+          const sb = getSupabase();
+          const { data: profiles } = await sb.from('profiles').select('id, display_name, saint_icon').in('id', uids);
+          (profiles || []).forEach(p => {
+            uploaderCache[p.id] = { name: p.display_name || 'Pilgrim', icon: p.saint_icon || '' };
+          });
+        } catch (e) { /* ignore */ }
+      }
 
       grid.innerHTML = '';
 
@@ -446,10 +469,15 @@
     lightbox.style.display = '';
     document.body.style.overflow = 'hidden';
 
+    // Update nav arrow visibility
+    document.querySelector('[data-lightbox-prev]').style.display = index > 0 ? '' : 'none';
+    document.querySelector('[data-lightbox-next]').style.display = index < currentPhotos.length - 1 ? '' : 'none';
+
     // Show loading state
     lbImg.src = '';
     lbImg.style.opacity = '0.3';
     lbCaption.textContent = '';
+    lbUploader.style.display = 'none';
     lbMeta.textContent = 'Loading...';
     lbActions.innerHTML = '';
 
@@ -469,6 +497,21 @@
       let metaText = date;
       if (photo.visibility === 'private') metaText += ' · Encrypted';
       lbMeta.textContent = metaText;
+
+      // Show uploader info for group gallery
+      if (currentTab === 'group' && photo.user_id !== Auth.user?.id) {
+        const uploader = uploaderCache[photo.user_id];
+        if (uploader && uploader.name) {
+          lbUploaderName.textContent = uploader.name;
+          if (uploader.icon && window.PROFILE_ICONS && window.PROFILE_ICONS[uploader.icon]) {
+            lbUploaderIcon.innerHTML = window.renderProfileIcon(uploader.icon, 28);
+            lbUploaderIcon.style.display = '';
+          } else {
+            lbUploaderIcon.style.display = 'none';
+          }
+          lbUploader.style.display = '';
+        }
+      }
 
       // Action buttons
       lbActions.innerHTML = '';
