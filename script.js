@@ -1050,6 +1050,56 @@
         el.textContent = formatCompact(TRIP.departPT - now);
       }
     }, 1000);
+
+    // --- Day-jump sticky toggle: auto-switch on scroll ---
+    const jumpBar = document.querySelector('.day-jump');
+    if (jumpBar) {
+      const jumpBtns = jumpBar.querySelectorAll('.day-jump-btn');
+      const jumpIndicator = jumpBar.querySelector('.day-jump-indicator');
+      let activeDay = 'saturday';
+      let scrollLock = false;
+
+      function setActiveDay(day, scroll) {
+        if (activeDay === day && !scroll) return;
+        activeDay = day;
+        const idx = day === 'sunday' ? 1 : 0;
+        jumpBtns.forEach(b => b.classList.remove('active'));
+        jumpBtns[idx].classList.add('active');
+        if (jumpIndicator) jumpIndicator.style.transform = `translateX(${idx * 100}%)`;
+
+        if (scroll) {
+          const target = document.getElementById('timeline-' + day);
+          if (!target) return;
+          const jumpH = jumpBar.offsetHeight;
+          const offset = 72 + jumpH + 12;
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          scrollLock = true;
+          window.scrollTo({ top, behavior: prefersReduced() ? 'auto' : 'smooth' });
+          setTimeout(() => { scrollLock = false; }, 800);
+        }
+      }
+
+      jumpBtns[0].addEventListener('click', () => setActiveDay('saturday', true));
+      jumpBtns[1].addEventListener('click', () => setActiveDay('sunday', true));
+
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => {
+            if (!scrollLock) {
+              const sun = document.getElementById('timeline-sunday');
+              if (sun) {
+                const threshold = 72 + jumpBar.offsetHeight + 40;
+                const day = sun.getBoundingClientRect().top <= threshold ? 'sunday' : 'saturday';
+                if (day !== activeDay) setActiveDay(day, false);
+              }
+            }
+            ticking = false;
+          });
+        }
+      }, { passive: true });
+    }
   }
 
   // -------------------------------------------------------
@@ -2330,7 +2380,7 @@
     // Update welcome text
     const welcomeEl = hubEl.querySelector('[data-hub-welcome]');
     if (welcomeEl) {
-      welcomeEl.textContent = `Welcome, ${Auth.isGuest ? 'pilgrim' : Auth.displayName}`;
+      welcomeEl.textContent = Auth.isGuest ? 'Welcome' : `Welcome, ${Auth.displayName}`;
     }
 
     // Account pill
