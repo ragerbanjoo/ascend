@@ -270,68 +270,72 @@ html[data-theme="light"] .cost-total-value { color: #1a1a2e; }
     <div class="container-narrow">
       <div class="section-header" data-reveal>
         <h2>Cost Breakdown</h2>
-        <p class="text-dim">Estimate the average cost per person for the entire trip. Enter the total group cost for each category.</p>
+        <p class="text-dim">Estimate the total trip cost. Fixed costs are for the whole group; meal prices are per person and get multiplied by the number of attendees.</p>
       </div>
 
       <div class="cost-calculator" data-reveal data-cost-calc>
         <div class="cost-row cost-row-attendees">
           <label for="cost-attendees">Number of attendees</label>
-          <input type="number" id="cost-attendees" min="1" max="100" value="10" data-cost-attendees class="cost-input">
+          <input type="number" id="cost-attendees" min="1" max="100" value="15" data-cost-attendees class="cost-input">
         </div>
 
-        <h4 class="cost-group-label">Registration &amp; Lodging</h4>
+        <h4 class="cost-group-label">Registration &amp; Lodging <span class="text-dim" style="text-transform:none;letter-spacing:0">(group total)</span></h4>
         <div class="cost-row">
           <label>ASCEND registration <span class="text-dim">(total for all)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="490" data-cost-item="registration" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="490" data-cost-item="registration" data-cost-type="fixed" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Hotel rooms <span class="text-dim">(total for all rooms)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="360" data-cost-item="hotel" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="360" data-cost-item="hotel" data-cost-type="fixed" class="cost-input"></div>
         </div>
 
-        <h4 class="cost-group-label">Transportation</h4>
+        <h4 class="cost-group-label">Transportation <span class="text-dim" style="text-transform:none;letter-spacing:0">(group total)</span></h4>
         <div class="cost-row">
           <label>Gas &amp; fuel <span class="text-dim">(estimated round-trip)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="120" data-cost-item="gas" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="120" data-cost-item="gas" data-cost-type="fixed" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Vehicle wear / rental <span class="text-dim">(if applicable)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="0" data-cost-item="vehicle" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="0" data-cost-item="vehicle" data-cost-type="fixed" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Parking &amp; tolls</label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="15" data-cost-item="parking" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="15" data-cost-item="parking" data-cost-type="fixed" class="cost-input"></div>
         </div>
 
-        <h4 class="cost-group-label">Meals</h4>
+        <h4 class="cost-group-label">Meals <span class="text-dim" style="text-transform:none;letter-spacing:0">(price per person)</span></h4>
         <div class="cost-row">
           <label>Saturday lunch <span class="text-dim">(Bellevue)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="150" data-cost-item="sat-lunch" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="15" data-cost-item="sat-lunch" data-cost-type="per-person" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Saturday dinner <span class="text-dim">(near hotel)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="180" data-cost-item="sat-dinner" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="18" data-cost-item="sat-dinner" data-cost-type="per-person" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Sunday breakfast <span class="text-dim">(Edmonds area)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="210" data-cost-item="sun-breakfast" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="14" data-cost-item="sun-breakfast" data-cost-type="per-person" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Sunday lunch <span class="text-dim">(Capitol Hill)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="225" data-cost-item="sun-lunch" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="15" data-cost-item="sun-lunch" data-cost-type="per-person" class="cost-input"></div>
         </div>
 
-        <h4 class="cost-group-label">Other</h4>
+        <h4 class="cost-group-label">Other <span class="text-dim" style="text-transform:none;letter-spacing:0">(group total)</span></h4>
         <div class="cost-row">
           <label>Snacks &amp; drinks <span class="text-dim">(rest stops, etc.)</span></label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="30" data-cost-item="snacks" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="30" data-cost-item="snacks" data-cost-type="fixed" class="cost-input"></div>
         </div>
         <div class="cost-row">
           <label>Miscellaneous / buffer</label>
-          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="40" data-cost-item="misc" class="cost-input"></div>
+          <div class="cost-input-wrap"><span class="cost-dollar">$</span><input type="number" min="0" step="0.01" placeholder="0" value="40" data-cost-item="misc" data-cost-type="fixed" class="cost-input"></div>
         </div>
 
         <div class="cost-totals">
+          <div class="cost-total-row">
+            <span>Meals subtotal <span class="text-dim">(per person &times; attendees)</span></span>
+            <span class="cost-total-value" data-cost-meals-total>$0.00</span>
+          </div>
           <div class="cost-total-row">
             <span>Total trip cost</span>
             <span class="cost-total-value" data-cost-total>$0.00</span>
@@ -483,14 +487,26 @@ html[data-theme="light"] .cost-total-value { color: #1a1a2e; }
   var attendeesInput = calc.querySelector('[data-cost-attendees]');
   var items = Array.from(calc.querySelectorAll('[data-cost-item]'));
   var totalEl = calc.querySelector('[data-cost-total]');
+  var mealsTotalEl = calc.querySelector('[data-cost-meals-total]');
   var perPersonEl = calc.querySelector('[data-cost-per-person]');
 
   function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
   function compute() {
-    var total = 0;
-    items.forEach(function(input) { total += parseFloat(input.value) || 0; });
     var attendees = Math.max(1, parseInt(attendeesInput.value) || 1);
+    var fixedTotal = 0;
+    var perPersonTotal = 0;
+    items.forEach(function(input) {
+      var val = parseFloat(input.value) || 0;
+      if (input.dataset.costType === 'per-person') {
+        perPersonTotal += val;
+      } else {
+        fixedTotal += val;
+      }
+    });
+    var mealsGroupTotal = perPersonTotal * attendees;
+    var total = fixedTotal + mealsGroupTotal;
+    if (mealsTotalEl) mealsTotalEl.textContent = fmt(mealsGroupTotal);
     totalEl.textContent = fmt(total);
     perPersonEl.textContent = fmt(total / attendees);
   }

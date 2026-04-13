@@ -57,6 +57,7 @@
   border-bottom: 1px solid var(--cream-line);
 }
 .faq-group-label:first-child { margin-top: 0; }
+.faq-group-label[id] { scroll-margin-top: 5rem; }
 
 /* FAQ accordion */
 .faq-item {
@@ -176,7 +177,34 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
     </div>
   </section>
 
-  <section style="padding-top:0;">
+  <section style="padding:0">
+    <div class="container">
+      <div class="hub-jumpnav">
+        <button type="button" class="hub-jumpnav-btn" aria-expanded="false" aria-controls="jumpnav-menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Jump to section
+          <svg class="hub-jumpnav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <nav class="hub-jumpnav-menu" id="jumpnav-menu" aria-label="Jump to section">
+          <a href="#faq-basics" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> The Basics</a>
+          <a href="#faq-packing" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Packing & Prep</a>
+          <a href="#faq-hotel" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> The Hotel</a>
+          <a href="#faq-food" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg> Food & Meals</a>
+          <a href="#faq-mass" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M5 8h14"/></svg> Mass & Faith</a>
+          <a href="#faq-drive" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h2l2-7h6l2 7h2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg> Drive & Travel</a>
+          <a href="#faq-app" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> App & Privacy</a>
+          <a href="#faq-other" data-faq-jump="attendees"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Other</a>
+          <a href="#faq-safety" data-faq-jump="parents"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Safety & Supervision</a>
+          <a href="#faq-money" data-faq-jump="parents"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Money & Logistics</a>
+          <a href="#faq-retreat" data-faq-jump="parents"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Retreat & Faith</a>
+          <a href="#faq-tech" data-faq-jump="parents"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> App & Technology</a>
+          <a href="#faq-consent" data-faq-jump="parents"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Consent & Contact</a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:var(--space-4);">
     <div class="container-narrow">
 
       <!-- Tab bar -->
@@ -190,7 +218,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
       <!-- =============================== -->
       <div class="faq-panel active" data-faq-panel="attendees">
 
-        <h4 class="faq-group-label">The Basics</h4>
+        <h4 id="faq-basics" class="faq-group-label">The Basics</h4>
 
         <details class="faq-item">
           <summary>What is ASCEND?</summary>
@@ -224,7 +252,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Packing &amp; Prep</h4>
+        <h4 id="faq-packing" class="faq-group-label">Packing &amp; Prep</h4>
 
         <details class="faq-item">
           <summary>What should I pack?</summary>
@@ -256,7 +284,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">The Hotel</h4>
+        <h4 id="faq-hotel" class="faq-group-label">The Hotel</h4>
 
         <details class="faq-item">
           <summary>What's the hotel like?</summary>
@@ -280,7 +308,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Food &amp; Meals</h4>
+        <h4 id="faq-food" class="faq-group-label">Food &amp; Meals</h4>
 
         <details class="faq-item">
           <summary>What's the food situation?</summary>
@@ -303,7 +331,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Mass &amp; Faith</h4>
+        <h4 id="faq-mass" class="faq-group-label">Mass &amp; Faith</h4>
 
         <details class="faq-item">
           <summary>What's a Traditional Latin Mass? I've never been to one.</summary>
@@ -334,7 +362,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">The Drive &amp; Travel</h4>
+        <h4 id="faq-drive" class="faq-group-label">The Drive &amp; Travel</h4>
 
         <details class="faq-item">
           <summary>How long is the drive?</summary>
@@ -357,7 +385,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">The App &amp; Privacy</h4>
+        <h4 id="faq-app" class="faq-group-label">The App &amp; Privacy</h4>
 
         <details class="faq-item">
           <summary>What's the retreat app?</summary>
@@ -381,7 +409,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Other</h4>
+        <h4 id="faq-other" class="faq-group-label">Other</h4>
 
         <details class="faq-item">
           <summary>Can I buy merch at ASCEND?</summary>
@@ -418,7 +446,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
       <!-- =============================== -->
       <div class="faq-panel" data-faq-panel="parents">
 
-        <h4 class="faq-group-label">Safety &amp; Supervision</h4>
+        <h4 id="faq-safety" class="faq-group-label">Safety &amp; Supervision</h4>
 
         <details class="faq-item">
           <summary>Where exactly will my child be?</summary>
@@ -468,7 +496,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Money &amp; Logistics</h4>
+        <h4 id="faq-money" class="faq-group-label">Money &amp; Logistics</h4>
 
         <details class="faq-item">
           <summary>How much does this cost?</summary>
@@ -500,7 +528,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">The Retreat &amp; Faith</h4>
+        <h4 id="faq-retreat" class="faq-group-label">The Retreat &amp; Faith</h4>
 
         <details class="faq-item">
           <summary>What is ASCEND?</summary>
@@ -524,7 +552,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">The App &amp; Technology</h4>
+        <h4 id="faq-tech" class="faq-group-label">The App &amp; Technology</h4>
 
         <details class="faq-item">
           <summary>What is this website / retreat app?</summary>
@@ -549,7 +577,7 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
           </div>
         </details>
 
-        <h4 class="faq-group-label">Consent &amp; Contact</h4>
+        <h4 id="faq-consent" class="faq-group-label">Consent &amp; Contact</h4>
 
         <details class="faq-item">
           <summary>Is there a consent form?</summary>
@@ -718,12 +746,28 @@ html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,
       panels.forEach(function(p) { p.classList.toggle('active', p.dataset.faqPanel === target); });
     });
   });
+  function switchTab(target) {
+    tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.faqTab === target); });
+    panels.forEach(function(p) { p.classList.toggle('active', p.dataset.faqPanel === target); });
+  }
+
   // Support linking directly to parents tab via ?tab=parents
   var params = new URLSearchParams(window.location.search);
-  if (params.get('tab') === 'parents') {
-    tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.faqTab === 'parents'); });
-    panels.forEach(function(p) { p.classList.toggle('active', p.dataset.faqPanel === 'parents'); });
-  }
+  if (params.get('tab') === 'parents') switchTab('parents');
+
+  // Jump-to-section links: switch tab then scroll
+  document.querySelectorAll('[data-faq-jump]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var targetTab = link.dataset.faqJump;
+      switchTab(targetTab);
+      // Small delay so the panel is visible before scroll
+      setTimeout(function() {
+        var el = document.querySelector(link.getAttribute('href'));
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      e.preventDefault();
+    });
+  });
 })();
 </script>
 </body>
