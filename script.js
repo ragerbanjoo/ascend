@@ -2103,23 +2103,32 @@
         return entries;
       }
       const sb = getSupabase();
-      let query = sb.from('journal_entries').select('*')
+      const query = sb.from('journal_entries').select('*')
         .eq('user_id', Auth.user.id).order('created_at', { ascending: false });
-      if (filter) query = query.eq('entry_type', filter);
       const { data } = await query;
       if (!data || !Crypto.hasCEK) return data || [];
       const decrypted = [];
       for (const entry of data) {
         try {
           const title = await _decryptPacked(entry.title);
-          const body = await _decryptPacked(entry.body);
-          const speaker = await _decryptPacked(entry.speaker);
-          const talkTitle = await _decryptPacked(entry.talk_title);
-          decrypted.push({ ...entry, title, body, speaker, talkTitle });
+          // Body stores JSON: {"body":"...","type":"journal","speaker":"...","talkTitle":"..."}
+          const bodyRaw = await _decryptPacked(entry.body);
+          let body = bodyRaw, entryType = 'journal', speaker = '', talkTitle = '';
+          try {
+            const parsed = JSON.parse(bodyRaw);
+            if (parsed && typeof parsed.body === 'string') {
+              body = parsed.body;
+              entryType = parsed.type || 'journal';
+              speaker = parsed.speaker || '';
+              talkTitle = parsed.talkTitle || '';
+            }
+          } catch (_) { /* plain text body, not JSON */ }
+          decrypted.push({ ...entry, title, body, entry_type: entryType, speaker, talkTitle });
         } catch (e) {
           decrypted.push({ ...entry, title: '[Encrypted]', body: '[Could not decrypt]', speaker: '', talkTitle: '' });
         }
       }
+      if (filter) return decrypted.filter(e => (e.entry_type || 'journal') === filter);
       return decrypted;
     },
 
@@ -2141,12 +2150,11 @@
         return;
       }
       const sb = getSupabase();
+      // Pack all fields into body as JSON, then encrypt title and body separately
+      const bodyJson = JSON.stringify({ body, type: entryType, speaker, talkTitle });
       const row = {
         title: await _encryptPacked(title),
-        body: await _encryptPacked(body),
-        speaker: await _encryptPacked(speaker),
-        talk_title: await _encryptPacked(talkTitle),
-        entry_type: entryType,
+        body: await _encryptPacked(bodyJson),
       };
       if (id) {
         row.updated_at = new Date().toISOString();
@@ -2283,10 +2291,13 @@
     async getPhotoUrl(photo) {
       if (photo.dataUrl) return photo.dataUrl; // guest localStorage
       const sb = getSupabase();
-      const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
-      if (photo.visibility === 'group') return urlData.publicUrl;
+      // Private bucket — must use signed URL
+      const { data: signedData, error: signErr } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
+      if (signErr || !signedData?.signedUrl) throw new Error('Could not get photo URL');
+      const signedUrl = signedData.signedUrl;
+      if (photo.visibility === 'group') return signedUrl;
       // Decrypt private photo — IV is prepended (first 12 bytes) to the blob
-      const resp = await fetch(urlData.publicUrl);
+      const resp = await fetch(signedUrl);
       const raw = new Uint8Array(await resp.arrayBuffer());
       const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
       const encBytes = raw.slice(12);
@@ -2323,7 +2334,7 @@
       const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
       const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
       combined.set(ivBytes, 0);
-      combined.set(new Uint8Array(ciphertext.buffer ? ciphertext.buffer : ciphertext), ivBytes.length);
+      combined.set(ciphertext, ivBytes.length);
       // Encrypt the caption
       const captionField = caption ? await _encryptPacked(caption) : '';
       // Upload encrypted blob (IV + ciphertext)
@@ -2349,8 +2360,8 @@
       const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
       if (!photo || photo.visibility !== 'private') return;
       // Decrypt the file — IV is prepended (first 12 bytes)
-      const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
-      const resp = await fetch(urlData.publicUrl);
+      const { data: signedData } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
+      const resp = await fetch(signedData.signedUrl);
       const raw = new Uint8Array(await resp.arrayBuffer());
       const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
       const plainBytes = await Crypto.decryptBytes(raw.slice(12), iv);
