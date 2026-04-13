@@ -224,7 +224,7 @@
 (function() {
   'use strict';
 
-  function ready() { return window.DataStore && window.Auth && window.Crypto; }
+  function ready() { return window.DataStore && window.Auth && window.Auth._initialized && window.Crypto; }
 
   function boot() {
     if (!ready()) return setTimeout(boot, 50);

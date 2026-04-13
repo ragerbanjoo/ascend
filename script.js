@@ -1759,6 +1759,7 @@
     _user: null,
     _profile: null,
     _listeners: [],
+    _initialized: false,
 
     get user() { return this._user; },
     get profile() { return this._profile; },
@@ -1772,7 +1773,7 @@
 
     async init() {
       const sb = getSupabase();
-      if (!sb) return;
+      if (!sb) { this._initialized = true; return; }
 
       const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
@@ -1788,6 +1789,8 @@
         await this._updateLastSeen();
         await Crypto.restoreCEK();
       }
+
+      this._initialized = true;
 
       sb.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
@@ -3144,6 +3147,8 @@
         a.click();
       });
       continueBtn.addEventListener('click', async () => {
+        continueBtn.disabled = true;
+        continueBtn.textContent = 'Setting up your account\u2026';
         await migrateGuestDataToAccount();
         modal.classList.remove('open');
         setTimeout(() => { modal.remove(); location.reload(); }, 300);

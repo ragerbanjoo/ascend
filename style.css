@@ -4060,7 +4060,6 @@ html[data-theme="light"] .password-meter { background: rgba(26, 26, 46, 0.08); }
 /* ---------- Light mode: Onboarding theme cards ---------- */
 html[data-theme="light"] .ob-theme-choice {
   border-color: rgba(26, 26, 46, 0.1);
-  color: var(--ink);
 }
 html[data-theme="light"] .ob-theme-choice:hover { border-color: var(--gold-dim); }
 html[data-theme="light"] .ob-theme-choice[aria-pressed="true"] {
