@@ -3072,7 +3072,10 @@
           <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" data-honeypot>
           <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}" data-size="compact"></div>
           <p class="auth-error" data-auth-error style="display:none"></p>
-          <p class="text-mute" style="font-size:1rem">No email needed. Your journal and private intentions are encrypted end-to-end. Only you can read them.</p>
+          <label style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;color:var(--cream-dim);cursor:pointer;margin:var(--space-3) 0">
+            <input type="checkbox" required data-privacy-agree style="margin-top:0.2rem;flex-shrink:0">
+            <span>I am at least 14 years old and agree to the <a href="privacy.html" target="_blank" style="color:var(--gold);text-decoration:underline">Privacy Policy</a></span>
+          </label>
           <button type="submit" class="btn btn-primary btn-full">Create account</button>
         </form>
       </div>

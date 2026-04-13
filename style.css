@@ -1412,7 +1412,7 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   font-style: italic;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   color: var(--gold-bright);
-  padding: var(--space-5) var(--space-7);
+  padding: var(--space-5) clamp(var(--space-4), 5vw, var(--space-7));
   border: 1px solid var(--gold);
   border-radius: var(--r-lg);
   background: rgba(201, 161, 74, 0.08);
@@ -2573,7 +2573,7 @@ html[data-theme="light"] .timeline-hint {
   background: linear-gradient(155deg, rgba(201,161,74,0.1), rgba(6,13,26,0.6));
   border: 1px solid var(--gold-soft);
   border-radius: var(--r-xl);
-  padding: var(--space-8);
+  padding: clamp(var(--space-5), 5vw, var(--space-8));
   position: relative;
   overflow: hidden;
   margin-bottom: var(--space-7);
@@ -3215,7 +3215,7 @@ html[data-theme="light"] .hub-guest-banner {
 .footer-inner {
   max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--space-7);
+  padding: 0 var(--space-5);
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-6);
@@ -4243,11 +4243,19 @@ html[data-theme="light"] .upload-queue-item { background: rgba(255,255,255,0.5);
   .lightbox-img { max-height: 55vh; }
 }
 
+/* ---------- Mobile: general overflow prevention ---------- */
+@media (max-width: 600px) {
+  .container, .container-narrow { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .warn-box { padding: var(--space-4); }
+  .countdown-big { gap: clamp(0.25rem, 1.5vw, 0.75rem); }
+  .countdown-cell { min-width: clamp(56px, 13vw, 110px); }
+}
+
 /* ---------- Mobile: small phones (iPhone SE / 14) ---------- */
 @media (max-width: 390px) {
   .guide-inner { padding: var(--space-5) var(--space-4); }
   .guide-icon-grid { grid-template-columns: repeat(4, 1fr); }
   .recovery-words { grid-template-columns: repeat(3, 1fr); gap: var(--space-1); padding: var(--space-3); }
   .ob-theme-cards { gap: var(--space-3); }
-  section { padding-left: var(--space-3); padding-right: var(--space-3); }
+  .container, .container-narrow { padding-left: var(--space-3); padding-right: var(--space-3); }
 }
