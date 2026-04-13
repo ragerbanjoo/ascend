@@ -32,7 +32,7 @@
       <li class="nav-dropdown">
         <button type="button" class="nav-dropdown-btn">Schedule <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
         <div class="nav-dropdown-menu">
-          <a href="timeline.html">Timeline</a>
+          <a href="timeline.html">Full Weekend</a>
           <a href="saturday.html">Saturday</a>
           <a href="sunday.html">Sunday</a>
         </div>
@@ -45,6 +45,7 @@
           <a href="hotel.html">Hotel</a>
           <a href="whats-included.html">Costs</a>
           <a href="speakers.html">Speakers</a>
+          <a href="faq.html">FAQ</a>
           <a href="parents.html">Parents</a>
         </div>
       </li>
@@ -74,8 +75,26 @@
         <div class="gold-rule center"></div>
       </div>
 
+      <div class="hub-jumpnav" style="margin-bottom: var(--space-5);">
+        <button type="button" class="hub-jumpnav-btn" aria-expanded="false" aria-controls="jumpnav-menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Jump to section
+          <svg class="hub-jumpnav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <nav class="hub-jumpnav-menu" id="jumpnav-menu" aria-label="Jump to section">
+          <a href="#parent-facts"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Quick Facts</a>
+          <a href="#parent-doing"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> What They're Doing</a>
+          <a href="#parent-safety"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Safety</a>
+          <a href="#parent-cost"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost & Consent</a>
+          <a href="#parent-contact"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.09 5.18 2 2 0 0 1 5.11 3h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.36a2 2 0 0 1-.45 2.11L8.91 10.6A16 16 0 0 0 13.4 15.1l1.42-1.42a2 2 0 0 1 2.11-.45c.76.32 1.55.55 2.36.68a2 2 0 0 1 1.72 2z"/></svg> Contact</a>
+          <a href="#parent-map"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Map</a>
+          <a href="#parent-app"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Retreat App</a>
+          <a href="#parent-rules"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Expectations</a>
+        </nav>
+      </div>
+
       <!-- Quick facts card - above the fold, no animation -->
-      <div class="hero-card" style="padding: var(--space-6);">
+      <div id="parent-facts" class="hero-card" style="padding: var(--space-6);">
         <span class="eyebrow">Quick facts</span>
         <h2 style="font-size: clamp(1.75rem, 3.5vw, 2.25rem); margin-bottom: var(--space-5);">Saturday, May 16 → Sunday, May 17, 2026</h2>
         <dl>
@@ -92,7 +111,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-doing" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="two-col">
         <div class="info-card">
@@ -113,7 +132,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-safety" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header">
         <h2>Safety &amp; supervision</h2>
@@ -133,7 +152,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-cost" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="two-col">
         <div class="info-card">
@@ -154,7 +173,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-contact" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header">
         <h2>Contact Us</h2>
@@ -172,7 +191,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-map" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header">
         <h2>Where they'll be</h2>
@@ -215,7 +234,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="parent-app" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header">
         <h2>The Retreat App</h2>
@@ -246,7 +265,19 @@
     </div>
   </section>
 
-  <section class="section group-rules-section" data-reveal>
+  <section style="padding-top: 0;">
+    <div class="container-narrow">
+      <div class="info-card" data-reveal style="text-align: center; border-color: var(--gold-soft); background: linear-gradient(155deg, rgba(201,161,74,0.08), transparent);">
+        <h3>Have questions?</h3>
+        <p class="text-dim">We've put together a full FAQ for parents — everything from safety and supervision to cost and the app.</p>
+        <div class="btn-row" style="margin-top: var(--space-4); justify-content: center;">
+          <a class="btn btn-gold btn-sm" href="faq.html?tab=parents">Parent FAQ &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="parent-rules" class="section group-rules-section" data-reveal>
     <div class="container-narrow">
       <h2 class="section-title gold-accent" data-reveal>What we expect from each other</h2>
       <ol class="group-rules">
@@ -388,6 +419,7 @@
     <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
     <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
   </ul>
+    <li><a href="faq.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a></li>
 </aside>
 
 <button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>Top</button>

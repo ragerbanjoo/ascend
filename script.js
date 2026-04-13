@@ -252,6 +252,17 @@
       if (schedBackdrop) schedBackdrop.addEventListener('click', closeSched);
     }
 
+    // --- Theme toggle ---
+    $$('[data-theme-toggle]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await Theme.toggle();
+        $$('.sheet-theme-label').forEach(lbl => {
+          const current = document.documentElement.getAttribute('data-theme');
+          lbl.textContent = current === 'dark' ? 'Light mode' : 'Dark mode';
+        });
+      });
+    });
+
     // --- More sheet ---
     const sheet = $('.sheet');
     const backdrop = $('.sheet-backdrop');
@@ -273,17 +284,6 @@
     closeBtns.forEach(btn => btn.addEventListener('click', close));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { close(); closeSched(); }
-    });
-
-    // --- Theme toggle ---
-    $$('[data-theme-toggle]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        await Theme.toggle();
-        $$('.sheet-theme-label').forEach(lbl => {
-          const current = document.documentElement.getAttribute('data-theme');
-          lbl.textContent = current === 'dark' ? 'Light mode' : 'Dark mode';
-        });
-      });
     });
 
     // --- Mobile top bar profile ---
@@ -781,7 +781,7 @@
       body:  'Latin Mass is early tomorrow. Rest well.',
     },
     // ── Sunday ──
-    { id: 20, day: 'sun', time: '05:45',
+    { id: 20, day: 'sun', time: '05:00',
       title: 'Wake up',
       body:  'No hotel breakfast this morning — we are eating after Mass. Get ready and meet in the lobby.',
     },
@@ -837,10 +837,10 @@
       title: 'Lunch — Capitol Hill',
       body:  'The group will pick a spot together. All of these are right in the neighborhood — but you can always change your mind once you\'re there.',
       places: [
-        { name: 'Fogon Cocina Mexicana', desc: 'Mexican', walk: '~5 min walk', url: 'https://maps.app.goo.gl/vYaJJYTUHt1bgbXNA' },
-        { name: 'Kizuki Ramen & Izakaya', desc: 'Japanese ramen', walk: '~5 min walk', url: 'https://maps.app.goo.gl/jMKkfKzJX8VLcNqC6' },
-        { name: 'Ba Bar Capitol Hill', desc: 'Vietnamese', walk: '~5 min walk', url: 'https://maps.app.goo.gl/Vn4RoQKtXB18SHkm6' },
-        { name: 'Carmelos Tacos', desc: 'Tacos', walk: '~5 min walk', url: 'https://maps.app.goo.gl/zW4tV5i2KAg6Wnkd8' },
+        { name: 'Fogon Cocina Mexicana', desc: 'Mexican', url: 'https://maps.app.goo.gl/vYaJJYTUHt1bgbXNA' },
+        { name: 'Kizuki Ramen & Izakaya', desc: 'Japanese ramen', url: 'https://maps.app.goo.gl/jMKkfKzJX8VLcNqC6' },
+        { name: 'Ba Bar Capitol Hill', desc: 'Vietnamese', url: 'https://maps.app.goo.gl/Vn4RoQKtXB18SHkm6' },
+        { name: 'Carmelos Tacos', desc: 'Tacos', url: 'https://maps.app.goo.gl/zW4tV5i2KAg6Wnkd8' },
       ],
       map:   'https://www.google.com/maps/search/?api=1&query=restaurants+Capitol+Hill+Seattle+WA',
     },
@@ -979,7 +979,7 @@
             ${stop.addr ? `<span class="addr">${escapeHTML(stop.addr)}</span>` : ''}
             <p>${escapeHTML(stop.body)}</p>
             ${stop.places ? `<ul class="stop-places">${stop.places.map(p =>
-              `<li><a href="${p.url}" target="_blank" rel="noopener">${escapeHTML(p.name)}</a><span class="text-dim"> — ${escapeHTML(p.desc)} · ${escapeHTML(p.walk)} walk</span></li>`
+              `<li><a href="${p.url}" target="_blank" rel="noopener">${escapeHTML(p.name)}</a><span class="text-dim"> — ${escapeHTML(p.desc)}${p.walk ? ' · ' + escapeHTML(p.walk) : ''}</span></li>`
             ).join('')}</ul>` : ''}
             ${stop.bring ? `<p><strong class="text-gold">Bring:</strong> ${escapeHTML(stop.bring)}</p>` : ''}
             ${stop.map ? `<a class="map-link" href="${stop.map}" target="_blank" rel="noopener">Open in Google Maps →</a>` : ''}
@@ -1187,7 +1187,34 @@
   }
 
   // -------------------------------------------------------
-  // 18b. Section jump nav (Saturday/Sunday pages)
+  // 18b-1. Jump-to-section dropdown (all sub-pages)
+  // -------------------------------------------------------
+  function initJumpNav() {
+    const jumpNav = document.querySelector('.hub-jumpnav');
+    if (!jumpNav) return;
+    const jumpBtn = jumpNav.querySelector('.hub-jumpnav-btn');
+    if (!jumpBtn) return;
+
+    jumpBtn.addEventListener('click', () => {
+      const open = jumpNav.classList.toggle('open');
+      jumpBtn.setAttribute('aria-expanded', open);
+    });
+    jumpNav.querySelectorAll('.hub-jumpnav-menu a').forEach(a => {
+      a.addEventListener('click', () => {
+        jumpNav.classList.remove('open');
+        jumpBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+    document.addEventListener('click', (e) => {
+      if (!jumpNav.contains(e.target)) {
+        jumpNav.classList.remove('open');
+        jumpBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // -------------------------------------------------------
+  // 18b-2. Section jump nav (Saturday/Sunday pages)
   // -------------------------------------------------------
   function initSectionJump() {
     const nav = document.querySelector('.section-jump');
@@ -2537,28 +2564,6 @@
     const hubEl = document.querySelector('[data-hub]');
     if (!hubEl) return;
 
-    // --- Jump-nav dropdown ---
-    const jumpBtn = hubEl.querySelector('.hub-jumpnav-btn');
-    const jumpNav = hubEl.querySelector('.hub-jumpnav');
-    if (jumpBtn && jumpNav) {
-      jumpBtn.addEventListener('click', () => {
-        const open = jumpNav.classList.toggle('open');
-        jumpBtn.setAttribute('aria-expanded', open);
-      });
-      jumpNav.querySelectorAll('.hub-jumpnav-menu a').forEach(a => {
-        a.addEventListener('click', () => {
-          jumpNav.classList.remove('open');
-          jumpBtn.setAttribute('aria-expanded', 'false');
-        });
-      });
-      document.addEventListener('click', (e) => {
-        if (!jumpNav.contains(e.target)) {
-          jumpNav.classList.remove('open');
-          jumpBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
     // Check for scheduled deletion banner
     if (!Auth.isGuest) {
       const deletion = await DataStore.getScheduledDeletion();
@@ -3630,6 +3635,7 @@
     initAnchors();
     initScrollTop();
     initSectionJump();
+    initJumpNav();
     initFooter();
     initHeroParticles();
     initRSVP().catch(console.warn);

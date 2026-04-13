@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ec">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="public/images/icon-192.png">
+<link rel="icon" href="public/images/icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ASCEND 2026">
+<meta name="description" content="Frequently asked questions about the ASCEND 2026 retreat — for attendees and parents.">
+<title>FAQ &middot; St. Juan Diego YAG &times; ASCEND 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>try{const t=JSON.parse(localStorage.getItem("user:theme"));document.documentElement.setAttribute("data-theme",t||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
+<link rel="stylesheet" href="style.css">
+<style>
+/* FAQ tabs */
+.faq-tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--cream-line);
+}
+.faq-tab {
+  background: none;
+  border: none;
+  color: var(--cream-mute);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.faq-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.faq-tab:hover { color: var(--cream); }
+
+/* FAQ panel */
+.faq-panel { display: none; }
+.faq-panel.active { display: block; }
+
+/* FAQ group */
+.faq-group-label {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: var(--space-6) 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--cream-line);
+}
+.faq-group-label:first-child { margin-top: 0; }
+
+/* FAQ accordion */
+.faq-item {
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-md);
+  margin-bottom: var(--space-3);
+  transition: border-color 0.15s;
+}
+.faq-item[open] { border-color: var(--gold-dim); }
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.4;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--cream-mute);
+  border-bottom: 2px solid var(--cream-mute);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-item[open] summary::after { transform: rotate(-135deg); }
+.faq-item summary:hover { color: var(--gold-bright); }
+.faq-answer {
+  padding: 0 var(--space-4) var(--space-4);
+  color: var(--cream-dim);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.faq-answer p { margin: 0 0 var(--space-3); }
+.faq-answer p:last-child { margin-bottom: 0; }
+.faq-answer a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
+.faq-answer strong { color: var(--cream); }
+.faq-answer ul { margin: var(--space-2) 0; padding-left: 1.25rem; }
+.faq-answer li { margin-bottom: var(--space-1); }
+
+/* Light mode */
+html[data-theme="light"] .faq-item { border-color: rgba(26,26,46,0.1); }
+html[data-theme="light"] .faq-item[open] { border-color: var(--gold); }
+html[data-theme="light"] .faq-item summary { color: #1a1a2e; }
+html[data-theme="light"] .faq-item summary::after { border-color: rgba(26,26,46,0.3); }
+
+@media (max-width: 600px) {
+  .faq-item summary { font-size: 0.95rem; padding: var(--space-3); }
+  .faq-answer { padding: 0 var(--space-3) var(--space-3); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="St. Juan Diego YAG × ASCEND — Home">
+      <span class="ornament" aria-hidden="true"></span>
+      St. Juan Diego YAG <span class="x">×</span> ASCEND
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">Schedule <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="timeline.html">Full Weekend</a>
+          <a href="saturday.html">Saturday</a>
+          <a href="sunday.html">Sunday</a>
+        </div>
+      </li>
+      <li><a href="hub.html">My Retreat</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">More <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="travel.html">Travel</a>
+          <a href="hotel.html">Hotel</a>
+          <a href="whats-included.html">Costs</a>
+          <a href="speakers.html">Speakers</a>
+          <a href="faq.html">FAQ</a>
+          <a href="parents.html">Parents</a>
+        </div>
+      </li>
+    </ul>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mtop" aria-label="Mobile header">
+  <div class="mtop-inner">
+    <a href="index.html" class="mtop-brand">SJD YAG <span class="x">×</span> ASCEND</a>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <a href="hub.html" class="mtop-profile" data-mtop-profile aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+  </div>
+</div>
+
+<main class="bg-ink bg-grain">
+  <section style="padding-top: var(--space-8); padding-bottom: var(--space-4);">
+    <div class="container-narrow">
+      <div class="section-header center" data-reveal>
+        <span class="eyebrow">Questions &amp; Answers</span>
+        <h1>FAQ</h1>
+        <p class="lede">Everything you need to know — whether you're going on the retreat or your kid is.</p>
+        <div class="gold-rule center"></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="container-narrow">
+
+      <!-- Tab bar -->
+      <div class="faq-tabs">
+        <button type="button" class="faq-tab active" data-faq-tab="attendees">For Attendees</button>
+        <button type="button" class="faq-tab" data-faq-tab="parents">For Parents</button>
+      </div>
+
+      <!-- =============================== -->
+      <!-- ATTENDEES PANEL                  -->
+      <!-- =============================== -->
+      <div class="faq-panel active" data-faq-panel="attendees">
+
+        <h4 class="faq-group-label">The Basics</h4>
+
+        <details class="faq-item">
+          <summary>What is ASCEND?</summary>
+          <div class="faq-answer">
+            <p>ASCEND is a large-scale Catholic Eucharistic Revival event happening at Meydenbauer Center in Bellevue, WA. Nationally known speakers like Chris Stefanick, Dr. Tim Gray, and the Swaffords will give talks. There's praise music, Eucharistic Adoration, Confession, and a Mass celebrated by Archbishop Paul Etienne. It runs all day Saturday, May 16.</p>
+            <p><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND official website &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>When do we leave and when do we get back?</summary>
+          <div class="faq-answer">
+            <p><strong>Saturday morning:</strong> We meet in Tieton at either 3:45 AM (Option A, with Confession &amp; Adoration) or 5:30 AM (Option B, without). It's early — really early. Coffee is your friend.</p>
+            <p><strong>Sunday evening:</strong> We depart Seattle around 5:00 PM and arrive back in Tieton around 7:45&ndash;8:00 PM.</p>
+            <p>See the <a href="timeline.html">full weekend timeline</a> for every stop.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is everything really free?</summary>
+          <div class="faq-answer">
+            <p><strong>Yes.</strong> The group covers ASCEND registration, the hotel, gas, and all four meals (Saturday lunch, Saturday dinner, Sunday breakfast, Sunday lunch). You only need pocket money for personal extras like snacks, merch, or church offerings.</p>
+            <p>Suggested: $20&ndash;40. See <a href="whats-included.html">What's Included</a> for full details.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if I can't afford even the extra spending money?</summary>
+          <div class="faq-answer">
+            <p>Talk to Gaby or Johana before the trip. We will figure something out. Money should never be the reason you don't come. No one gets left behind.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Packing &amp; Prep</h4>
+
+        <details class="faq-item">
+          <summary>What should I pack?</summary>
+          <div class="faq-answer">
+            <p>There's a full interactive packing checklist on the <a href="hub.html">My Retreat</a> page, but the essentials:</p>
+            <ul>
+              <li>Comfortable clothes for Saturday (you'll be sitting in talks all day)</li>
+              <li>Sunday Mass clothes — something respectful for a Traditional Latin Mass</li>
+              <li>Toiletries, charger, snacks for the drive</li>
+              <li>A light jacket or layers (Bellevue/Seattle mornings can be cool even in May)</li>
+              <li>Spending money if you want extras</li>
+              <li>A good attitude and an open heart</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What should I wear?</summary>
+          <div class="faq-answer">
+            <p><strong>Saturday:</strong> Casual and comfortable. You'll be sitting through talks, walking around Bellevue for lunch, and attending Mass in the evening. Nice casual is fine.</p>
+            <p><strong>Sunday:</strong> Dress respectfully for the Traditional Latin Mass. For guys: collared shirt and slacks at a minimum. For girls: something modest — shoulders covered, knee-length or longer skirt/dress preferred. This is a reverent, sacred liturgy and we want to honor that.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I bring my own car?</summary>
+          <div class="faq-answer">
+            <p>No. The group travels together in vans. This is for safety, coordination, and so no one gets lost or left behind. Carpool assignments will be shared before the trip.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">The Hotel</h4>
+
+        <details class="faq-item">
+          <summary>What's the hotel like?</summary>
+          <div class="faq-answer">
+            <p>La Quinta Inn by Wyndham in Lynnwood — recently renovated, 4 stars. Free parking, indoor pool, hot tub, and gym. Clean rooms and friendly staff. It's right off I-5 between Bellevue, Edmonds, and Seattle, which makes it perfect for our weekend loop.</p>
+            <p><a href="hotel.html">Full hotel details &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What are the sleeping arrangements?</summary>
+          <div class="faq-answer">
+            <p><strong>Guys and girls are in separate rooms — no exceptions.</strong> This is non-negotiable. Room assignments will be shared by Gaby the week before departure. No guests in rooms, and there's an 11:00 PM curfew (Latin Mass is early Sunday morning).</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is there a curfew?</summary>
+          <div class="faq-answer">
+            <p>Yes — <strong>11:00 PM lights out</strong> Saturday night. We have to be at North American Martyrs by 6:40 AM Sunday for the 7:00 AM Latin Mass, so sleep matters. Curfew is non-negotiable.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Food &amp; Meals</h4>
+
+        <details class="faq-item">
+          <summary>What's the food situation?</summary>
+          <div class="faq-answer">
+            <p>Four group meals, all covered:</p>
+            <ul>
+              <li><strong>Saturday lunch</strong> — walking-distance restaurants in downtown Bellevue (group picks together)</li>
+              <li><strong>Saturday dinner</strong> — near the hotel in Lynnwood (group picks together)</li>
+              <li><strong>Sunday breakfast</strong> — after Latin Mass, near Edmonds</li>
+              <li><strong>Sunday lunch</strong> — Capitol Hill, Seattle (group picks together)</li>
+            </ul>
+            <p>If you have dietary restrictions, let Gaby know ahead of time. Most restaurants we're choosing from have good variety.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I bring my own snacks for the drive?</summary>
+          <div class="faq-answer">
+            <p>Absolutely. We'll stop at a Pilot Travel Center in Ellensburg on the way out, and you're welcome to bring snacks from home. Coffee is highly recommended for the 3:45/5:30 AM start.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Mass &amp; Faith</h4>
+
+        <details class="faq-item">
+          <summary>What's a Traditional Latin Mass? I've never been to one.</summary>
+          <div class="faq-answer">
+            <p>The Traditional Latin Mass (also called the Extraordinary Form or Tridentine Mass) is the form of the Mass used by the Catholic Church for centuries before the liturgical reforms of the 1960s. It's celebrated in Latin, with the priest facing the altar (ad orientem), and has a sense of deep reverence and beauty.</p>
+            <p>Don't worry if you've never been — we'll have Latin Mass booklets that walk you through the whole thing. Just follow along, take it in, and let it speak to you. It's a powerful experience.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Do I need to know Latin?</summary>
+          <div class="faq-answer">
+            <p>No. The booklets we'll have include both the Latin text and English translation side by side. You don't need to know a word of Latin. Just follow along and be present.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if I'm not Catholic?</summary>
+          <div class="faq-answer">
+            <p>You're absolutely welcome to come. ASCEND is open to everyone, and you'll experience beautiful talks, music, and community. During Mass, non-Catholics are welcome to come forward for a blessing (cross your arms over your chest) instead of receiving Communion. We're glad you're here.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Will there be Confession available?</summary>
+          <div class="faq-answer">
+            <p>Yes. If you choose Option A (the earlier departure), there's a Confession window during the two-hour Adoration session before ASCEND begins Saturday morning. The ASCEND event itself may also have Confession available during the day — check the event program when you arrive.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">The Drive &amp; Travel</h4>
+
+        <details class="faq-item">
+          <summary>How long is the drive?</summary>
+          <div class="faq-answer">
+            <p>About 2 hours 25 minutes from Tieton to Bellevue (142 miles) over Snoqualmie Pass. The total trip loop is about 320 miles. We'll have rest stops and the group travels together. See the <a href="travel.html">travel page</a> for the full route breakdown.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What about Snoqualmie Pass? Is it safe in May?</summary>
+          <div class="faq-answer">
+            <p>Usually fine in mid-May, but weather in Washington is unpredictable. We'll check <a href="https://wsdot.com/travel/real-time/mountainpasses/snoqualmie" target="_blank" rel="noopener">WSDOT pass conditions</a> the night before. If conditions are rough, we'll adjust departure time and add buffer. Safety comes first.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>I get carsick. What should I do?</summary>
+          <div class="faq-answer">
+            <p>Let the group leaders know when carpool assignments are being made so we can put you in the front seat. Bring motion sickness medication (Dramamine, ginger chews, etc.) and avoid heavy food right before the mountain pass. We'll have rest stops along the way.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">The App &amp; Privacy</h4>
+
+        <details class="faq-item">
+          <summary>What's the retreat app?</summary>
+          <div class="faq-answer">
+            <p>This website <em>is</em> the retreat app. It has a live timeline that shows where the group is, an encrypted journal for your reflections and talk notes, a guided rosary, a photo gallery, a packing checklist, and daily readings. Create a free account on the <a href="hub.html">My Retreat</a> page to unlock everything.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is my journal actually private?</summary>
+          <div class="faq-answer">
+            <p><strong>Yes — genuinely private.</strong> Your journal entries, prayer intentions, and private photos are encrypted in your browser before they're ever sent to the server. The encryption key is derived from your password, which never leaves your device. Not even the site administrator can read your private content. It uses AES-256-GCM — the same encryption standard used by banks.</p>
+            <p><a href="privacy.html">Privacy policy</a> · <a href="security.html">Security details</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Do I need to create an account?</summary>
+          <div class="faq-answer">
+            <p>Not required. You can browse the timeline, schedule, travel info, and everything else without an account. But creating one (free, takes 30 seconds) unlocks the journal, rosary tracker, photo gallery, and packing checklist. No email required — just a username and password.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Other</h4>
+
+        <details class="faq-item">
+          <summary>Can I buy merch at ASCEND?</summary>
+          <div class="faq-answer">
+            <p>Yes — bring your own money for that. Most merch tables accept cards. You can browse ahead of time: <a href="https://ascendmerchstore.itemorder.com/shop/home/" target="_blank" rel="noopener">ASCEND Merch Store &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if there's an emergency?</summary>
+          <div class="faq-answer">
+            <p>Call or text Gaby immediately: <a href="tel:+15098239987">+1 (509) 823-9987</a>. She's available 24/7 during the trip. Johana (<a href="tel:+15093885123">+1 (509) 388-5123</a>) and Alex (<a href="tel:+15093060440">+1 (509) 306-0440</a>) are also reachable. For a life-threatening emergency, call 911 first, then the group leaders.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I invite a friend who isn't part of the group?</summary>
+          <div class="faq-answer">
+            <p>Talk to Gaby or Johana first. We may be able to accommodate them depending on vehicle space and hotel rooms, but it needs to be coordinated in advance — not a last-minute addition. Everyone who comes needs to be accounted for.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if I have a medical condition or need medication?</summary>
+          <div class="faq-answer">
+            <p>Bring all your own medication and let the group leaders know about anything they should be aware of (allergies, conditions, etc.) before departure. If you use a daily medication, pack it in your carry bag — not in your checked luggage — so it's always accessible.</p>
+          </div>
+        </details>
+
+      </div>
+
+      <!-- =============================== -->
+      <!-- PARENTS PANEL                    -->
+      <!-- =============================== -->
+      <div class="faq-panel" data-faq-panel="parents">
+
+        <h4 class="faq-group-label">Safety &amp; Supervision</h4>
+
+        <details class="faq-item">
+          <summary>Where exactly will my child be?</summary>
+          <div class="faq-answer">
+            <p>The <a href="timeline.html">live timeline</a> shows exactly where the group should be at any moment during the trip. The full itinerary:</p>
+            <ul>
+              <li><strong>Saturday:</strong> Meydenbauer Center in Bellevue (ASCEND event, all day), then La Quinta Inn in Lynnwood (overnight)</li>
+              <li><strong>Sunday:</strong> North American Martyrs Parish in Edmonds (Mass), Gas Works Park (Seattle), St. James Cathedral (Seattle), Immaculate Conception Church (Capitol Hill), lunch and free time in Seattle, then drive home</li>
+            </ul>
+            <p>See the <a href="parents.html">parents page</a> for the full overview with maps and addresses.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Who is supervising them?</summary>
+          <div class="faq-answer">
+            <p><strong>Gaby</strong> and <strong>Johana</strong> chaperone the full trip. <strong>Alex</strong> joins on Sunday. All three are group leaders with the St. Juan Diego Young Adult Group and have planned this retreat end to end. Their phone numbers are shared with all attendees and parents.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What are the sleeping arrangements at the hotel?</summary>
+          <div class="faq-answer">
+            <p><strong>Guys and girls are in completely separate rooms — no exceptions.</strong> This is non-negotiable. Room assignments are confirmed by Gaby the week before departure. There's an 11:00 PM curfew, no guests allowed in rooms, and all hotel quiet hours must be respected.</p>
+            <p><a href="hotel.html">Full hotel details &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if there's an emergency?</summary>
+          <div class="faq-answer">
+            <p>Call Gaby at <a href="tel:+15098239987">+1 (509) 823-9987</a> — she's available 24/7 during the trip. You can also reach Johana at <a href="tel:+15093885123">+1 (509) 388-5123</a> or Alex at <a href="tel:+15093060440">+1 (509) 306-0440</a>. The hotel front desk is reachable at (425) 775-7447.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Who is driving? Are the vehicles safe?</summary>
+          <div class="faq-answer">
+            <p>The group travels together in vans with designated drivers. All drivers are experienced and vetted by the group leaders. The total route is about 320 miles round trip with multiple scheduled rest stops. See the <a href="travel.html">travel page</a> for the full route breakdown.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What about the mountain pass?</summary>
+          <div class="faq-answer">
+            <p>The route crosses Snoqualmie Pass on I-90. It's usually clear in mid-May, but we'll check <a href="https://wsdot.com/travel/real-time/mountainpasses/snoqualmie" target="_blank" rel="noopener">WSDOT pass conditions</a> the night before and adjust departure time if needed. We always add buffer time for mountain driving.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Money &amp; Logistics</h4>
+
+        <details class="faq-item">
+          <summary>How much does this cost?</summary>
+          <div class="faq-answer">
+            <p><strong>Nothing.</strong> The group covers everything: ASCEND registration, hotel, gas, and all four meals. Your child only needs pocket money for personal extras like snacks, merch, or offerings. Suggested: $20&ndash;40.</p>
+            <p>If even that is a hardship, contact Gaby — no one is turned away for financial reasons.</p>
+            <p><a href="whats-included.html">Full cost details &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>When will they be back?</summary>
+          <div class="faq-answer">
+            <p>Sunday evening, approximately <strong>7:45&ndash;8:00 PM</strong> back in Tieton. The group departs Seattle around 5:00 PM. If there are any delays (pass conditions, traffic), the leaders will communicate updates.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if my child has dietary restrictions?</summary>
+          <div class="faq-answer">
+            <p>Let Gaby know ahead of time. All meals are at restaurants (not pre-ordered), so there's usually good variety — vegetarian, gluten-free, and allergy-friendly options are available at the places we're considering. The group picks together, so your child can help steer toward a place that works for them.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What about medical needs or medication?</summary>
+          <div class="faq-answer">
+            <p>Your child should bring all their own medication and keep it in their carry bag (not checked luggage). Please inform Gaby of any conditions, allergies, or special needs before departure so the leaders are prepared.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">The Retreat &amp; Faith</h4>
+
+        <details class="faq-item">
+          <summary>What is ASCEND?</summary>
+          <div class="faq-answer">
+            <p>ASCEND is a large Catholic Eucharistic Revival event at Meydenbauer Center in Bellevue, WA. It features nationally recognized Catholic speakers (Chris Stefanick, Dr. Tim Gray, Andrew &amp; Sarah Swafford), praise music, Eucharistic Adoration, Confession, and a Mass celebrated by Archbishop Paul Etienne. It's a day focused on deepening faith and community.</p>
+            <p><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND official website &rarr;</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What is a Traditional Latin Mass?</summary>
+          <div class="faq-answer">
+            <p>It's the form of the Catholic Mass that was celebrated universally for centuries, using the Latin language. The priest faces the altar, and the liturgy has a deep sense of reverence and beauty. Sunday's 7:00 AM Mass is at North American Martyrs Parish in Edmonds, served by the Priestly Fraternity of St. Peter (FSSP). Booklets with Latin-English translations will be provided.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>My child isn't Catholic. Is that okay?</summary>
+          <div class="faq-answer">
+            <p>Absolutely. Everyone is welcome. ASCEND is open to all, and the church visits on Sunday are beautiful cultural and spiritual experiences regardless of faith background. During Mass, non-Catholics are invited to come forward for a blessing instead of Communion. Your child will be treated with the same warmth and respect as everyone else.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">The App &amp; Technology</h4>
+
+        <details class="faq-item">
+          <summary>What is this website / retreat app?</summary>
+          <div class="faq-answer">
+            <p>It's a companion website built specifically for this retreat. It includes a live timeline showing where the group is, an encrypted journal for reflections, a photo gallery, a guided rosary, a packing checklist, and daily readings. Your child can optionally create an account (free, no email required) to use the interactive features.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is my child's data safe?</summary>
+          <div class="faq-answer">
+            <p><strong>Yes.</strong> Private content (journal entries, prayer intentions, private photos) is encrypted in the browser before it ever reaches the server. The encryption uses AES-256-GCM — the same standard used by banks. Not even the site administrator can read private content. No email addresses are collected. Accounts use only a username and password.</p>
+            <p>The code is <a href="https://github.com/ragerbanjoo/ascend" target="_blank" rel="noopener">open source</a> so anyone can verify these claims.</p>
+            <p><a href="privacy.html">Privacy policy</a> &middot; <a href="security.html">Security details</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can my child delete their account afterward?</summary>
+          <div class="faq-answer">
+            <p>Yes. In account settings, there's a "Delete my account" button. It starts a 7-day grace period, then permanently deletes all their data from the server. They can also export all their data before deleting. Full control is in their hands.</p>
+          </div>
+        </details>
+
+        <h4 class="faq-group-label">Consent &amp; Contact</h4>
+
+        <details class="faq-item">
+          <summary>Is there a consent form?</summary>
+          <div class="faq-answer">
+            <p>A consent form is required for all attendees under 18. Contact Gaby to receive the form and return it signed before departure: <a href="tel:+15098239987">+1 (509) 823-9987</a> or <a href="mailto:gaby@sjdyoungadults.com">gaby@sjdyoungadults.com</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>How can I reach the chaperones during the trip?</summary>
+          <div class="faq-answer">
+            <p>Text is preferred during the trip. All three leaders' phones are on at all times:</p>
+            <ul>
+              <li><strong>Gaby:</strong> <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
+              <li><strong>Johana:</strong> <a href="tel:+15093885123">+1 (509) 388-5123</a></li>
+              <li><strong>Alex:</strong> <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
+            </ul>
+            <p><strong>Hotel front desk:</strong> (425) 775-7447</p>
+          </div>
+        </details>
+
+      </div><!-- end parents panel -->
+
+    </div>
+  </section>
+
+  <!-- Still have questions? -->
+  <section style="padding-top: 0;">
+    <div class="container-narrow">
+      <div class="info-card" data-reveal style="text-align: center; border-color: var(--gold-soft); background: linear-gradient(155deg, rgba(201,161,74,0.08), transparent);">
+        <h3>Still have questions?</h3>
+        <p class="text-dim">Reach out to any of the group leaders — we're happy to help.</p>
+        <div class="btn-row" style="margin-top: var(--space-4); justify-content: center;">
+          <a class="btn btn-outline btn-sm" href="tel:+15098239987">Call Gaby</a>
+          <a class="btn btn-ghost btn-sm" href="tel:+15093885123">Call Johana</a>
+          <a class="btn btn-ghost btn-sm" href="mailto:gaby@sjdyoungadults.com">Email</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner" style="text-align:center">
+    <div>
+      <p class="footer-brand">St. Juan Diego Young Adult Group</p>
+      <p class="footer-tag">"In Him, We Rise — Together."</p>
+      <p class="text-mute" style="font-size: 1rem;">A retreat for the ASCEND Eucharistic Revival &middot; May 16&ndash;17, 2026</p>
+    </div>
+    <div>
+      <h5>External</h5>
+      <ul>
+        <li><a href="https://www.ascendeucharisticrevival.church/" target="_blank" rel="noopener">ASCEND</a></li>
+        <li><a href="https://www.northamericanmartyrs.org/" target="_blank" rel="noopener">North American Martyrs</a></li>
+        <li><a href="https://stjames-cathedral.org/" target="_blank" rel="noopener">St. James Cathedral</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Contact</h5>
+      <ul>
+        <li><strong>Gaby</strong> &mdash; <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
+        <li><a href="mailto:gaby@sjdyoungadults.com">gaby@sjdyoungadults.com</a></li>
+        <li><strong>Johana</strong> &mdash; <a href="tel:+15093885123">+1 (509) 388-5123</a></li>
+        <li><strong>Alex</strong> (Sunday YAG) &mdash; <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>made with <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a14a" aria-label="heart"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by alex</span>
+    <span><a href="https://github.com/ragerbanjoo/ascend" target="_blank" rel="noopener">open source</a> &middot; <a href="security.html">security</a></span>
+  </div>
+</footer>
+
+<nav class="mnav" aria-label="Mobile primary">
+  <div class="mnav-inner">
+    <a href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/>
+      </svg>
+      <span class="mnav-label">Home</span>
+    </a>
+    <button type="button" data-open-schedule>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="mnav-label">Schedule</span>
+    </button>
+    <a href="hub.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="mnav-label">My Retreat</span>
+    </a>
+    <a href="parents.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="mnav-label">Parents</span>
+    </a>
+    <button type="button" data-open-sheet>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      <span class="mnav-label">More</span>
+    </button>
+  </div>
+  <div class="mnav-sub" aria-hidden="true">
+    <a href="timeline.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Full Weekend
+    </a>
+    <a href="saturday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h20"/><path d="M6 20V10M10 20V10M14 20V10M18 20V10"/><path d="M12 3l9 7H3z"/></svg>
+      Saturday
+    </a>
+    <a href="sunday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M10 4.5h4M6 21V11l6-5 6 5v10"/><path d="M10 21v-4h4v4"/></svg>
+      Sunday
+    </a>
+  </div>
+</nav>
+<div class="mnav-sub-backdrop" aria-hidden="true"></div>
+
+<div class="sheet-backdrop" data-close-sheet aria-hidden="true"></div>
+<aside class="sheet" role="dialog" aria-modal="true" aria-label="More pages" aria-hidden="true">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-header">
+    <h5>More</h5>
+    <button type="button" class="sheet-close" data-close-sheet aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <button type="button" class="sheet-theme-toggle" data-theme-toggle>
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      <span class="sheet-theme-label">Dark mode</span>
+    </button>
+  <ul class="sheet-links">
+    <li><a href="travel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/><path d="M9 4v13M15 7v13"/></svg> Travel</a></li>
+    <li><a href="hotel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Hotel</a></li>
+    <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
+    <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
+    <li><a href="faq.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a></li>
+  </ul>
+</aside>
+
+<button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>Top</button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="script.js"></script>
+<script>
+(function initFaqTabs() {
+  var tabs = document.querySelectorAll('[data-faq-tab]');
+  var panels = document.querySelectorAll('[data-faq-panel]');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var target = tab.dataset.faqTab;
+      tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.faqTab === target); });
+      panels.forEach(function(p) { p.classList.toggle('active', p.dataset.faqPanel === target); });
+    });
+  });
+  // Support linking directly to parents tab via ?tab=parents
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('tab') === 'parents') {
+    tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.faqTab === 'parents'); });
+    panels.forEach(function(p) { p.classList.toggle('active', p.dataset.faqPanel === 'parents'); });
+  }
+})();
+</script>
+</body>
+</html>

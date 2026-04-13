@@ -146,8 +146,10 @@ html[data-theme="light"] .quicklink {
 }
 html[data-theme="light"] .tile:hover,
 html[data-theme="light"] .quicklink:hover {
-  background: rgba(255,255,255,0.9);
-  box-shadow: 0 0 24px -4px rgba(158,124,46,0.15), 0 8px 28px -8px rgba(26,26,46,0.12);
+  background: rgba(255,255,255,0.95);
+  border-color: rgba(201,161,74,0.3);
+  border-top-color: var(--gold);
+  box-shadow: 0 0 24px -4px rgba(158,124,46,0.2), 0 12px 32px -8px rgba(26,26,46,0.14);
 }
 html[data-theme="light"] .info-card {
   background: rgba(255,255,255,0.7) !important;

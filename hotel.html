@@ -32,7 +32,7 @@
       <li class="nav-dropdown">
         <button type="button" class="nav-dropdown-btn">Schedule <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
         <div class="nav-dropdown-menu">
-          <a href="timeline.html">Timeline</a>
+          <a href="timeline.html">Full Weekend</a>
           <a href="saturday.html">Saturday</a>
           <a href="sunday.html">Sunday</a>
         </div>
@@ -45,6 +45,7 @@
           <a href="hotel.html">Hotel</a>
           <a href="whats-included.html">Costs</a>
           <a href="speakers.html">Speakers</a>
+          <a href="faq.html">FAQ</a>
           <a href="parents.html">Parents</a>
         </div>
       </li>
@@ -75,7 +76,28 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section style="padding:0">
+    <div class="container">
+      <div class="hub-jumpnav">
+        <button type="button" class="hub-jumpnav-btn" aria-expanded="false" aria-controls="jumpnav-menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Jump to section
+          <svg class="hub-jumpnav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <nav class="hub-jumpnav-menu" id="jumpnav-menu" aria-label="Jump to section">
+          <a href="#hotel-info"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/></svg> La Quinta</a>
+          <a href="#hotel-why"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Why This Hotel</a>
+          <a href="#hotel-checkin"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zM15.5 8.5l-3.5-3.5M8.5 15.5l3.5 3.5"/></svg> Check-in</a>
+          <a href="#hotel-rooms"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg> Rooms</a>
+          <a href="#hotel-rules"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> House Rules</a>
+          <a href="#hotel-backup"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Backup Hotel</a>
+          <a href="#hotel-map"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Map</a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section id="hotel-info" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="hero-card" data-reveal>
         <span class="eyebrow">Saturday, May 16 · Check-in ~8:00 PM</span>
@@ -91,7 +113,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-why" style="padding-top: 0;">
     <div class="container">
       <div class="two-col">
         <div data-reveal>
@@ -122,7 +144,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-checkin" style="padding-top: 0;">
     <div class="container">
       <div class="section-header" data-reveal>
         <h2>Check-in &amp; check-out</h2>
@@ -150,7 +172,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-rooms" style="padding-top: 0;">
     <div class="container">
       <div class="section-header" data-reveal>
         <h2>Room assignments</h2>
@@ -166,7 +188,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-rules" style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header" data-reveal>
         <h2>House rules</h2>
@@ -185,7 +207,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-backup" style="padding-top: 0;">
     <div class="container">
       <div class="section-header" data-reveal>
         <h2>Backup hotel</h2>
@@ -204,7 +226,7 @@
     </div>
   </section>
 
-  <section style="padding-top: 0;">
+  <section id="hotel-map" style="padding-top: 0;">
     <div class="container">
       <div class="section-header" data-reveal>
         <h2>Where it is</h2>
@@ -330,6 +352,7 @@
     <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
     <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
   </ul>
+    <li><a href="faq.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a></li>
 </aside>
 
 <button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>Top</button>
