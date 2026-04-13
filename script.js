@@ -1628,6 +1628,24 @@
       return new TextDecoder().decode(pt);
     },
 
+    // Binary encryption for photos — works on ArrayBuffer/Uint8Array
+    async encryptBytes(buffer) {
+      if (!this._cek) throw new Error('No encryption key loaded');
+      const iv = new Uint8Array(12);
+      crypto.getRandomValues(iv);
+      const ct = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv }, this._cek, buffer
+      );
+      return { ciphertext: new Uint8Array(ct), iv: this._toBase64(iv) };
+    },
+
+    async decryptBytes(cipherBuffer, ivB64) {
+      if (!this._cek) throw new Error('No encryption key loaded');
+      const iv = this._fromBase64(ivB64);
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, this._cek, cipherBuffer);
+      return new Uint8Array(pt);
+    },
+
     async setCEK(key) {
       this._cek = key;
       try {
@@ -2210,14 +2228,34 @@
       return data || [];
     },
 
-    async uploadPhoto(file, caption, visibility) {
+    // Get a displayable URL for a photo (handles decryption for private photos)
+    async getPhotoUrl(photo) {
+      if (photo.dataUrl) return photo.dataUrl; // guest localStorage
+      const sb = getSupabase();
+      const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
+      if (!photo.encrypted) return urlData.publicUrl;
+      // Decrypt private photo
+      const resp = await fetch(urlData.publicUrl);
+      const encBytes = new Uint8Array(await resp.arrayBuffer());
+      const plainBytes = await Crypto.decryptBytes(encBytes, photo.iv);
+      const blob = new Blob([plainBytes], { type: photo.mime_type || 'image/jpeg' });
+      return URL.createObjectURL(blob);
+    },
+
+    // Get decrypted caption for a photo
+    async getPhotoCaption(photo) {
+      if (!photo.encrypted || !photo.caption || !photo.caption_iv) return photo.caption || '';
+      return await Crypto.decrypt(photo.caption, photo.caption_iv);
+    },
+
+    // Upload a photo (always encrypted as private first)
+    async uploadPhoto(file, caption) {
       if (Auth.isGuest) {
-        // Store as data URL in localStorage (limited)
         const photos = Storage._lsGet('hub:photos', []);
         const reader = new FileReader();
         return new Promise((resolve) => {
           reader.onload = () => {
-            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility, created_at: new Date().toISOString() });
+            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility: 'private', created_at: new Date().toISOString() });
             Storage._lsSet('hub:photos', photos);
             resolve();
           };
@@ -2225,13 +2263,98 @@
         });
       }
       const sb = getSupabase();
-      const ext = file.name.split('.').pop();
-      const path = `${Auth.user.id}/${crypto.randomUUID()}.${ext}`;
-      const { error: uploadErr } = await sb.storage.from('photos').upload(path, file);
+      // Encrypt the file bytes
+      const plainBytes = new Uint8Array(await file.arrayBuffer());
+      const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
+      // Encrypt the caption
+      const captionEnc = caption ? await Crypto.encrypt(caption) : { ciphertext: '', iv: null };
+      // Upload encrypted blob
+      const path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
+      const blob = new Blob([ciphertext], { type: 'application/octet-stream' });
+      const { error: uploadErr } = await sb.storage.from('photos').upload(path, blob);
       if (uploadErr) throw new Error(uploadErr.message);
+      // Insert metadata
+      const { data } = await sb.from('photos').insert({
+        user_id: Auth.user.id,
+        storage_path: path,
+        caption: captionEnc.ciphertext,
+        caption_iv: captionEnc.iv,
+        visibility: 'private',
+        encrypted: true,
+        iv,
+        original_name: file.name,
+        mime_type: file.type,
+        file_size: file.size
+      }).select().single();
+      return data;
+    },
+
+    // Share a private photo to the group (decrypt + re-upload plain)
+    async sharePhoto(photoId) {
+      if (Auth.isGuest) return;
+      const sb = getSupabase();
+      const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
+      if (!photo || !photo.encrypted) return;
+      // Decrypt the file
+      const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
+      const resp = await fetch(urlData.publicUrl);
+      const encBytes = new Uint8Array(await resp.arrayBuffer());
+      const plainBytes = await Crypto.decryptBytes(encBytes, photo.iv);
+      // Decrypt caption
+      const caption = photo.caption && photo.caption_iv
+        ? await Crypto.decrypt(photo.caption, photo.caption_iv) : (photo.caption || '');
+      // Upload plain copy
+      const ext = (photo.original_name || 'photo.jpg').split('.').pop();
+      const publicPath = `${Auth.user.id}/public/${crypto.randomUUID()}.${ext}`;
+      const plainBlob = new Blob([plainBytes], { type: photo.mime_type || 'image/jpeg' });
+      const { error: uploadErr } = await sb.storage.from('photos').upload(publicPath, plainBlob);
+      if (uploadErr) throw new Error(uploadErr.message);
+      // Insert group row
       await sb.from('photos').insert({
-        user_id: Auth.user.id, storage_path: path, caption, visibility
+        user_id: Auth.user.id,
+        storage_path: publicPath,
+        caption,
+        visibility: 'group',
+        encrypted: false,
+        original_name: photo.original_name,
+        mime_type: photo.mime_type,
+        file_size: photo.file_size,
+        shared_from: photo.id
       });
+    },
+
+    // Un-share a photo (delete the group copy, keep encrypted original)
+    async unsharePhoto(photoId) {
+      if (Auth.isGuest) return;
+      const sb = getSupabase();
+      // Find the group copy linked to this photo
+      const { data: copies } = await sb.from('photos').select('*')
+        .eq('shared_from', photoId).eq('user_id', Auth.user.id);
+      for (const copy of (copies || [])) {
+        await sb.storage.from('photos').remove([copy.storage_path]);
+        await sb.from('photos').delete().eq('id', copy.id);
+      }
+    },
+
+    // Delete a photo and its group copy if any
+    async deletePhoto(photoId) {
+      if (Auth.isGuest) {
+        const photos = Storage._lsGet('hub:photos', []);
+        Storage._lsSet('hub:photos', photos.filter(p => p.id !== photoId));
+        return;
+      }
+      const sb = getSupabase();
+      const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
+      if (!photo) return;
+      // Delete any group copies first
+      const { data: copies } = await sb.from('photos').select('*').eq('shared_from', photoId);
+      for (const copy of (copies || [])) {
+        await sb.storage.from('photos').remove([copy.storage_path]);
+        await sb.from('photos').delete().eq('id', copy.id);
+      }
+      // Delete the original
+      await sb.storage.from('photos').remove([photo.storage_path]);
+      await sb.from('photos').delete().eq('id', photoId);
     },
 
     // Sharing preferences
@@ -3376,11 +3499,28 @@
         text: i.text, answered: i.answered, created: i.created_at
       })), null, 2));
 
+      // Photos (decrypted)
+      try {
+        const photos = await DataStore.getPhotos('mine');
+        const photosFolder = zip.folder('photos');
+        for (const photo of photos) {
+          try {
+            const url = await DataStore.getPhotoUrl(photo);
+            const caption = await DataStore.getPhotoCaption(photo);
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            const ext = (photo.original_name || 'photo.jpg').split('.').pop();
+            photosFolder.file(`${photo.id}.${ext}`, blob);
+            if (caption) photosFolder.file(`${photo.id}.caption.txt`, caption);
+          } catch (e) { /* skip photos that fail to decrypt */ }
+        }
+      } catch (e) { /* photos export optional */ }
+
       // Audit log
       zip.file('audit-log.json', JSON.stringify(await DataStore.getMyAuditLog(), null, 2));
 
       // README
-      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries (decrypted)\n- talk-notes.json — Notes from talks\n- intentions.json — Private intentions (decrypted)\n- audit-log.json — Account activity log\n`);
+      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries (decrypted)\n- talk-notes.json — Notes from talks\n- intentions.json — Private intentions (decrypted)\n- photos/ — Your photos (decrypted) with captions\n- audit-log.json — Account activity log\n`);
 
       const blob = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');

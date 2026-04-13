@@ -132,12 +132,14 @@
   <section style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header" data-reveal>
-        <h2>End-to-end encryption for your journal &amp; talk notes</h2>
+        <h2>End-to-end encryption</h2>
       </div>
       <div class="info-card" data-reveal>
         <ul>
-          <li>Journal entries, talk notes, and private intentions encrypted in your browser before being sent</li>
+          <li>Journal entries, talk notes, private intentions, and <strong class="text-gold">private photos</strong> encrypted in your browser before being sent</li>
           <li>Journal supports rich text and embedded drawings — all encrypted as HTML before storage</li>
+          <li>Private photos are encrypted as binary blobs — the server stores ciphertext, not images</li>
+          <li>Photo captions are also encrypted when photos are private</li>
           <li><strong class="text-gold">AES-GCM 256-bit</strong> encryption (same standard used by banks and governments)</li>
           <li>Encryption key derived from password using <strong class="text-gold">PBKDF2 with 250,000 iterations</strong></li>
           <li>Encryption key lives only in browser memory during session — never stored on disk, never sent to server</li>
@@ -265,7 +267,7 @@
         <ul>
           <li>No 2FA (adds friction for group reluctant about email)</li>
           <li>No full security team (built by one person for a small group)</li>
-          <li>Client-side encryption only for journal and intentions</li>
+          <li>Client-side encryption for journal, intentions, and private photos (not packing list or profile)</li>
           <li>Session keys in browser memory (lock your phone)</li>
         </ul>
       </div>

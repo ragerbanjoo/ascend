@@ -126,7 +126,7 @@
         <ul>
           <li>Username, display name, saint icon</li>
           <li>Packing progress</li>
-          <li>Photos you upload</li>
+          <li>Photos you choose to share with the group (you control this)</li>
         </ul>
       </div>
 
@@ -137,11 +137,22 @@
           <li>&#x1f512; Journal entries (including rich text and drawings)</li>
           <li>&#x1f512; Talk notes from speakers</li>
           <li>&#x1f512; Private intentions</li>
+          <li>&#x1f512; Private photos and their captions</li>
         </ul>
       </div>
 
       <div class="info-card" data-reveal>
         <p>These are encrypted with a key derived from your password using <strong class="text-gold">PBKDF2</strong> and <strong class="text-gold">AES-GCM</strong>, industry-standard cryptography. The encryption happens in your browser before anything is sent to the database. Even Alex, who owns the database, sees only scrambled text.</p>
+      </div>
+
+      <div class="info-card" data-reveal>
+        <h3>How photos work</h3>
+        <p class="text-dim">Photos have two modes — you choose which:</p>
+        <ul>
+          <li><strong class="text-gold">Private</strong> — encrypted in your browser before upload. The server stores an encrypted blob that only you can view. Not even the database admin can see these photos.</li>
+          <li><strong class="text-gold">Shared with group</strong> — when you choose to share a photo, a plain copy is uploaded so others can see it. The original encrypted version stays in your private gallery.</li>
+        </ul>
+        <p class="text-dim" style="margin-top: var(--space-3);">You can share or un-share any photo at any time. Un-sharing deletes the plain copy from the server — only the encrypted original remains.</p>
       </div>
     </div>
   </section>
