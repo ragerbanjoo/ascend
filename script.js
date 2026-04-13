@@ -1195,7 +1195,13 @@
       }
     }, { passive: true });
     btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: prefersReduced() ? 'auto' : 'smooth' });
+      const rosaryProgress = document.querySelector('#pray-active .progress-bar-wrap');
+      if (rosaryProgress && rosaryProgress.offsetParent !== null) {
+        const y = rosaryProgress.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? 'auto' : 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: prefersReduced() ? 'auto' : 'smooth' });
+      }
     });
   }
 

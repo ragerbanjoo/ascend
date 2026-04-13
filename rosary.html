@@ -171,23 +171,6 @@ html[data-theme="light"] .toggle input:checked + .slider {
 }
 .intention-input::placeholder { color: var(--cream-mute); }
 
-/* Text size */
-.text-size-btns {
-  display: flex; gap: 0.25rem;
-}
-.text-size-btns button {
-  background: var(--gold-dim);
-  border: none;
-  color: var(--cream);
-  width: 32px; height: 32px;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: background 0.15s;
-}
-.text-size-btns button:hover { background: var(--gold-soft); }
-.text-size-btns button.active { background: var(--gold); color: var(--ink-deep); }
 
 /* Prayer card */
 .prayer-card {
@@ -224,9 +207,6 @@ html[data-theme="light"] .toggle input:checked + .slider {
   white-space: pre-line;
   max-width: 32rem;
 }
-.prayer-card .prayer-text.text-sm { font-size: 0.9375rem; }
-.prayer-card .prayer-text.text-md { font-size: 1.0625rem; }
-.prayer-card .prayer-text.text-lg { font-size: 1.25rem; line-height: 1.8; }
 
 /* Mystery announcement */
 .mystery-announce { text-align: center; }
@@ -807,14 +787,6 @@ html[data-theme="light"] .pray-nav .btn-back {
   border-color: rgba(26,26,46,0.16);
   color: var(--cream);
 }
-html[data-theme="light"] .text-size-btns button {
-  background: rgba(26,26,46,0.08);
-  color: var(--cream);
-}
-html[data-theme="light"] .text-size-btns button.active {
-  background: var(--gold);
-  color: #fff;
-}
 html[data-theme="light"] .progress-track {
   background: rgba(26,26,46,0.12);
 }
@@ -923,14 +895,6 @@ html[data-theme="light"] .opt-row {
             <div class="opt-row" style="flex-direction:column;align-items:stretch;gap:0.25rem;">
               <label for="opt-intention">Intention (optional)</label>
               <input type="text" id="opt-intention" class="intention-input" placeholder="e.g. For my family's health...">
-            </div>
-            <div class="opt-row">
-              <label>Text Size</label>
-              <div class="text-size-btns">
-                <button data-size="sm">A</button>
-                <button data-size="md" class="active">A</button>
-                <button data-size="lg">A</button>
-              </div>
             </div>
           </div>
           <div style="text-align:center;">
@@ -1406,7 +1370,6 @@ const state = {
   litany: false,
   scripture: false,
   intention: '',
-  textSize: 'md',
   steps: [],
   stepIndex: 0,
   beadCount: 0,
@@ -1438,17 +1401,7 @@ const state = {
   document.getElementById('opt-scripture').addEventListener('change', e => { state.scripture = e.target.checked; });
   document.getElementById('opt-intention').addEventListener('input', e => { state.intention = e.target.value; });
 
-  document.querySelectorAll('.text-size-btns button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.textSize = btn.dataset.size;
-      document.querySelectorAll('.text-size-btns button').forEach(b => b.classList.toggle('active', b.dataset.size === state.textSize));
-      // Update visible prayer text immediately if mid-prayer
-      document.querySelectorAll('.prayer-text').forEach(el => {
-        el.classList.remove('text-sm', 'text-md', 'text-lg');
-        el.classList.add('text-' + state.textSize);
-      });
-    });
-  });
+});
 })();
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -1567,7 +1520,7 @@ function renderPrayer(key) {
   if (state.beginner && p.instruction) {
     html += '<div class="instruction">' + escHtml(p.instruction) + '</div>';
   }
-  html += '<p class="prayer-text text-' + state.textSize + '">' + escHtml(p.text) + '</p>';
+  html += '<p class="prayer-text">' + escHtml(p.text) + '</p>';
   prayerCard.innerHTML = html;
 }
 
@@ -1610,7 +1563,7 @@ function renderBeadPrayer(key, total) {
   html += '</div>';
 
   if (!done) {
-    html += '<p class="prayer-text text-' + state.textSize + '" style="margin-top:1rem;">' + escHtml(p.text) + '</p>';
+    html += '<p class="prayer-text" style="margin-top:1rem;">' + escHtml(p.text) + '</p>';
   }
 
   prayerCard.innerHTML = html;
