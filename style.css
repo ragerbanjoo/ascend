@@ -4126,6 +4126,15 @@ html[data-theme="light"] .scroll-list { background: rgba(255, 255, 255, 0.5); }
 .encrypted-banner strong { color: var(--gold-bright); }
 .encrypted-banner a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; }
 
+.photos-share-toggle {
+  display: flex; align-items: center; gap: var(--space-2); cursor: pointer;
+  font-size: var(--fs-xs); color: var(--cream-dim); margin-bottom: var(--space-4);
+}
+.photos-share-toggle input { accent-color: var(--gold); }
+.photos-upload-progress {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4); font-size: var(--fs-sm); color: var(--cream-dim);
+}
 .photos-dropzone {
   border: 2px dashed var(--cream-line); border-radius: var(--r-lg);
   padding: var(--space-7) var(--space-5); text-align: center; cursor: pointer;

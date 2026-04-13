@@ -2312,14 +2312,15 @@
       return await _decryptPacked(photo.caption);
     },
 
-    // Upload a photo (always encrypted as private first)
-    async uploadPhoto(file, caption) {
+    // Upload a photo — visibility: 'private' (encrypted) or 'group' (plain)
+    async uploadPhoto(file, caption, visibility) {
+      visibility = visibility || 'private';
       if (Auth.isGuest) {
         const photos = Storage._lsGet('hub:photos', []);
         const reader = new FileReader();
         return new Promise((resolve) => {
           reader.onload = () => {
-            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility: 'private', created_at: new Date().toISOString() });
+            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility, created_at: new Date().toISOString() });
             Storage._lsSet('hub:photos', photos);
             resolve();
           };
@@ -2327,27 +2328,30 @@
         });
       }
       const sb = getSupabase();
-      // Encrypt the file bytes
-      const plainBytes = new Uint8Array(await file.arrayBuffer());
-      const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
-      // Prepend raw IV bytes (12 bytes) to encrypted blob for storage
-      const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
-      const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
-      combined.set(ivBytes, 0);
-      combined.set(ciphertext, ivBytes.length);
-      // Encrypt the caption
-      const captionField = caption ? await _encryptPacked(caption) : '';
-      // Upload encrypted blob (IV + ciphertext)
-      const path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
-      const blob = new Blob([combined], { type: 'application/octet-stream' });
+      let path, blob, captionField = caption || '';
+      if (visibility === 'group') {
+        // Group: upload plain (no encryption)
+        path = `${Auth.user.id}/public/${crypto.randomUUID()}.${file.name.split('.').pop() || 'jpg'}`;
+        blob = file;
+      } else {
+        // Private: encrypt file bytes, prepend IV
+        const plainBytes = new Uint8Array(await file.arrayBuffer());
+        const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
+        const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
+        const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
+        combined.set(ivBytes, 0);
+        combined.set(ciphertext, ivBytes.length);
+        path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
+        blob = new Blob([combined], { type: 'application/octet-stream' });
+        captionField = caption ? await _encryptPacked(caption) : '';
+      }
       const { error: uploadErr } = await sb.storage.from('photos').upload(path, blob);
       if (uploadErr) throw new Error(uploadErr.message);
-      // Insert metadata (only columns that exist in DB)
       const { data, error: insertErr } = await sb.from('photos').insert({
         user_id: Auth.user.id,
         storage_path: path,
         caption: captionField,
-        visibility: 'private'
+        visibility
       }).select().single();
       if (insertErr) throw new Error(insertErr.message);
       return data;

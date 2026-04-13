@@ -85,6 +85,12 @@
       <p>Your photos are <strong>encrypted in your browser</strong> before upload. Not even the admin can see them. If you lose your recovery phrase, encrypted photos cannot be recovered. <a href="security.html">Learn more</a></p>
     </details>
 
+    <!-- Tabs -->
+    <div class="photos-tabs">
+      <button class="photos-tab active" data-photos-tab="mine">My Photos</button>
+      <button class="photos-tab" data-photos-tab="group">Group Gallery</button>
+    </div>
+
     <!-- Upload area -->
     <div data-upload-area style="display:none">
       <div class="photos-dropzone" data-dropzone>
@@ -93,7 +99,14 @@
         <input type="file" accept="image/*" multiple hidden data-file-input>
         <p class="text-mute" style="font-size:0.8rem">Max 10 MB per photo</p>
       </div>
-      <div class="photos-upload-queue" data-upload-queue></div>
+      <label class="photos-share-toggle" data-share-toggle>
+        <input type="checkbox" data-share-to-group>
+        <span>Share to Group Gallery</span>
+      </label>
+      <div class="photos-upload-progress" data-upload-progress style="display:none">
+        <div class="spinner"></div>
+        <span data-upload-status>Uploading...</span>
+      </div>
     </div>
 
     <!-- Photo grid -->
@@ -230,6 +243,7 @@
   }
 
   // State
+  let currentTab = 'mine';
   let currentPhotos = [];
   let urlCache = new Map();
   let lightboxIndex = -1;
@@ -242,12 +256,16 @@
   const uploadBtn = document.querySelector('[data-upload-btn]');
   const dropzone = document.querySelector('[data-dropzone]');
   const fileInput = document.querySelector('[data-file-input]');
-  const uploadQueue = document.querySelector('[data-upload-queue]');
+  const progressEl = document.querySelector('[data-upload-progress]');
+  const statusEl = document.querySelector('[data-upload-status]');
+  const shareToggle = document.querySelector('[data-share-to-group]');
+  const tabs = document.querySelectorAll('[data-photos-tab]');
   const lightbox = document.querySelector('[data-lightbox]');
   const lbImg = document.querySelector('[data-lightbox-img]');
   const lbCaption = document.querySelector('[data-lightbox-caption]');
   const lbMeta = document.querySelector('[data-lightbox-meta]');
   const lbActions = document.querySelector('[data-lightbox-actions]');
+
   function init() {
     // Guest gate
     if (Auth.isGuest) {
@@ -255,18 +273,29 @@
       uploadBtn.style.display = 'none';
       grid.style.display = 'none';
       document.querySelector('[data-encryption-banner]').style.display = 'none';
+      document.querySelector('.photos-tabs').style.display = 'none';
       guestEl.querySelector('[data-auth-cta]')?.addEventListener('click', () => {
         if (window.openAuthModal) window.openAuthModal('signup');
       });
       return;
     }
 
+    // Tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.photosTab;
+        loadPhotos();
+      });
+    });
+
     // Upload button
     uploadBtn.addEventListener('click', () => {
       uploadArea.style.display = uploadArea.style.display === 'none' ? '' : 'none';
     });
 
-    // Dropzone
+    // Dropzone — auto-upload on file select
     dropzone.addEventListener('click', () => fileInput.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
@@ -293,7 +322,6 @@
       if (e.key === 'ArrowRight') navigateLightbox(1);
     });
 
-    // Load initial tab
     loadPhotos();
   }
 
@@ -303,7 +331,6 @@
     emptyEl.style.display = 'none';
     grid.style.display = '';
 
-    // Show skeletons
     for (let i = 0; i < 8; i++) {
       const sk = document.createElement('div');
       sk.className = 'photo-skeleton';
@@ -311,7 +338,7 @@
     }
 
     try {
-      currentPhotos = await DataStore.getPhotos('mine');
+      currentPhotos = await DataStore.getPhotos(currentTab === 'mine' ? 'mine' : 'group');
 
       grid.innerHTML = '';
 
@@ -371,76 +398,43 @@
     return url;
   }
 
-  // ──── Upload Flow ────
-  function handleFiles(fileList) {
+  // ──── Upload Flow (auto-upload all selected files) ────
+  async function handleFiles(fileList) {
     const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
-    if (!files.length) {
-      showToast('Please select image files.', 'error');
-      return;
+    if (!files.length) { showToast('Please select image files.', 'error'); return; }
+
+    const tooBig = files.filter(f => f.size > 10 * 1024 * 1024);
+    const valid = files.filter(f => f.size <= 10 * 1024 * 1024);
+    tooBig.forEach(f => showToast(f.name + ' is too large (max 10 MB).', 'error'));
+    if (!valid.length) return;
+
+    const shareToGroup = shareToggle && shareToggle.checked;
+    dropzone.style.display = 'none';
+    progressEl.style.display = 'flex';
+    let done = 0;
+
+    for (const file of valid) {
+      statusEl.textContent = 'Uploading ' + (done + 1) + ' of ' + valid.length + '...';
+      try {
+        await DataStore.uploadPhoto(file, '', shareToGroup ? 'group' : 'private');
+        done++;
+      } catch (err) {
+        showToast('Failed: ' + (err.message || file.name), 'error');
+      }
     }
 
-    files.forEach(file => {
-      if (file.size > 10 * 1024 * 1024) {
-        showToast(file.name + ' is too large (max 10 MB).', 'error');
-        return;
+    progressEl.style.display = 'none';
+    dropzone.style.display = '';
+    uploadArea.style.display = 'none';
+    if (done) {
+      showToast(done + ' photo' + (done > 1 ? 's' : '') + ' uploaded!');
+      if (shareToGroup) {
+        tabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-photos-tab="group"]').classList.add('active');
+        currentTab = 'group';
       }
-      addToQueue(file);
-    });
-  }
-
-  function addToQueue(file) {
-    const item = document.createElement('div');
-    item.className = 'upload-queue-item';
-
-    const previewUrl = URL.createObjectURL(file);
-
-    item.innerHTML =
-      '<img class="upload-queue-thumb" src="' + previewUrl + '" alt="">' +
-      '<div class="upload-queue-info">' +
-        '<div class="upload-queue-name">' + escapeHtml(file.name) + '</div>' +
-        '<input type="text" class="field upload-queue-caption" placeholder="Add a caption (optional)" maxlength="200">' +
-      '</div>' +
-      '<div class="upload-queue-actions">' +
-        '<button type="button" class="btn btn-gold btn-sm" data-queue-upload>Upload</button>' +
-        '<button type="button" class="btn btn-ghost btn-sm" data-queue-remove>&times;</button>' +
-      '</div>';
-
-    item.querySelector('[data-queue-upload]').addEventListener('click', async () => {
-      const btn = item.querySelector('[data-queue-upload]');
-      const actions = item.querySelector('.upload-queue-actions');
-      btn.disabled = true;
-      actions.innerHTML = '<div class="spinner"></div>';
-
-      const caption = item.querySelector('.upload-queue-caption').value.trim();
-      try {
-        await DataStore.uploadPhoto(file, caption);
-        URL.revokeObjectURL(previewUrl);
-        item.remove();
-        showToast('Photo uploaded and encrypted!');
-        // Reload if queue is now empty
-        if (!uploadQueue.children.length) {
-          uploadArea.style.display = 'none';
-          loadPhotos();
-        }
-      } catch (err) {
-        showToast('Upload failed: ' + (err.message || 'Unknown error'), 'error');
-        actions.innerHTML =
-          '<button type="button" class="btn btn-gold btn-sm" data-queue-upload>Retry</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm" data-queue-remove>&times;</button>';
-        item.querySelector('[data-queue-upload]').addEventListener('click', arguments.callee);
-        item.querySelector('[data-queue-remove]').addEventListener('click', () => {
-          URL.revokeObjectURL(previewUrl);
-          item.remove();
-        });
-      }
-    });
-
-    item.querySelector('[data-queue-remove]').addEventListener('click', () => {
-      URL.revokeObjectURL(previewUrl);
-      item.remove();
-    });
-
-    uploadQueue.appendChild(item);
+    }
+    loadPhotos();
   }
 
   // ──── Lightbox ────
