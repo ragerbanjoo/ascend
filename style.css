@@ -3554,10 +3554,9 @@ html[data-theme="light"] .intentions-empty {
 }
 .ob-welcome-detail {
   color: var(--cream-dim);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
   line-height: 1.6;
   margin: 0 0 var(--space-6);
-  opacity: 0.75;
 }
 
 /* Instructions (Add to Home Screen) */
@@ -3630,8 +3629,8 @@ html[data-theme="light"] .intentions-empty {
 }
 .ob-desc {
   color: var(--cream-dim);
-  font-size: var(--fs-base);
-  line-height: 1.7;
+  font-size: var(--fs-md);
+  line-height: 1.6;
   margin: 0;
   text-align: left;
 }
