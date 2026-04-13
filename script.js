@@ -2054,6 +2054,21 @@
   // ============================================
   // DATASTORE — Unified interface (guest=localStorage, auth=Supabase)
   // ============================================
+
+  // Pack encrypted data as "iv:ciphertext" in a single DB column
+  async function _encryptPacked(text) {
+    if (!text) return '';
+    const enc = await Crypto.encrypt(text);
+    return enc.iv + ':' + enc.ciphertext;
+  }
+  // Unpack "iv:ciphertext" from a single DB column and decrypt
+  async function _decryptPacked(packed) {
+    if (!packed) return '';
+    const sep = packed.indexOf(':');
+    if (sep <= 0) return packed; // plain text (not encrypted)
+    return await Crypto.decrypt(packed.slice(sep + 1), packed.slice(0, sep));
+  }
+
   const DataStore = {
     // Packing items
     async getPackingItems() {
@@ -2096,10 +2111,10 @@
       const decrypted = [];
       for (const entry of data) {
         try {
-          const title = entry.title_ciphertext ? await Crypto.decrypt(entry.title_ciphertext, entry.title_iv) : '';
-          const body = entry.body_ciphertext ? await Crypto.decrypt(entry.body_ciphertext, entry.body_iv) : '';
-          const speaker = entry.speaker_ciphertext ? await Crypto.decrypt(entry.speaker_ciphertext, entry.speaker_iv) : '';
-          const talkTitle = entry.talk_title_ciphertext ? await Crypto.decrypt(entry.talk_title_ciphertext, entry.talk_title_iv) : '';
+          const title = await _decryptPacked(entry.title);
+          const body = await _decryptPacked(entry.body);
+          const speaker = await _decryptPacked(entry.speaker);
+          const talkTitle = await _decryptPacked(entry.talk_title);
           decrypted.push({ ...entry, title, body, speaker, talkTitle });
         } catch (e) {
           decrypted.push({ ...entry, title: '[Encrypted]', body: '[Could not decrypt]', speaker: '', talkTitle: '' });
@@ -2126,15 +2141,11 @@
         return;
       }
       const sb = getSupabase();
-      const titleEnc = title ? await Crypto.encrypt(title) : { ciphertext: null, iv: null };
-      const bodyEnc = body ? await Crypto.encrypt(body) : { ciphertext: null, iv: null };
-      const speakerEnc = speaker ? await Crypto.encrypt(speaker) : { ciphertext: null, iv: null };
-      const talkTitleEnc = talkTitle ? await Crypto.encrypt(talkTitle) : { ciphertext: null, iv: null };
       const row = {
-        title_ciphertext: titleEnc.ciphertext, title_iv: titleEnc.iv,
-        body_ciphertext: bodyEnc.ciphertext, body_iv: bodyEnc.iv,
-        speaker_ciphertext: speakerEnc.ciphertext, speaker_iv: speakerEnc.iv,
-        talk_title_ciphertext: talkTitleEnc.ciphertext, talk_title_iv: talkTitleEnc.iv,
+        title: await _encryptPacked(title),
+        body: await _encryptPacked(body),
+        speaker: await _encryptPacked(speaker),
+        talk_title: await _encryptPacked(talkTitle),
         entry_type: entryType,
       };
       if (id) {
@@ -2205,8 +2216,13 @@
       const decrypted = [];
       for (const item of data) {
         try {
-          const text = await Crypto.decrypt(item.text_ciphertext, item.text_iv);
-          decrypted.push({ ...item, text });
+          const sep = (item.text || '').indexOf(':');
+          if (sep > 0) {
+            const plaintext = await Crypto.decrypt(item.text.slice(sep + 1), item.text.slice(0, sep));
+            decrypted.push({ ...item, text: plaintext });
+          } else {
+            decrypted.push(item);
+          }
         } catch (e) {
           decrypted.push({ ...item, text: '[Could not decrypt]' });
         }
@@ -2223,8 +2239,9 @@
       }
       const sb = getSupabase();
       const enc = await Crypto.encrypt(text);
+      const packed = enc.iv + ':' + enc.ciphertext;
       const { error } = await sb.from('private_intentions').insert({
-        user_id: Auth.user.id, text_ciphertext: enc.ciphertext, text_iv: enc.iv
+        user_id: Auth.user.id, text: packed
       });
       if (error) throw new Error('Failed to save intention: ' + error.message);
     },
@@ -2267,25 +2284,21 @@
       if (photo.dataUrl) return photo.dataUrl; // guest localStorage
       const sb = getSupabase();
       const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
-      if (!photo.encrypted) return urlData.publicUrl;
-      // Decrypt private photo
+      if (photo.visibility === 'group') return urlData.publicUrl;
+      // Decrypt private photo — IV is prepended (first 12 bytes) to the blob
       const resp = await fetch(urlData.publicUrl);
-      const encBytes = new Uint8Array(await resp.arrayBuffer());
-      const plainBytes = await Crypto.decryptBytes(encBytes, photo.iv);
-      const blob = new Blob([plainBytes], { type: photo.mime_type || 'image/jpeg' });
+      const raw = new Uint8Array(await resp.arrayBuffer());
+      const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
+      const encBytes = raw.slice(12);
+      const plainBytes = await Crypto.decryptBytes(encBytes, iv);
+      const blob = new Blob([plainBytes], { type: 'image/jpeg' });
       return URL.createObjectURL(blob);
     },
 
     // Get decrypted caption for a photo
     async getPhotoCaption(photo) {
-      if (!photo.encrypted || !photo.caption) return photo.caption || '';
-      // Caption stored as "iv:ciphertext"
-      const sep = photo.caption.indexOf(':');
-      if (sep === -1) return photo.caption;
-      const capIv = photo.caption.slice(0, sep);
-      const capCt = photo.caption.slice(sep + 1);
-      if (!capIv || !capCt) return '';
-      return await Crypto.decrypt(capCt, capIv);
+      if (photo.visibility === 'group' || !photo.caption) return photo.caption || '';
+      return await _decryptPacked(photo.caption);
     },
 
     // Upload a photo (always encrypted as private first)
@@ -2306,28 +2319,24 @@
       // Encrypt the file bytes
       const plainBytes = new Uint8Array(await file.arrayBuffer());
       const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
-      // Encrypt the caption (store as "iv:ciphertext" in single column)
-      let captionField = '';
-      if (caption) {
-        const captionEnc = await Crypto.encrypt(caption);
-        captionField = captionEnc.iv + ':' + captionEnc.ciphertext;
-      }
-      // Upload encrypted blob
+      // Prepend raw IV bytes (12 bytes) to encrypted blob for storage
+      const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
+      const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
+      combined.set(ivBytes, 0);
+      combined.set(new Uint8Array(ciphertext.buffer ? ciphertext.buffer : ciphertext), ivBytes.length);
+      // Encrypt the caption
+      const captionField = caption ? await _encryptPacked(caption) : '';
+      // Upload encrypted blob (IV + ciphertext)
       const path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
-      const blob = new Blob([ciphertext], { type: 'application/octet-stream' });
+      const blob = new Blob([combined], { type: 'application/octet-stream' });
       const { error: uploadErr } = await sb.storage.from('photos').upload(path, blob);
       if (uploadErr) throw new Error(uploadErr.message);
-      // Insert metadata
+      // Insert metadata (only columns that exist in DB)
       const { data, error: insertErr } = await sb.from('photos').insert({
         user_id: Auth.user.id,
         storage_path: path,
         caption: captionField,
-        visibility: 'private',
-        encrypted: true,
-        iv,
-        original_name: file.name,
-        mime_type: file.type,
-        file_size: file.size
+        visibility: 'private'
       }).select().single();
       if (insertErr) throw new Error(insertErr.message);
       return data;
@@ -2338,19 +2347,18 @@
       if (Auth.isGuest) return;
       const sb = getSupabase();
       const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
-      if (!photo || !photo.encrypted) return;
-      // Decrypt the file
+      if (!photo || photo.visibility !== 'private') return;
+      // Decrypt the file — IV is prepended (first 12 bytes)
       const { data: urlData } = sb.storage.from('photos').getPublicUrl(photo.storage_path);
       const resp = await fetch(urlData.publicUrl);
-      const encBytes = new Uint8Array(await resp.arrayBuffer());
-      const plainBytes = await Crypto.decryptBytes(encBytes, photo.iv);
+      const raw = new Uint8Array(await resp.arrayBuffer());
+      const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
+      const plainBytes = await Crypto.decryptBytes(raw.slice(12), iv);
       // Decrypt caption
-      const caption = photo.caption && photo.caption_iv
-        ? await Crypto.decrypt(photo.caption, photo.caption_iv) : (photo.caption || '');
+      const caption = photo.caption ? await _decryptPacked(photo.caption) : '';
       // Upload plain copy
-      const ext = (photo.original_name || 'photo.jpg').split('.').pop();
-      const publicPath = `${Auth.user.id}/public/${crypto.randomUUID()}.${ext}`;
-      const plainBlob = new Blob([plainBytes], { type: photo.mime_type || 'image/jpeg' });
+      const publicPath = `${Auth.user.id}/public/${crypto.randomUUID()}.jpg`;
+      const plainBlob = new Blob([plainBytes], { type: 'image/jpeg' });
       const { error: uploadErr } = await sb.storage.from('photos').upload(publicPath, plainBlob);
       if (uploadErr) throw new Error(uploadErr.message);
       // Insert group row
@@ -2358,22 +2366,16 @@
         user_id: Auth.user.id,
         storage_path: publicPath,
         caption,
-        visibility: 'group',
-        encrypted: false,
-        original_name: photo.original_name,
-        mime_type: photo.mime_type,
-        file_size: photo.file_size,
-        shared_from: photo.id
+        visibility: 'group'
       });
     },
 
-    // Un-share a photo (delete the group copy, keep encrypted original)
+    // Un-share a photo (delete group copies by this user)
     async unsharePhoto(photoId) {
       if (Auth.isGuest) return;
       const sb = getSupabase();
-      // Find the group copy linked to this photo
       const { data: copies } = await sb.from('photos').select('*')
-        .eq('shared_from', photoId).eq('user_id', Auth.user.id);
+        .eq('user_id', Auth.user.id).eq('visibility', 'group');
       for (const copy of (copies || [])) {
         await sb.storage.from('photos').remove([copy.storage_path]);
         await sb.from('photos').delete().eq('id', copy.id);
@@ -3605,7 +3607,7 @@
             const caption = await DataStore.getPhotoCaption(photo);
             const resp = await fetch(url);
             const blob = await resp.blob();
-            const ext = (photo.original_name || 'photo.jpg').split('.').pop();
+            const ext = 'jpg';
             photosFolder.file(`${photo.id}.${ext}`, blob);
             if (caption) photosFolder.file(`${photo.id}.caption.txt`, caption);
           } catch (e) { /* skip photos that fail to decrypt */ }

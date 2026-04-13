@@ -334,20 +334,12 @@
         sk.style.inset = '0';
         thumb.appendChild(sk);
 
-        // Lock badge for encrypted
-        if (photo.encrypted) {
+        // Lock badge for private (encrypted) photos
+        if (photo.visibility === 'private') {
           const lock = document.createElement('span');
           lock.className = 'photo-thumb-lock';
           lock.innerHTML = '&#128274;';
           thumb.appendChild(lock);
-        }
-
-        // Shared badge for group copies of own photos
-        if (photo.visibility === 'group' && photo.shared_from && photo.user_id === Auth.user?.id) {
-          const badge = document.createElement('span');
-          badge.className = 'photo-thumb-shared';
-          badge.textContent = 'shared';
-          thumb.appendChild(badge);
         }
 
         thumb.addEventListener('click', () => openLightbox(idx));
@@ -357,7 +349,7 @@
         resolvePhotoUrl(photo).then(url => {
           const img = document.createElement('img');
           img.src = url;
-          img.alt = photo.original_name || 'Photo';
+          img.alt = 'Photo';
           img.onload = () => { if (sk.parentNode) sk.remove(); };
           thumb.insertBefore(img, thumb.firstChild);
         }).catch(() => {
@@ -480,17 +472,15 @@
       const date = new Date(photo.created_at).toLocaleDateString('en-US', {
         month: 'short', day: 'numeric', year: 'numeric'
       });
-      const size = photo.file_size ? formatBytes(photo.file_size) : '';
       let metaText = date;
-      if (size) metaText += ' · ' + size;
-      if (photo.encrypted) metaText += ' · Encrypted';
+      if (photo.visibility === 'private') metaText += ' · Encrypted';
       lbMeta.textContent = metaText;
 
       // Action buttons
       lbActions.innerHTML = '';
       const isOwn = photo.user_id === Auth.user?.id;
 
-      if (isOwn && photo.visibility === 'private' && photo.encrypted) {
+      if (isOwn && photo.visibility === 'private') {
         // Private photo: offer share
         const shareBtn = document.createElement('button');
         shareBtn.className = 'btn btn-gold btn-sm';
@@ -521,7 +511,7 @@
           unshareBtn.disabled = true;
           unshareBtn.textContent = 'Removing...';
           try {
-            await DataStore.unsharePhoto(photo.shared_from || photo.id);
+            await DataStore.unsharePhoto(photo.id);
             showToast('Photo removed from Group Gallery.');
             closeLightbox();
             loadPhotos();
