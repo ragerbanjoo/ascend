@@ -140,11 +140,11 @@
       <div class="day-jump" aria-label="Jump to day">
         <div class="day-jump-track">
           <div class="day-jump-indicator"></div>
-          <button type="button" class="day-jump-btn active" onclick="jumpToDay('saturday', this, 0)">
+          <button type="button" class="day-jump-btn active" data-jump="saturday">
             <span class="day-jump-label">Saturday</span>
             <span class="day-jump-date">May 16</span>
           </button>
-          <button type="button" class="day-jump-btn" onclick="jumpToDay('sunday', this, 1)">
+          <button type="button" class="day-jump-btn" data-jump="sunday">
             <span class="day-jump-label">Sunday</span>
             <span class="day-jump-date">May 17</span>
           </button>
@@ -159,21 +159,57 @@
   </section>
 
   <script>
-  function jumpToDay(day, btn, idx) {
-    document.querySelectorAll('.day-jump-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    // Slide the indicator
-    const indicator = document.querySelector('.day-jump-indicator');
-    if (indicator) indicator.style.transform = 'translateX(' + (idx * 100) + '%)';
-    // Scroll to anchor
-    const target = document.getElementById('timeline-' + day);
-    if (!target) return;
+  (function () {
     const jumpBar = document.querySelector('.day-jump');
-    const jumpH = jumpBar ? jumpBar.offsetHeight : 0;
-    const offset = 72 + jumpH + 12; // nav + sticky bar + spacing
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
-  }
+    if (!jumpBar) return;
+    const btns = jumpBar.querySelectorAll('.day-jump-btn');
+    const indicator = jumpBar.querySelector('.day-jump-indicator');
+    let activeDay = 'saturday';
+    let scrollLock = false; // true while a manual jump is animating
+
+    function setActive(day, scroll) {
+      if (activeDay === day && !scroll) return;
+      activeDay = day;
+      const idx = day === 'sunday' ? 1 : 0;
+      btns.forEach(b => b.classList.remove('active'));
+      btns[idx].classList.add('active');
+      if (indicator) indicator.style.transform = 'translateX(' + (idx * 100) + '%)';
+
+      if (scroll) {
+        const target = document.getElementById('timeline-' + day);
+        if (!target) return;
+        const jumpH = jumpBar.offsetHeight;
+        const offset = 72 + jumpH + 12;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        scrollLock = true;
+        window.scrollTo({ top, behavior: 'smooth' });
+        // Release scroll lock after animation settles
+        setTimeout(function () { scrollLock = false; }, 800);
+      }
+    }
+
+    btns[0].addEventListener('click', function () { setActive('saturday', true); });
+    btns[1].addEventListener('click', function () { setActive('sunday', true); });
+
+    // Auto-switch based on scroll position
+    function checkDay() {
+      if (scrollLock) return;
+      var sun = document.getElementById('timeline-sunday');
+      if (!sun) return;
+      var jumpH = jumpBar.offsetHeight;
+      var threshold = 72 + jumpH + 40;
+      var day = sun.getBoundingClientRect().top <= threshold ? 'sunday' : 'saturday';
+      if (day !== activeDay) setActive(day, false);
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function () { checkDay(); ticking = false; });
+      }
+    }, { passive: true });
+  })();
   </script>
 </main>
 
