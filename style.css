@@ -1070,6 +1070,11 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   box-shadow: 0 16px 44px -10px rgba(229, 192, 106, 0.65);
   color: var(--ink);
 }
+.btn:disabled, .btn[disabled] {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 .btn-outline {
   background: transparent;
   color: var(--gold);

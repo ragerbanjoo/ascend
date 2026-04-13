@@ -3124,18 +3124,29 @@
       modal.querySelector('.auth-modal').innerHTML = `
         <div class="recovery-phrase-screen">
           <h3>Your Recovery Phrase</h3>
-          <p>Your journal and private intentions are encrypted with your password. If you forget your password, this 12-word phrase is the <strong>only way</strong> to get them back.</p>
+          <p>Your journal, private intentions, and private photos are encrypted with your password. If you forget your password, this 12-word phrase is the <strong>only way</strong> to get them back.</p>
           <div class="recovery-words">${recoveryPhrase.split(' ').map((w, i) => `<span class="recovery-word"><em>${i + 1}</em>${escapeHtml(w)}</span>`).join('')}</div>
           <div class="recovery-actions">
             <button type="button" class="btn btn-ghost" data-copy-phrase>Copy to clipboard</button>
             <button type="button" class="btn btn-ghost" data-download-phrase>Download as text</button>
           </div>
-          <p class="recovery-warning">Write this down somewhere safe. Screenshot it. Email it to yourself. Alex cannot recover this for you. If you lose both your password AND this phrase, your journal is gone forever.</p>
+          <p class="recovery-warning">Write this down somewhere safe. Screenshot it. Email it to yourself. Alex cannot recover this for you. If you lose both your password AND this phrase, your journal and private photos are gone forever.</p>
           <button type="button" class="btn btn-primary btn-full" data-phrase-continue disabled>I've saved this somewhere safe — continue</button>
         </div>
       `;
       const continueBtn = modal.querySelector('[data-phrase-continue]');
-      setTimeout(() => { continueBtn.disabled = false; }, 10000);
+      let countdown = 3;
+      continueBtn.textContent = `Please read — continue in ${countdown}s`;
+      const countdownTimer = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          continueBtn.textContent = `Please read — continue in ${countdown}s`;
+        } else {
+          clearInterval(countdownTimer);
+          continueBtn.disabled = false;
+          continueBtn.textContent = "I've saved this somewhere safe — continue";
+        }
+      }, 1000);
       modal.querySelector('[data-copy-phrase]')?.addEventListener('click', () => {
         navigator.clipboard.writeText(recoveryPhrase).then(() => showToast('Copied!'));
       });
@@ -3376,7 +3387,7 @@
       {
         icon: `<svg ${svgAttrs}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
         title: 'Create an Account',
-        desc: 'Save your data across devices with a free account. Just a username and password — no email needed. Your journal and intentions stay encrypted.',
+        desc: 'Save your data across devices with a free account. Just a username and password — no email needed. Your journal and intentions stay encrypted. <a href="security.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:2px">Learn how we keep your data safe</a>',
         cta: true,
         extra: `<div class="guide-actions">
           <button type="button" class="btn btn-primary" data-guide-advance>Create Account</button>
