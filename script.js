@@ -1054,50 +1054,57 @@
     // --- Day-jump sticky toggle: auto-switch on scroll ---
     const jumpBar = document.querySelector('.day-jump');
     if (jumpBar) {
-      const jumpBtns = jumpBar.querySelectorAll('.day-jump-btn');
+      const jumpBtns = Array.from(jumpBar.querySelectorAll('.day-jump-btn'));
       const jumpIndicator = jumpBar.querySelector('.day-jump-indicator');
       let activeDay = 'saturday';
       let scrollLock = false;
 
-      function setActiveDay(day, scroll) {
-        if (activeDay === day && !scroll) return;
+      function getNavOffset() {
+        const mtop = document.querySelector('.mtop');
+        const nav = document.querySelector('.nav');
+        const navH = (mtop && mtop.offsetParent !== null) ? mtop.offsetHeight
+                   : (nav && nav.offsetParent !== null) ? nav.offsetHeight : 0;
+        return navH + jumpBar.offsetHeight + 16;
+      }
+
+      function setActiveDay(day, doScroll) {
+        if (activeDay === day && !doScroll) return;
         activeDay = day;
         const idx = day === 'sunday' ? 1 : 0;
         jumpBtns.forEach(b => b.classList.remove('active'));
         jumpBtns[idx].classList.add('active');
         if (jumpIndicator) jumpIndicator.style.transform = `translateX(${idx * 100}%)`;
 
-        if (scroll) {
+        if (doScroll) {
           const target = document.getElementById('timeline-' + day);
           if (!target) return;
-          const jumpH = jumpBar.offsetHeight;
-          const offset = 72 + jumpH + 12;
-          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          const top = target.getBoundingClientRect().top + window.scrollY - getNavOffset();
           scrollLock = true;
-          window.scrollTo({ top, behavior: prefersReduced() ? 'auto' : 'smooth' });
-          setTimeout(() => { scrollLock = false; }, 800);
+          window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced() ? 'auto' : 'smooth' });
+          setTimeout(() => { scrollLock = false; }, 900);
         }
       }
 
-      jumpBtns[0].addEventListener('click', () => setActiveDay('saturday', true));
-      jumpBtns[1].addEventListener('click', () => setActiveDay('sunday', true));
+      jumpBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const day = btn.dataset.jump || (jumpBtns.indexOf(btn) === 0 ? 'saturday' : 'sunday');
+          setActiveDay(day, true);
+        });
+      });
 
       let ticking = false;
       window.addEventListener('scroll', () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(() => {
-            if (!scrollLock) {
-              const sun = document.getElementById('timeline-sunday');
-              if (sun) {
-                const threshold = 72 + jumpBar.offsetHeight + 40;
-                const day = sun.getBoundingClientRect().top <= threshold ? 'sunday' : 'saturday';
-                if (day !== activeDay) setActiveDay(day, false);
-              }
-            }
-            ticking = false;
-          });
-        }
+        if (scrollLock || ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const sun = document.getElementById('timeline-sunday');
+          if (sun) {
+            const threshold = getNavOffset() + 24;
+            const day = sun.getBoundingClientRect().top <= threshold ? 'sunday' : 'saturday';
+            if (day !== activeDay) setActiveDay(day, false);
+          }
+          ticking = false;
+        });
       }, { passive: true });
     }
   }
@@ -1179,7 +1186,65 @@
   }
 
   // -------------------------------------------------------
-  // 18b. Scroll to top button
+  // 18b. Section jump nav (Saturday/Sunday pages)
+  // -------------------------------------------------------
+  function initSectionJump() {
+    const nav = document.querySelector('.section-jump');
+    if (!nav) return;
+    const btns = Array.from(nav.querySelectorAll('.section-jump-btn'));
+    const track = nav.querySelector('.section-jump-track');
+    let scrollLock = false;
+
+    function getOffset() {
+      const mtop = document.querySelector('.mtop');
+      const navEl = document.querySelector('.nav');
+      const navH = (mtop && mtop.offsetParent !== null) ? mtop.offsetHeight
+                 : (navEl && navEl.offsetParent !== null) ? navEl.offsetHeight : 0;
+      return navH + nav.offsetHeight + 12;
+    }
+
+    function setActive(btn) {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Scroll the pill into view within the track
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.jumpTo;
+        const target = document.getElementById(id);
+        if (!target) return;
+        setActive(btn);
+        scrollLock = true;
+        const top = target.getBoundingClientRect().top + window.scrollY - getOffset();
+        window.scrollTo({ top: Math.max(0, top), behavior: prefersReduced() ? 'auto' : 'smooth' });
+        setTimeout(() => { scrollLock = false; }, 900);
+      });
+    });
+
+    // Auto-highlight on scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (scrollLock || ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const threshold = getOffset() + 40;
+        let active = btns[0];
+        for (const btn of btns) {
+          const section = document.getElementById(btn.dataset.jumpTo);
+          if (section && section.getBoundingClientRect().top <= threshold) {
+            active = btn;
+          }
+        }
+        if (!active.classList.contains('active')) setActive(active);
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  // -------------------------------------------------------
+  // 18c. Scroll to top button
   // -------------------------------------------------------
   function initScrollTop() {
     const btn = document.querySelector('.btn-scroll-top');
@@ -3373,6 +3438,7 @@
     initReveal();
     initAnchors();
     initScrollTop();
+    initSectionJump();
     initFooter();
     initHeroParticles();
     initRSVP().catch(console.warn);
