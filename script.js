@@ -1062,8 +1062,9 @@
       function getNavOffset() {
         const mtop = document.querySelector('.mtop');
         const nav = document.querySelector('.nav');
-        const navH = (mtop && mtop.offsetParent !== null) ? mtop.offsetHeight
-                   : (nav && nav.offsetParent !== null) ? nav.offsetHeight : 0;
+        // Use offsetHeight > 0 (not offsetParent) — fixed-position elements have null offsetParent
+        const navH = (mtop && mtop.offsetHeight > 0) ? mtop.offsetHeight
+                   : (nav && nav.offsetHeight > 0) ? nav.offsetHeight : 0;
         return navH + jumpBar.offsetHeight + 16;
       }
 
@@ -1198,16 +1199,19 @@
     function getOffset() {
       const mtop = document.querySelector('.mtop');
       const navEl = document.querySelector('.nav');
-      const navH = (mtop && mtop.offsetParent !== null) ? mtop.offsetHeight
-                 : (navEl && navEl.offsetParent !== null) ? navEl.offsetHeight : 0;
+      // Use offsetHeight > 0 (not offsetParent) — fixed-position elements have null offsetParent
+      const navH = (mtop && mtop.offsetHeight > 0) ? mtop.offsetHeight
+                 : (navEl && navEl.offsetHeight > 0) ? navEl.offsetHeight : 0;
       return navH + nav.offsetHeight + 12;
     }
 
     function setActive(btn) {
       btns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      // Scroll the pill into view within the track
-      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      // Scroll the pill into view within the track (horizontal only — never scrollIntoView
+      // on sticky children, it yanks the whole page to the element's natural position)
+      const left = btn.offsetLeft - track.offsetWidth / 2 + btn.offsetWidth / 2;
+      track.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
     }
 
     btns.forEach(btn => {
@@ -2336,6 +2340,16 @@
       }
     },
 
+    // Resolve user IDs to display names for group gallery
+    async getPhotoUploaderNames(userIds) {
+      if (!userIds.length) return {};
+      const sb = getSupabase();
+      const { data } = await sb.from('profiles').select('id, display_name').in('id', userIds);
+      const map = {};
+      (data || []).forEach(p => { map[p.id] = p.display_name || 'Pilgrim'; });
+      return map;
+    },
+
     // Delete a photo and its group copy if any
     async deletePhoto(photoId) {
       if (Auth.isGuest) {
@@ -2608,6 +2622,7 @@
     await initHubIntentions();
     initHubConfessionPrep();
     initHubEmergency();
+    await initHubPhotos();
 
     // Auto-export reminder (May 18+)
     if (!Auth.isGuest) {
@@ -2960,6 +2975,32 @@
     });
 
     await render();
+  }
+
+  async function initHubPhotos() {
+    const container = document.querySelector('[data-hub-photos]');
+    if (!container) return;
+    const previews = container.querySelector('[data-photo-previews]');
+    const countEl = container.querySelector('[data-photo-count]');
+    const photos = await DataStore.getPhotos('mine');
+    if (countEl) countEl.textContent = photos.length + ' private photo' + (photos.length === 1 ? '' : 's');
+    const show = photos.slice(0, 4);
+    if (previews && show.length) {
+      for (const photo of show) {
+        try {
+          const url = await DataStore.getPhotoUrl(photo);
+          const img = document.createElement('img');
+          img.src = url; img.alt = '';
+          previews.appendChild(img);
+        } catch (e) { /* skip failed decryption */ }
+      }
+      if (photos.length > 4) {
+        const more = document.createElement('div');
+        more.className = 'hub-photo-more';
+        more.textContent = '+' + (photos.length - 4);
+        previews.appendChild(more);
+      }
+    }
   }
 
   function initHubConfessionPrep() {

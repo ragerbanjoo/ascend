@@ -236,14 +236,17 @@
           </div>
         </div>
 
-        <!-- 6. Photo Gallery -->
-        <div class="hub-tile" data-hub-photos data-reveal>
+        <!-- 6. Photo Gallery (ENCRYPTED private, plain group) -->
+        <div class="hub-tile hub-tile-encrypted" data-hub-photos data-reveal>
           <div class="hub-tile-header">
             <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <h3>Photos</h3>
+            <span class="encrypted-badge" title="Private photos are end-to-end encrypted">&#128274;</span>
           </div>
-          <p class="hub-tile-desc">Upload and share photos from the trip.</p>
-          <p class="text-mute" style="font-size:1rem">[PLACEHOLDER: Photo gallery — coming during the trip]</p>
+          <p class="hub-tile-desc">Your private encrypted gallery + shared group photos.</p>
+          <div class="hub-photo-previews" data-photo-previews></div>
+          <p class="text-mute" style="font-size:0.85rem" data-photo-count></p>
+          <a href="photos.html" class="btn btn-gold btn-sm" style="margin-top:var(--space-3)">Open Gallery</a>
         </div>
 
         <!-- 7. Confession Prep -->

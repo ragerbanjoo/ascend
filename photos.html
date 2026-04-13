@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ec">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="public/images/icon-192.png">
+<link rel="icon" href="public/images/icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ASCEND 2026">
+<meta name="description" content="Upload and share retreat photos — private encrypted gallery and group sharing.">
+<title>Photos · St. Juan Diego YAG × ASCEND 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<script>try{const t=JSON.parse(localStorage.getItem("user:theme"));document.documentElement.setAttribute("data-theme",t||"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="St. Juan Diego YAG × ASCEND — Home">
+      <span class="ornament" aria-hidden="true"></span>
+      St. Juan Diego YAG <span class="x">×</span> ASCEND
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">Schedule <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="timeline.html">Timeline</a>
+          <a href="saturday.html">Saturday</a>
+          <a href="sunday.html">Sunday</a>
+        </div>
+      </li>
+      <li><a href="hub.html">My Retreat</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-btn">More <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"/></svg></button>
+        <div class="nav-dropdown-menu">
+          <a href="travel.html">Travel</a>
+          <a href="hotel.html">Hotel</a>
+          <a href="whats-included.html">Costs</a>
+          <a href="speakers.html">Speakers</a>
+          <a href="parents.html">Parents</a>
+        </div>
+      </li>
+    </ul>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mtop" aria-label="Mobile header">
+  <div class="mtop-inner">
+    <a href="index.html" class="mtop-brand">SJD YAG <span class="x">×</span> ASCEND</a>
+    <div class="countdown-chip" role="status" aria-live="polite"><span class="chip-value">—</span></div>
+    <a href="hub.html" class="mtop-profile" data-mtop-profile aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+  </div>
+</div>
+
+<main class="bg-ink bg-grain photos-page">
+  <div class="container-narrow">
+
+    <!-- Header -->
+    <div class="photos-header">
+      <a href="hub.html" class="btn btn-ghost btn-sm">&larr; Hub</a>
+      <h1>Photos</h1>
+      <button class="btn btn-gold btn-sm" data-upload-btn>+ Upload</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="photos-tabs">
+      <button class="photos-tab active" data-photos-tab="mine">My Photos <span class="encrypted-badge">&#128274;</span></button>
+      <button class="photos-tab" data-photos-tab="group">Group Gallery</button>
+    </div>
+
+    <!-- Encryption info banner -->
+    <div class="photos-info-banner" data-encryption-banner>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p>Your private photos are <strong>encrypted</strong> in your browser before upload. Not even the admin can see them. Share specific photos to the Group Gallery when you're ready.</p>
+    </div>
+
+    <!-- Upload area -->
+    <div data-upload-area style="display:none">
+      <div class="photos-dropzone" data-dropzone>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p>Drag photos here or tap to browse</p>
+        <input type="file" accept="image/*" multiple hidden data-file-input>
+        <p class="text-mute" style="font-size:0.8rem">Max 10 MB per photo</p>
+      </div>
+      <div class="photos-upload-queue" data-upload-queue></div>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="photos-grid" data-photos-grid></div>
+
+    <!-- Empty state -->
+    <div class="photos-empty" data-photos-empty style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <h3>No photos yet</h3>
+      <p>Upload your first photo to get started.</p>
+    </div>
+
+    <!-- Guest gate -->
+    <div class="photos-guest-gate" data-photos-guest style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <h3>Sign in to use Photos</h3>
+      <p>Create an account to upload and encrypt your private photos, or browse the group gallery.</p>
+      <button class="btn btn-gold" data-auth-cta>Create Account</button>
+    </div>
+
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div class="photo-lightbox" data-lightbox style="display:none">
+  <div class="lightbox-backdrop" data-lightbox-close></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" data-lightbox-close>&times;</button>
+    <img class="lightbox-img" data-lightbox-img alt="">
+    <div class="lightbox-info">
+      <p class="lightbox-caption" data-lightbox-caption></p>
+      <p class="lightbox-meta" data-lightbox-meta></p>
+    </div>
+    <div class="lightbox-actions" data-lightbox-actions></div>
+  </div>
+  <button class="lightbox-nav lightbox-prev" data-lightbox-prev aria-label="Previous">&lsaquo;</button>
+  <button class="lightbox-nav lightbox-next" data-lightbox-next aria-label="Next">&rsaquo;</button>
+</div>
+
+<nav class="mnav" aria-label="Mobile primary">
+  <div class="mnav-inner">
+    <a href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V11z"/>
+      </svg>
+      <span class="mnav-label">Home</span>
+    </a>
+    <button type="button" data-open-schedule>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span class="mnav-label">Schedule</span>
+    </button>
+    <a href="hub.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="mnav-label">My Retreat</span>
+    </a>
+    <a href="parents.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="mnav-label">Parents</span>
+    </a>
+    <button type="button" data-open-sheet>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
+        <circle cx="19" cy="12" r="1.5"/>
+      </svg>
+      <span class="mnav-label">More</span>
+    </button>
+  </div>
+  <div class="mnav-sub" aria-hidden="true">
+    <a href="timeline.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Full Weekend
+    </a>
+    <a href="saturday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h20"/><path d="M6 20V10M10 20V10M14 20V10M18 20V10"/><path d="M12 3l9 7H3z"/></svg>
+      Saturday
+    </a>
+    <a href="sunday.html">
+      <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M10 4.5h4M6 21V11l6-5 6 5v10"/><path d="M10 21v-4h4v4"/></svg>
+      Sunday
+    </a>
+  </div>
+</nav>
+<div class="mnav-sub-backdrop" aria-hidden="true"></div>
+
+<div class="sheet-backdrop" data-close-sheet aria-hidden="true"></div>
+<aside class="sheet" role="dialog" aria-modal="true" aria-label="More pages" aria-hidden="true">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-header">
+    <h5>More</h5>
+    <button type="button" class="sheet-close" data-close-sheet aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <button type="button" class="sheet-theme-toggle" data-theme-toggle>
+      <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      <span class="sheet-theme-label">Dark mode</span>
+    </button>
+  <ul class="sheet-links">
+    <li><a href="travel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/><path d="M9 4v13M15 7v13"/></svg> Travel</a></li>
+    <li><a href="hotel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Hotel</a></li>
+    <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
+    <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
+  </ul>
+</aside>
+
+<button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>Top</button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="script.js"></script>
+<script>
+/* Photos Page Logic */
+(function() {
+  'use strict';
+
+  function ready() { return window.DataStore && window.Auth && window.Crypto; }
+
+  function boot() {
+    if (!ready()) return setTimeout(boot, 50);
+    init();
+  }
+
+  // State
+  let currentTab = 'mine';
+  let currentPhotos = [];
+  let urlCache = new Map();
+  let uploaderNames = {};
+  let lightboxIndex = -1;
+
+  // DOM refs
+  const grid = document.querySelector('[data-photos-grid]');
+  const emptyEl = document.querySelector('[data-photos-empty]');
+  const guestEl = document.querySelector('[data-photos-guest]');
+  const uploadArea = document.querySelector('[data-upload-area]');
+  const uploadBtn = document.querySelector('[data-upload-btn]');
+  const dropzone = document.querySelector('[data-dropzone]');
+  const fileInput = document.querySelector('[data-file-input]');
+  const uploadQueue = document.querySelector('[data-upload-queue]');
+  const encBanner = document.querySelector('[data-encryption-banner]');
+  const lightbox = document.querySelector('[data-lightbox]');
+  const lbImg = document.querySelector('[data-lightbox-img]');
+  const lbCaption = document.querySelector('[data-lightbox-caption]');
+  const lbMeta = document.querySelector('[data-lightbox-meta]');
+  const lbActions = document.querySelector('[data-lightbox-actions]');
+  const tabs = document.querySelectorAll('[data-photos-tab]');
+
+  function init() {
+    // Guest gate
+    if (Auth.isGuest) {
+      guestEl.style.display = '';
+      uploadBtn.style.display = 'none';
+      document.querySelector('.photos-tabs').style.display = 'none';
+      encBanner.style.display = 'none';
+      grid.style.display = 'none';
+      guestEl.querySelector('[data-auth-cta]')?.addEventListener('click', () => {
+        if (window.openAuthModal) window.openAuthModal('signup');
+      });
+      // Still allow viewing group gallery for guests
+      return;
+    }
+
+    // Tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.photosTab;
+        encBanner.style.display = currentTab === 'mine' ? '' : 'none';
+        uploadBtn.style.display = currentTab === 'mine' ? '' : 'none';
+        if (currentTab !== 'mine') {
+          uploadArea.style.display = 'none';
+        }
+        loadPhotos();
+      });
+    });
+
+    // Upload button
+    uploadBtn.addEventListener('click', () => {
+      uploadArea.style.display = uploadArea.style.display === 'none' ? '' : 'none';
+    });
+
+    // Dropzone
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => {
+      handleFiles(fileInput.files);
+      fileInput.value = '';
+    });
+
+    // Lightbox controls
+    document.querySelectorAll('[data-lightbox-close]').forEach(el => {
+      el.addEventListener('click', closeLightbox);
+    });
+    document.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => navigateLightbox(-1));
+    document.querySelector('[data-lightbox-next]')?.addEventListener('click', () => navigateLightbox(1));
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.style.display === 'none') return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      if (e.key === 'ArrowRight') navigateLightbox(1);
+    });
+
+    // Load initial tab
+    loadPhotos();
+  }
+
+  // ──── Load Photos ────
+  async function loadPhotos() {
+    grid.innerHTML = '';
+    emptyEl.style.display = 'none';
+    grid.style.display = '';
+
+    // Show skeletons
+    for (let i = 0; i < 8; i++) {
+      const sk = document.createElement('div');
+      sk.className = 'photo-skeleton';
+      grid.appendChild(sk);
+    }
+
+    try {
+      const filter = currentTab === 'mine' ? 'mine' : 'group';
+      currentPhotos = await DataStore.getPhotos(filter);
+
+      // Resolve uploader names for group tab
+      if (currentTab === 'group' && currentPhotos.length) {
+        const ids = [...new Set(currentPhotos.map(p => p.user_id))];
+        uploaderNames = await DataStore.getPhotoUploaderNames(ids);
+      }
+
+      grid.innerHTML = '';
+
+      if (!currentPhotos.length) {
+        emptyEl.style.display = '';
+        const emptyH3 = emptyEl.querySelector('h3');
+        const emptyP = emptyEl.querySelector('p');
+        if (currentTab === 'mine') {
+          emptyH3.textContent = 'No photos yet';
+          emptyP.textContent = 'Upload your first photo to get started.';
+        } else {
+          emptyH3.textContent = 'No shared photos yet';
+          emptyP.textContent = 'Photos shared to the group will appear here.';
+        }
+        return;
+      }
+
+      // Render thumbnails
+      currentPhotos.forEach((photo, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'photo-thumb';
+
+        // Skeleton placeholder inside thumb
+        const sk = document.createElement('div');
+        sk.className = 'photo-skeleton';
+        sk.style.position = 'absolute';
+        sk.style.inset = '0';
+        thumb.appendChild(sk);
+
+        // Lock badge for encrypted
+        if (photo.encrypted) {
+          const lock = document.createElement('span');
+          lock.className = 'photo-thumb-lock';
+          lock.innerHTML = '&#128274;';
+          thumb.appendChild(lock);
+        }
+
+        // Shared badge for group copies of own photos
+        if (photo.visibility === 'group' && photo.shared_from && photo.user_id === Auth.user?.id) {
+          const badge = document.createElement('span');
+          badge.className = 'photo-thumb-shared';
+          badge.textContent = 'shared';
+          thumb.appendChild(badge);
+        }
+
+        thumb.addEventListener('click', () => openLightbox(idx));
+        grid.appendChild(thumb);
+
+        // Resolve URL (async)
+        resolvePhotoUrl(photo).then(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = photo.original_name || 'Photo';
+          img.onload = () => { if (sk.parentNode) sk.remove(); };
+          thumb.insertBefore(img, thumb.firstChild);
+        }).catch(() => {
+          sk.style.background = 'rgba(255,0,0,0.1)';
+        });
+      });
+    } catch (err) {
+      grid.innerHTML = '';
+      emptyEl.style.display = '';
+      emptyEl.querySelector('h3').textContent = 'Error loading photos';
+      emptyEl.querySelector('p').textContent = err.message || 'Please try again.';
+    }
+  }
+
+  async function resolvePhotoUrl(photo) {
+    if (urlCache.has(photo.id)) return urlCache.get(photo.id);
+    const url = await DataStore.getPhotoUrl(photo);
+    urlCache.set(photo.id, url);
+    return url;
+  }
+
+  // ──── Upload Flow ────
+  function handleFiles(fileList) {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    if (!files.length) {
+      showToast('Please select image files.', 'error');
+      return;
+    }
+
+    files.forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        showToast(file.name + ' is too large (max 10 MB).', 'error');
+        return;
+      }
+      addToQueue(file);
+    });
+  }
+
+  function addToQueue(file) {
+    const item = document.createElement('div');
+    item.className = 'upload-queue-item';
+
+    const previewUrl = URL.createObjectURL(file);
+
+    item.innerHTML =
+      '<img class="upload-queue-thumb" src="' + previewUrl + '" alt="">' +
+      '<div class="upload-queue-info">' +
+        '<div class="upload-queue-name">' + escapeHtml(file.name) + '</div>' +
+        '<input type="text" class="field upload-queue-caption" placeholder="Add a caption (optional)" maxlength="200">' +
+      '</div>' +
+      '<div class="upload-queue-actions">' +
+        '<button type="button" class="btn btn-gold btn-sm" data-queue-upload>Upload</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-queue-remove>&times;</button>' +
+      '</div>';
+
+    item.querySelector('[data-queue-upload]').addEventListener('click', async () => {
+      const btn = item.querySelector('[data-queue-upload]');
+      const actions = item.querySelector('.upload-queue-actions');
+      btn.disabled = true;
+      actions.innerHTML = '<div class="spinner"></div>';
+
+      const caption = item.querySelector('.upload-queue-caption').value.trim();
+      try {
+        await DataStore.uploadPhoto(file, caption);
+        URL.revokeObjectURL(previewUrl);
+        item.remove();
+        showToast('Photo uploaded and encrypted!');
+        // Reload if queue is now empty
+        if (!uploadQueue.children.length) {
+          uploadArea.style.display = 'none';
+          // Switch to My Photos tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tabs[0].classList.add('active');
+          currentTab = 'mine';
+          encBanner.style.display = '';
+          uploadBtn.style.display = '';
+          loadPhotos();
+        }
+      } catch (err) {
+        showToast('Upload failed: ' + (err.message || 'Unknown error'), 'error');
+        actions.innerHTML =
+          '<button type="button" class="btn btn-gold btn-sm" data-queue-upload>Retry</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" data-queue-remove>&times;</button>';
+        item.querySelector('[data-queue-upload]').addEventListener('click', arguments.callee);
+        item.querySelector('[data-queue-remove]').addEventListener('click', () => {
+          URL.revokeObjectURL(previewUrl);
+          item.remove();
+        });
+      }
+    });
+
+    item.querySelector('[data-queue-remove]').addEventListener('click', () => {
+      URL.revokeObjectURL(previewUrl);
+      item.remove();
+    });
+
+    uploadQueue.appendChild(item);
+  }
+
+  // ──── Lightbox ────
+  async function openLightbox(index) {
+    if (index < 0 || index >= currentPhotos.length) return;
+    lightboxIndex = index;
+    const photo = currentPhotos[index];
+
+    lightbox.style.display = '';
+    document.body.style.overflow = 'hidden';
+
+    // Show loading state
+    lbImg.src = '';
+    lbImg.style.opacity = '0.3';
+    lbCaption.textContent = '';
+    lbMeta.textContent = 'Loading...';
+    lbActions.innerHTML = '';
+
+    try {
+      const url = await resolvePhotoUrl(photo);
+      lbImg.src = url;
+      lbImg.style.opacity = '1';
+
+      // Caption
+      const caption = await DataStore.getPhotoCaption(photo);
+      lbCaption.textContent = caption || '';
+
+      // Meta
+      const date = new Date(photo.created_at).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+      const size = photo.file_size ? formatBytes(photo.file_size) : '';
+      let metaText = date;
+      if (size) metaText += ' · ' + size;
+      if (currentTab === 'group' && photo.user_id !== Auth.user?.id) {
+        const name = uploaderNames[photo.user_id] || 'Pilgrim';
+        metaText += ' · by ' + name;
+      }
+      if (photo.encrypted) metaText += ' · Encrypted';
+      lbMeta.textContent = metaText;
+
+      // Action buttons
+      lbActions.innerHTML = '';
+      const isOwn = photo.user_id === Auth.user?.id;
+
+      if (isOwn && photo.visibility === 'private' && photo.encrypted) {
+        // Private photo: offer share
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'btn btn-gold btn-sm';
+        shareBtn.textContent = 'Share to Group';
+        shareBtn.addEventListener('click', async () => {
+          shareBtn.disabled = true;
+          shareBtn.textContent = 'Sharing...';
+          try {
+            await DataStore.sharePhoto(photo.id);
+            showToast('Photo shared to Group Gallery!');
+            closeLightbox();
+            loadPhotos();
+          } catch (err) {
+            showToast('Share failed: ' + err.message, 'error');
+            shareBtn.disabled = false;
+            shareBtn.textContent = 'Share to Group';
+          }
+        });
+        lbActions.appendChild(shareBtn);
+      }
+
+      if (isOwn && photo.visibility === 'group') {
+        // Shared photo: offer unshare
+        const unshareBtn = document.createElement('button');
+        unshareBtn.className = 'btn btn-ghost btn-sm';
+        unshareBtn.textContent = 'Unshare';
+        unshareBtn.addEventListener('click', async () => {
+          unshareBtn.disabled = true;
+          unshareBtn.textContent = 'Removing...';
+          try {
+            await DataStore.unsharePhoto(photo.shared_from || photo.id);
+            showToast('Photo removed from Group Gallery.');
+            closeLightbox();
+            loadPhotos();
+          } catch (err) {
+            showToast('Unshare failed: ' + err.message, 'error');
+            unshareBtn.disabled = false;
+            unshareBtn.textContent = 'Unshare';
+          }
+        });
+        lbActions.appendChild(unshareBtn);
+      }
+
+      if (isOwn) {
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-ghost btn-sm';
+        delBtn.style.color = 'var(--sacred-bright)';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', async () => {
+          if (!confirm('Delete this photo? This cannot be undone.')) return;
+          delBtn.disabled = true;
+          delBtn.textContent = 'Deleting...';
+          try {
+            await DataStore.deletePhoto(photo.id);
+            urlCache.delete(photo.id);
+            showToast('Photo deleted.');
+            closeLightbox();
+            loadPhotos();
+          } catch (err) {
+            showToast('Delete failed: ' + err.message, 'error');
+            delBtn.disabled = false;
+            delBtn.textContent = 'Delete';
+          }
+        });
+        lbActions.appendChild(delBtn);
+      }
+    } catch (err) {
+      lbMeta.textContent = 'Failed to load photo';
+      lbImg.style.opacity = '0.1';
+    }
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+    lightboxIndex = -1;
+  }
+
+  function navigateLightbox(dir) {
+    const next = lightboxIndex + dir;
+    if (next >= 0 && next < currentPhotos.length) {
+      openLightbox(next);
+    }
+  }
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  // Start
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+</body>
+</html>
