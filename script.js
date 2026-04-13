@@ -3823,9 +3823,34 @@
         // Delete user
         tbody.querySelectorAll('[data-admin-delete]').forEach(btn => {
           btn.addEventListener('click', async () => {
-            if (!confirm(`Delete @${btn.dataset.username}? This cascades ALL their data.`)) return;
-            await logAdminAction('delete_user', btn.dataset.adminDelete, btn.dataset.username, 'Account deleted by admin');
-            showToast(`Deleted @${btn.dataset.username}`);
+            if (!confirm(`Delete @${btn.dataset.username}? This will remove ALL their data permanently.`)) return;
+            const uid = btn.dataset.adminDelete;
+            try {
+              btn.disabled = true;
+              btn.textContent = 'Deleting...';
+              // Delete user photos from storage
+              const { data: userPhotos } = await sb.from('photos').select('storage_path').eq('user_id', uid);
+              if (userPhotos && userPhotos.length) {
+                await sb.storage.from('photos').remove(userPhotos.map(p => p.storage_path));
+              }
+              // Cascade delete from all user tables
+              await sb.from('photos').delete().eq('user_id', uid);
+              await sb.from('journal_entries').delete().eq('user_id', uid);
+              await sb.from('private_intentions').delete().eq('user_id', uid);
+              await sb.from('talk_notes').delete().eq('user_id', uid);
+              await sb.from('packing_items').delete().eq('user_id', uid);
+              await sb.from('sharing_preferences').delete().eq('user_id', uid);
+              await sb.from('scheduled_deletions').delete().eq('user_id', uid);
+              await sb.from('profiles').delete().eq('id', uid);
+              await logAdminAction('delete_user', uid, btn.dataset.username, 'Account deleted by admin');
+              // Remove the row from the table
+              btn.closest('tr').remove();
+              showToast(`Deleted @${btn.dataset.username} and all their data.`);
+            } catch (err) {
+              showToast('Delete failed: ' + err.message, 'error');
+              btn.disabled = false;
+              btn.textContent = 'Delete';
+            }
           });
         });
       }
