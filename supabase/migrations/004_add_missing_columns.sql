@@ -29,10 +29,5 @@ ALTER TABLE journal_entries ADD COLUMN IF NOT EXISTS talk_title_iv text;
 ALTER TABLE journal_entries ADD COLUMN IF NOT EXISTS sort_order integer DEFAULT 0;
 
 -- Private intentions: ensure encrypted columns exist
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='private_intentions' AND column_name='text_ciphertext') THEN
-    ALTER TABLE private_intentions ADD COLUMN text_ciphertext text;
-    ALTER TABLE private_intentions ADD COLUMN text_iv text;
-    ALTER TABLE private_intentions ADD COLUMN answered boolean DEFAULT false;
-  END IF;
-END $$;
+ALTER TABLE private_intentions ADD COLUMN IF NOT EXISTS text_ciphertext text;
+ALTER TABLE private_intentions ADD COLUMN IF NOT EXISTS text_iv text;
