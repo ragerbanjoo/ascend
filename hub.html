@@ -202,38 +202,50 @@
           <div class="packing-progress-bar" data-packing-progress role="progressbar" aria-valuenow="0" aria-valuemax="0" style="--progress:0%">
             <div class="packing-progress-fill"></div>
           </div>
-          <div class="packing-categories">
+          <div class="packing-categories" data-packing-list>
             <details open>
               <summary>Essentials</summary>
-              <label><input type="checkbox" data-pack-key="id"> Photo ID</label>
-              <label><input type="checkbox" data-pack-key="phone-charger"> Phone + charger</label>
-              <label><input type="checkbox" data-pack-key="cash"> Cash for meals</label>
-              <label><input type="checkbox" data-pack-key="meds"> Medications</label>
-              <label><input type="checkbox" data-pack-key="water-bottle"> Water bottle</label>
-              <label><input type="checkbox" data-pack-key="snacks"> Snacks for the road</label>
+              <div data-pack-cat="essentials">
+                <label data-pack-item="id"><input type="checkbox" data-pack-key="id"><span>Photo ID</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="phone-charger"><input type="checkbox" data-pack-key="phone-charger"><span>Phone + charger</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="cash"><input type="checkbox" data-pack-key="cash"><span>Cash for meals</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="meds"><input type="checkbox" data-pack-key="meds"><span>Medications</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="water-bottle"><input type="checkbox" data-pack-key="water-bottle"><span>Water bottle</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="snacks"><input type="checkbox" data-pack-key="snacks"><span>Snacks for the road</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+              </div>
+              <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="essentials"><button type="button" data-pack-add-btn="essentials" aria-label="Add">+</button></div>
             </details>
             <details>
               <summary>Clothing</summary>
-              <label><input type="checkbox" data-pack-key="conference-outfit"> Conference outfit (Saturday)</label>
-              <label><input type="checkbox" data-pack-key="mass-outfit"> Mass outfit (Sunday)</label>
-              <label><input type="checkbox" data-pack-key="pajamas"> Pajamas</label>
-              <label><input type="checkbox" data-pack-key="jacket"> Jacket / layers</label>
-              <label><input type="checkbox" data-pack-key="comfortable-shoes"> Comfortable shoes</label>
-              <label><input type="checkbox" data-pack-key="change-clothes"> Change of clothes</label>
+              <div data-pack-cat="clothing">
+                <label data-pack-item="conference-outfit"><input type="checkbox" data-pack-key="conference-outfit"><span>Conference outfit (Saturday)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="mass-outfit"><input type="checkbox" data-pack-key="mass-outfit"><span>Mass outfit (Sunday)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="pajamas"><input type="checkbox" data-pack-key="pajamas"><span>Pajamas</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="jacket"><input type="checkbox" data-pack-key="jacket"><span>Jacket / layers</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="comfortable-shoes"><input type="checkbox" data-pack-key="comfortable-shoes"><span>Comfortable shoes</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="change-clothes"><input type="checkbox" data-pack-key="change-clothes"><span>Change of clothes</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+              </div>
+              <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="clothing"><button type="button" data-pack-add-btn="clothing" aria-label="Add">+</button></div>
             </details>
             <details>
               <summary>Spiritual</summary>
-              <label><input type="checkbox" data-pack-key="rosary"> Rosary</label>
-              <label><input type="checkbox" data-pack-key="bible"> Bible / prayer book</label>
-              <label><input type="checkbox" data-pack-key="journal-physical"> Journal / notebook (optional — the app has a <a href="journal.html">built-in journal</a>)</label>
-              <label><input type="checkbox" data-pack-key="chapel-veil"> Chapel veil (optional)</label>
+              <div data-pack-cat="spiritual">
+                <label data-pack-item="rosary"><input type="checkbox" data-pack-key="rosary"><span>Rosary</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="bible"><input type="checkbox" data-pack-key="bible"><span>Bible / prayer book</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="journal-physical"><input type="checkbox" data-pack-key="journal-physical"><span>Journal / notebook</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="chapel-veil"><input type="checkbox" data-pack-key="chapel-veil"><span>Chapel veil (optional)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+              </div>
+              <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="spiritual"><button type="button" data-pack-add-btn="spiritual" aria-label="Add">+</button></div>
             </details>
             <details>
               <summary>Overnight</summary>
-              <label><input type="checkbox" data-pack-key="toiletries"> Toiletries</label>
-              <label><input type="checkbox" data-pack-key="towel"> Towel (hotel provides, but just in case)</label>
-              <label><input type="checkbox" data-pack-key="pillow"> Pillow / blanket for the van</label>
-              <label><input type="checkbox" data-pack-key="earplugs"> Earplugs / sleep mask</label>
+              <div data-pack-cat="overnight">
+                <label data-pack-item="toiletries"><input type="checkbox" data-pack-key="toiletries"><span>Toiletries</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="towel"><input type="checkbox" data-pack-key="towel"><span>Towel (hotel provides, but just in case)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="pillow"><input type="checkbox" data-pack-key="pillow"><span>Pillow / blanket for the van</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="earplugs"><input type="checkbox" data-pack-key="earplugs"><span>Earplugs / sleep mask</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+              </div>
+              <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="overnight"><button type="button" data-pack-add-btn="overnight" aria-label="Add">+</button></div>
             </details>
           </div>
         </div>

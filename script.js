@@ -2971,19 +2971,105 @@
     const container = document.querySelector('[data-hub-packing]');
     if (!container) return;
     const items = await DataStore.getPackingItems();
-    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => {
+
+    // Hide removed default items
+    container.querySelectorAll('[data-pack-item]').forEach(label => {
+      const key = label.dataset.packItem;
+      if (items['_removed:' + key]) label.remove();
+    });
+
+    // Restore checked state on remaining default items
+    container.querySelectorAll('input[data-pack-key]').forEach(cb => {
       const key = cb.dataset.packKey;
       if (key && items[key]) cb.checked = true;
-      cb.addEventListener('change', () => DataStore.setPackingItem(key, cb.checked));
+      cb.addEventListener('change', () => {
+        DataStore.setPackingItem(key, cb.checked);
+        updatePackingProgress(container);
+      });
     });
+
+    // Render custom items into their categories
+    // Key format: custom:category:itemText
+    Object.keys(items).forEach(key => {
+      if (!key.startsWith('custom:')) return;
+      const parts = key.split(':');
+      const cat = parts[1] || 'essentials';
+      const text = parts.slice(2).join(':');
+      const catEl = container.querySelector(`[data-pack-cat="${cat}"]`);
+      if (!catEl || !text) return;
+      addPackItemEl(catEl, key, text, items[key], container);
+    });
+
+    // Remove buttons for default items
+    container.querySelectorAll('.pack-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const label = btn.closest('label');
+        const key = label.dataset.packItem;
+        if (!key) return;
+        DataStore.setPackingItem('_removed:' + key, true);
+        label.remove();
+        updatePackingProgress(container);
+      });
+    });
+
+    // Add item inputs
+    container.querySelectorAll('[data-pack-add-btn]').forEach(btn => {
+      const cat = btn.dataset.packAddBtn;
+      const input = container.querySelector(`[data-pack-add="${cat}"]`);
+      if (!input) return;
+
+      function addItem() {
+        const text = input.value.trim();
+        if (!text) return;
+        const key = 'custom:' + cat + ':' + text;
+        const catEl = container.querySelector(`[data-pack-cat="${cat}"]`);
+        DataStore.setPackingItem(key, false);
+        addPackItemEl(catEl, key, text, false, container);
+        input.value = '';
+        updatePackingProgress(container);
+      }
+
+      btn.addEventListener('click', addItem);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addItem(); } });
+    });
+
     updatePackingProgress(container);
   }
 
+  function addPackItemEl(catEl, key, text, checked, container) {
+    const label = document.createElement('label');
+    label.dataset.packItem = key;
+    label.innerHTML = `<input type="checkbox" data-pack-key="${escapeHtml(key)}"${checked ? ' checked' : ''}><span>${escapeHtml(text)}</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button>`;
+    catEl.appendChild(label);
+    const cb = label.querySelector('input');
+    cb.addEventListener('change', () => {
+      DataStore.setPackingItem(key, cb.checked);
+      updatePackingProgress(container);
+    });
+    label.querySelector('.pack-remove').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Delete custom item from DB
+      if (Auth.isGuest) {
+        const items = Storage._lsGet('hub:packing', {});
+        delete items[key];
+        Storage._lsSet('hub:packing', items);
+      } else {
+        const sb = getSupabase();
+        sb.from('packing_items').delete().eq('user_id', Auth.user.id).eq('item_key', key);
+      }
+      label.remove();
+      updatePackingProgress(container);
+    });
+  }
+
   function updatePackingProgress(container) {
-    const cbs = container.querySelectorAll('input[type="checkbox"]');
-    const total = cbs.length;
-    const checked = Array.from(cbs).filter(c => c.checked).length;
+    const cbs = container.querySelectorAll('input[type="checkbox"][data-pack-key]');
+    const visible = Array.from(cbs).filter(c => !c.dataset.packKey.startsWith('_'));
+    const total = visible.length;
+    const checked = visible.filter(c => c.checked).length;
     const bar = container.querySelector('[data-packing-progress]');
     if (bar) {
       bar.style.setProperty('--progress', `${total ? (checked / total) * 100 : 0}%`);
