@@ -2939,102 +2939,161 @@
   // ============================================
   // HUB TOUR GUIDE (first visit)
   // ============================================
+  function createGuide(stepsConfig, opts = {}) {
+    const { onClose, onFinish, storageKey } = opts;
+    const total = stepsConfig.length;
+    let current = 0;
+
+    const el = document.createElement('div');
+    el.className = 'guide-overlay';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+
+    el.innerHTML = `
+      <div class="guide-inner">
+        <button type="button" class="guide-close-x" aria-label="Close">&times;</button>
+        <div class="guide-progress"><div class="guide-progress-fill"></div></div>
+        <div class="guide-body"></div>
+        <div class="guide-nav">
+          <button type="button" class="btn btn-ghost btn-sm guide-btn-back" style="visibility:hidden">Back</button>
+          <div class="guide-dots">${stepsConfig.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>
+          <button type="button" class="btn btn-primary btn-sm guide-btn-next">Next</button>
+        </div>
+      </div>
+    `;
+
+    const body = el.querySelector('.guide-body');
+    const dots = el.querySelectorAll('.guide-dot');
+    const backBtn = el.querySelector('.guide-btn-back');
+    const nextBtn = el.querySelector('.guide-btn-next');
+    const progressFill = el.querySelector('.guide-progress-fill');
+    const closeX = el.querySelector('.guide-close-x');
+
+    function render() {
+      const step = stepsConfig[current];
+      body.style.opacity = '0';
+      body.style.transform = 'translateY(8px)';
+
+      setTimeout(() => {
+        body.innerHTML = `
+          ${step.icon ? `<div class="guide-icon">${step.icon}</div>` : ''}
+          ${step.html || `<h2>${step.title}</h2><p class="guide-desc">${step.desc}</p>`}
+          ${step.extra || ''}
+        `;
+        body.style.opacity = '1';
+        body.style.transform = 'translateY(0)';
+        if (step.onEnter) step.onEnter(el);
+      }, 150);
+
+      dots.forEach((d, i) => d.classList.toggle('active', i <= current));
+      progressFill.style.width = `${((current + 1) / total) * 100}%`;
+      backBtn.style.visibility = current > 0 ? 'visible' : 'hidden';
+
+      if (step.nextLabel) nextBtn.textContent = step.nextLabel;
+      else if (current === total - 1) nextBtn.textContent = 'Done';
+      else if (current === 0) nextBtn.textContent = step.cta ? 'Get Started' : 'Next';
+      else nextBtn.textContent = 'Next';
+
+      if (step.cta) {
+        nextBtn.style.display = 'none';
+        // CTA buttons are in the step's extra HTML
+      } else {
+        nextBtn.style.display = '';
+      }
+    }
+
+    function goTo(n) {
+      if (n < 0 || n >= total) return;
+      current = n;
+      render();
+    }
+
+    function close() {
+      if (storageKey) Storage._lsSet(storageKey, true);
+      el.classList.remove('open');
+      setTimeout(() => el.remove(), 350);
+      if (onClose) onClose();
+    }
+
+    function advance() {
+      if (current === total - 1) {
+        if (onFinish) onFinish(el);
+        else close();
+      } else {
+        goTo(current + 1);
+      }
+    }
+
+    backBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', advance);
+    closeX.addEventListener('click', close);
+
+    el.addEventListener('click', (e) => {
+      if (e.target === el) close();
+      if (e.target.matches('[data-guide-advance]')) advance();
+      if (e.target.matches('[data-guide-dismiss]')) close();
+    });
+
+    document.body.appendChild(el);
+    render();
+    requestAnimationFrame(() => el.classList.add('open'));
+
+    return { el, goTo, close, advance, getCurrent: () => current };
+  }
+
+  // ============================================
+  // HUB FIRST VISIT TOUR (guests only)
+  // ============================================
   function initHubFirstVisit() {
     if (!document.querySelector('[data-hub]')) return;
-    const seen = Storage._lsGet('hub:tour-seen', false);
-    if (seen || !Auth.isGuest) return;
+    if (Storage._lsGet('hub:tour-seen', false) || !Auth.isGuest) return;
 
-    const steps = [
+    const svgAttrs = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"';
+
+    createGuide([
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+        icon: `<svg ${svgAttrs}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
         title: 'Your Retreat Hub',
-        desc: 'This is your personal command center for the ASCEND 2026 retreat. Everything you need is right here — let\'s take a quick look.'
+        desc: 'This is your personal command center for the ASCEND 2026 retreat. Everything you need is right here — let\'s take a quick look.',
+        nextLabel: 'Show Me Around'
       },
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+        icon: `<svg ${svgAttrs}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
         title: 'Daily Readings',
         desc: 'Start each day with the Mass readings, psalm, and gospel. If there\'s a saint of the day, you\'ll see their story and a quote.'
       },
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>`,
+        icon: `<svg ${svgAttrs}><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>`,
         title: 'Journal & Talk Notes',
         desc: 'Write reflections, sketch drawings, and capture speaker notes with a rich text editor. Everything is encrypted — only you can read it.'
       },
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>`,
+        icon: `<svg ${svgAttrs}><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>`,
         title: 'Rosary & Intentions',
         desc: 'Pray the Holy Rosary with a guided experience, and keep a private list of prayer intentions that are encrypted end-to-end.'
       },
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 21h16"/><rect x="9" y="14" width="6" height="3" rx=".5"/></svg>`,
+        icon: `<svg ${svgAttrs}><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 21h16"/><rect x="9" y="14" width="6" height="3" rx=".5"/></svg>`,
         title: 'Packing & More',
         desc: 'Check off your packing list, review confession prep, find emergency contacts, and see the full retreat schedule.'
       },
       {
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+        icon: `<svg ${svgAttrs}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
         title: 'Create an Account',
         desc: 'Save your data across devices with a free account. Just a username and password — no email needed. Your journal and intentions stay encrypted.',
-        cta: true
+        cta: true,
+        extra: `<div class="guide-actions">
+          <button type="button" class="btn btn-primary" data-guide-advance>Create Account</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-guide-dismiss>Continue as Guest</button>
+        </div>`
       }
-    ];
-
-    const totalSteps = steps.length;
-    const dotsHTML = steps.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('');
-    const stepsHTML = steps.map((s, i) => `
-      <div class="guide-step${i === 0 ? ' active' : ''}" data-guide-step="${i}">
-        <div class="guide-icon">${s.icon}</div>
-        <h2>${s.title}</h2>
-        <p class="guide-desc">${s.desc}</p>
-        <div class="guide-actions">
-          ${i > 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-back>Back</button>' : ''}
-          ${s.cta ? `
-            <button type="button" class="btn btn-primary" data-guide-signup>Create Account</button>
-            <button type="button" class="btn btn-ghost btn-sm" data-guide-close>Continue as Guest</button>
-          ` : `
-            <button type="button" class="btn btn-primary" data-guide-next>${i === 0 ? 'Show Me Around' : 'Next'}</button>
-            ${i === 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-close>Skip</button>' : ''}
-          `}
-        </div>
-        <div class="guide-counter">${i + 1} / ${totalSteps}</div>
-      </div>
-    `).join('');
-
-    const guide = document.createElement('div');
-    guide.className = 'guide-overlay';
-    guide.innerHTML = `
-      <div class="guide-inner">
-        <div class="guide-dots">${dotsHTML}</div>
-        ${stepsHTML}
-      </div>
-    `;
-    document.body.appendChild(guide);
-    requestAnimationFrame(() => guide.classList.add('open'));
-
-    let current = 0;
-    const allSteps = guide.querySelectorAll('.guide-step');
-    const allDots = guide.querySelectorAll('.guide-dot');
-
-    function goTo(n) {
-      allSteps.forEach(s => s.classList.remove('active'));
-      allDots.forEach(d => d.classList.remove('active'));
-      allSteps[n].classList.add('active');
-      allDots[n].classList.add('active');
-      current = n;
-    }
-
-    function close() {
-      Storage._lsSet('hub:tour-seen', true);
-      guide.classList.remove('open');
-      setTimeout(() => guide.remove(), 400);
-    }
-
-    guide.addEventListener('click', (e) => {
-      if (e.target.matches('[data-guide-next]')) goTo(current + 1);
-      else if (e.target.matches('[data-guide-back]')) goTo(current - 1);
-      else if (e.target.matches('[data-guide-close]')) close();
-      else if (e.target.matches('[data-guide-signup]')) {
-        close();
-        setTimeout(() => openAuthModal('signup'), 400);
+    ], {
+      storageKey: 'hub:tour-seen',
+      onClose() {},
+      onFinish(el) {
+        Storage._lsSet('hub:tour-seen', true);
+        el.classList.remove('open');
+        setTimeout(() => { el.remove(); openAuthModal('signup'); }, 350);
       }
     });
   }
@@ -3043,8 +3102,7 @@
   // ACCOUNT SETUP GUIDE (after first signup)
   // ============================================
   function showAccountSetupGuide() {
-    const seen = Storage._lsGet('acct:setup-seen', false);
-    if (seen) return;
+    if (Storage._lsGet('acct:setup-seen', false)) return;
 
     const iconKeys = typeof PROFILE_ICONS !== 'undefined' ? Object.keys(PROFILE_ICONS) : [];
     const iconGridHTML = iconKeys.map(key => {
@@ -3052,13 +3110,15 @@
       return `<button type="button" class="guide-icon-btn" data-pick-icon="${key}" title="${key}">${svg}</button>`;
     }).join('');
 
-    const steps = [
+    const svgAttrs = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"';
+    let selectedIcon = Auth.profile?.saint_icon || '';
+
+    createGuide([
       {
-        html: `
-          <div class="guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-          <h2>Account Created!</h2>
-          <p class="guide-desc">Welcome to ASCEND. Let's set up your profile so other retreat attendees can recognize you.</p>
-        `
+        icon: `<svg ${svgAttrs}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+        title: 'Account Created!',
+        desc: 'Welcome to ASCEND. Let\'s set up your profile so other retreat attendees can recognize you.',
+        nextLabel: 'Set Up Profile'
       },
       {
         html: `
@@ -3075,7 +3135,13 @@
           <h2>Pick a Profile Icon</h2>
           <p class="guide-desc">Choose a symbol that represents you.</p>
           <div class="guide-icon-grid">${iconGridHTML}</div>
-        `
+        `,
+        onEnter(el) {
+          if (selectedIcon) {
+            const active = el.querySelector(`[data-pick-icon="${selectedIcon}"]`);
+            if (active) active.classList.add('selected');
+          }
+        }
       },
       {
         html: `
@@ -3083,17 +3149,11 @@
           <p class="guide-desc">Control what other retreat attendees can see.</p>
           <div class="guide-toggles">
             <label class="guide-toggle-row">
-              <span>
-                <strong>Share Profile</strong>
-                <small>Others can see your name and icon</small>
-              </span>
+              <span><strong>Share Profile</strong><small>Others can see your name and icon</small></span>
               <input type="checkbox" data-setup-share-profile checked>
             </label>
             <label class="guide-toggle-row">
-              <span>
-                <strong>Share Packing Progress</strong>
-                <small>Others can see your packing checklist</small>
-              </span>
+              <span><strong>Share Packing Progress</strong><small>Others can see your packing checklist</small></span>
               <input type="checkbox" data-setup-share-packing>
             </label>
           </div>
@@ -3105,96 +3165,58 @@
           <p class="guide-desc">You can always change this later in settings.</p>
           <div class="ob-theme-cards">
             <button type="button" class="ob-theme-choice" data-setup-theme="dark" aria-pressed="true">
-              <div class="ob-theme-preview ob-preview-dark">Aa</div>
+              <div class="ob-theme-preview ob-preview-dark"></div>
               <span>Dark</span>
             </button>
             <button type="button" class="ob-theme-choice" data-setup-theme="light" aria-pressed="false">
-              <div class="ob-theme-preview ob-preview-light">Aa</div>
+              <div class="ob-theme-preview ob-preview-light"></div>
               <span>Light</span>
             </button>
           </div>
         `
       },
       {
-        html: `
-          <div class="guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z"/><path d="M9 12l2 2 4-4"/></svg></div>
-          <h2>You're All Set!</h2>
-          <p class="guide-desc">Your profile is saved. You can update any of these settings anytime from the account page.</p>
-        `
+        icon: `<svg ${svgAttrs}><path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z"/><path d="M9 12l2 2 4-4"/></svg>`,
+        title: 'You\'re All Set!',
+        desc: 'Your profile is saved. You can update any of these settings anytime from the account page.'
       }
-    ];
+    ], {
+      storageKey: 'acct:setup-seen',
+      async onFinish(el) {
+        const nameInput = el.querySelector('#setup-display-name');
+        const displayName = nameInput ? nameInput.value.trim() : '';
+        const shareProfile = el.querySelector('[data-setup-share-profile]')?.checked ?? true;
+        const sharePacking = el.querySelector('[data-setup-share-packing]')?.checked ?? false;
 
-    const totalSteps = steps.length;
-    const dotsHTML = steps.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('');
-    const stepsHTML = steps.map((s, i) => `
-      <div class="guide-step${i === 0 ? ' active' : ''}" data-guide-step="${i}">
-        ${s.html}
-        <div class="guide-actions">
-          ${i > 0 ? '<button type="button" class="btn btn-ghost btn-sm" data-guide-back>Back</button>' : ''}
-          <button type="button" class="btn btn-primary" data-guide-next>${i === totalSteps - 1 ? 'Done' : i === 0 ? 'Set Up Profile' : 'Next'}</button>
-        </div>
-        <div class="guide-counter">${i + 1} / ${totalSteps}</div>
-      </div>
-    `).join('');
+        if (displayName || selectedIcon) {
+          const update = {};
+          if (displayName) update.display_name = displayName;
+          if (selectedIcon) update.saint_icon = selectedIcon;
+          try { await Auth.updateProfile(update); } catch (e) { console.warn('Profile update failed:', e); }
+        }
+        try {
+          await DataStore.updateSharingPrefs({ share_profile: shareProfile, share_packing: sharePacking });
+        } catch (e) { console.warn('Sharing prefs failed:', e); }
 
-    const guide = document.createElement('div');
-    guide.className = 'guide-overlay';
-    guide.innerHTML = `<div class="guide-inner">${stepsHTML}<div class="guide-dots">${dotsHTML}</div></div>`;
-    document.body.appendChild(guide);
-    requestAnimationFrame(() => guide.classList.add('open'));
-
-    let current = 0;
-    let selectedIcon = Auth.profile?.saint_icon || '';
-    const allSteps = guide.querySelectorAll('.guide-step');
-    const allDots = guide.querySelectorAll('.guide-dot');
-
-    function goTo(n) {
-      allSteps.forEach(s => s.classList.remove('active'));
-      allDots.forEach(d => d.classList.remove('active'));
-      allSteps[n].classList.add('active');
-      allDots[n].classList.add('active');
-      current = n;
-    }
-
-    async function finish() {
-      // Save display name + icon
-      const nameInput = guide.querySelector('#setup-display-name');
-      const displayName = nameInput ? nameInput.value.trim() : '';
-      const shareProfile = guide.querySelector('[data-setup-share-profile]')?.checked ?? true;
-      const sharePacking = guide.querySelector('[data-setup-share-packing]')?.checked ?? false;
-
-      if (displayName || selectedIcon) {
-        const update = {};
-        if (displayName) update.display_name = displayName;
-        if (selectedIcon) update.saint_icon = selectedIcon;
-        try { await Auth.updateProfile(update); } catch (e) { console.warn('Profile update failed:', e); }
+        Storage._lsSet('acct:setup-seen', true);
+        el.classList.remove('open');
+        setTimeout(() => { el.remove(); location.reload(); }, 350);
       }
+    });
 
-      try {
-        await DataStore.updateSharingPrefs({ share_profile: shareProfile, share_packing: sharePacking });
-      } catch (e) { console.warn('Sharing prefs failed:', e); }
-
-      Storage._lsSet('acct:setup-seen', true);
-      guide.classList.remove('open');
-      setTimeout(() => { guide.remove(); location.reload(); }, 400);
-    }
-
-    guide.addEventListener('click', (e) => {
-      if (e.target.matches('[data-guide-next]')) {
-        if (current === totalSteps - 1) finish();
-        else goTo(current + 1);
-      } else if (e.target.matches('[data-guide-back]')) {
-        goTo(current - 1);
-      } else if (e.target.closest('[data-pick-icon]')) {
-        const btn = e.target.closest('[data-pick-icon]');
-        guide.querySelectorAll('.guide-icon-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedIcon = btn.dataset.pickIcon;
-      } else if (e.target.closest('[data-setup-theme]')) {
-        const btn = e.target.closest('[data-setup-theme]');
-        guide.querySelectorAll('[data-setup-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
-        btn.setAttribute('aria-pressed', 'true');
-        Theme.set(btn.dataset.setupTheme);
+    // Delegate icon picker and theme picker clicks
+    document.querySelector('.guide-overlay')?.addEventListener('click', (e) => {
+      const iconBtn = e.target.closest('[data-pick-icon]');
+      if (iconBtn) {
+        document.querySelectorAll('.guide-icon-btn').forEach(b => b.classList.remove('selected'));
+        iconBtn.classList.add('selected');
+        selectedIcon = iconBtn.dataset.pickIcon;
+      }
+      const themeBtn = e.target.closest('[data-setup-theme]');
+      if (themeBtn) {
+        document.querySelectorAll('[data-setup-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        themeBtn.setAttribute('aria-pressed', 'true');
+        Theme.set(themeBtn.dataset.setupTheme);
       }
     });
   }
