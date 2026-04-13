@@ -175,7 +175,7 @@
   justify-content: center;
   background: rgba(245,241,232,0.04);
   border: 2px solid var(--cream-line);
-  border-radius: var(--r-md);
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s;
   color: var(--cream-dim);
@@ -184,7 +184,7 @@
 }
 .icon-picker-btn:hover {
   border-color: var(--gold-dim);
-  color: var(--gold);
+  background: rgba(201,161,74,0.06);
 }
 .icon-picker-btn.selected {
   border-color: var(--gold);
@@ -192,8 +192,7 @@
   color: var(--gold-bright);
   box-shadow: 0 0 12px rgba(201,161,74,0.2);
 }
-.icon-picker-btn img { width: 100%; height: 100%; object-fit: contain; }
-.icon-picker-btn svg { width: 24px; height: 24px; }
+.icon-picker-btn img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
 
 /* Friends grid */
 .friend-grid {
