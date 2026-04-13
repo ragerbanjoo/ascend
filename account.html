@@ -164,10 +164,12 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
+  max-width: 400px;
 }
 .icon-picker-btn {
   width: 100%;
   aspect-ratio: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,7 +179,8 @@
   cursor: pointer;
   transition: all 0.2s;
   color: var(--cream-dim);
-  padding: 6px;
+  padding: 8px;
+  overflow: hidden;
 }
 .icon-picker-btn:hover {
   border-color: var(--gold-dim);
