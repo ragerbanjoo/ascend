@@ -1867,10 +1867,22 @@
       const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
       const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
 
-      // 7. Sign up with Supabase
+      // 7. Sign up with Supabase (handle ghost auth users from admin deletion)
       const email = `${uname}@pilgrim.sjdyag.com`;
-      const { data: authData, error: authError } = await sb.auth.signUp({ email, password });
-      if (authError) throw new Error(authError.message);
+      let authData;
+      const { data: signUpData, error: authError } = await sb.auth.signUp({ email, password });
+      if (authError) {
+        // If auth user exists but profile was deleted by admin, sign in instead
+        if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
+          const { data: signInData, error: signInErr } = await sb.auth.signInWithPassword({ email, password });
+          if (signInErr) throw new Error('Username was previously used. Please choose a different username.');
+          authData = signInData;
+        } else {
+          throw new Error(authError.message);
+        }
+      } else {
+        authData = signUpData;
+      }
 
       // 8. Insert profile
       const { error: profileError } = await sb.from('profiles').insert({
@@ -3910,6 +3922,14 @@
     const usernameEl = pageEl.querySelector('[data-acct-username]');
     if (usernameEl) usernameEl.textContent = '@' + Auth.username;
 
+    const displayLabel = pageEl.querySelector('[data-acct-display-label]');
+    if (displayLabel) displayLabel.textContent = Auth.profile?.display_name || '';
+
+    const acctIconEl = pageEl.querySelector('[data-acct-icon]');
+    if (acctIconEl && Auth.profile?.saint_icon && PROFILE_ICONS[Auth.profile.saint_icon]) {
+      acctIconEl.innerHTML = renderProfileIcon(Auth.profile.saint_icon, 52);
+    }
+
     const displayNameInput = pageEl.querySelector('#acct-display-name');
     if (displayNameInput) displayNameInput.value = Auth.profile?.display_name || '';
 
@@ -3982,8 +4002,8 @@
           const card = document.createElement('div');
           card.className = 'friend-card';
           const icon = f.saint_icon && PROFILE_ICONS[f.saint_icon]
-            ? renderProfileIcon(f.saint_icon, 28)
-            : '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+            ? renderProfileIcon(f.saint_icon, 36)
+            : '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
           card.innerHTML = `<span class="friend-icon">${icon}</span><span class="friend-name">${escapeHtml(f.display_name || f.username)}</span>`;
           friendsList.appendChild(card);
         });
