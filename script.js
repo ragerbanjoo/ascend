@@ -3354,6 +3354,11 @@
         desc: 'Pray the Holy Rosary with a guided experience, and keep a private list of prayer intentions that are encrypted end-to-end.'
       },
       {
+        icon: `<svg ${svgAttrs}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+        title: 'Photo Gallery',
+        desc: 'Upload retreat photos to your private encrypted gallery. When you\'re ready, share specific photos to the group gallery for everyone to enjoy.'
+      },
+      {
         icon: `<svg ${svgAttrs}><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 21h16"/><rect x="9" y="14" width="6" height="3" rx=".5"/></svg>`,
         title: 'Packing & More',
         desc: 'Check off your packing list, review confession prep, find emergency contacts, and see the full retreat schedule.'
@@ -3437,6 +3442,10 @@
               <span><strong>Share Packing Progress</strong><small>Others can see your packing checklist</small></span>
               <input type="checkbox" data-setup-share-packing>
             </label>
+            <label class="guide-toggle-row">
+              <span><strong>Share Photos</strong><small>Your shared photos appear in the group gallery</small></span>
+              <input type="checkbox" data-setup-share-photos checked>
+            </label>
           </div>
         `
       },
@@ -3468,6 +3477,7 @@
         const displayName = nameInput ? nameInput.value.trim() : '';
         const shareProfile = el.querySelector('[data-setup-share-profile]')?.checked ?? true;
         const sharePacking = el.querySelector('[data-setup-share-packing]')?.checked ?? false;
+        const sharePhotos = el.querySelector('[data-setup-share-photos]')?.checked ?? true;
 
         if (displayName || selectedIcon) {
           const update = {};
@@ -3476,7 +3486,7 @@
           try { await Auth.updateProfile(update); } catch (e) { console.warn('Profile update failed:', e); }
         }
         try {
-          await DataStore.updateSharingPrefs({ share_profile: shareProfile, share_packing: sharePacking });
+          await DataStore.updateSharingPrefs({ share_profile: shareProfile, share_packing_progress: sharePacking, share_photos: sharePhotos });
         } catch (e) { console.warn('Sharing prefs failed:', e); }
 
         Storage._lsSet('acct:setup-seen', true);
