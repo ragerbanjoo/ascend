@@ -2308,7 +2308,7 @@
       const { error: uploadErr } = await sb.storage.from('photos').upload(path, blob);
       if (uploadErr) throw new Error(uploadErr.message);
       // Insert metadata
-      const { data } = await sb.from('photos').insert({
+      const { data, error: insertErr } = await sb.from('photos').insert({
         user_id: Auth.user.id,
         storage_path: path,
         caption: captionEnc.ciphertext,
@@ -2320,6 +2320,7 @@
         mime_type: file.type,
         file_size: file.size
       }).select().single();
+      if (insertErr) throw new Error(insertErr.message);
       return data;
     },
 
@@ -3478,11 +3479,11 @@
           <h2>Choose Your Theme</h2>
           <p class="guide-desc">You can always change this later in settings.</p>
           <div class="ob-theme-cards">
-            <button type="button" class="ob-theme-choice" data-setup-theme="dark" aria-pressed="true">
+            <button type="button" class="ob-theme-choice" data-setup-theme="dark" aria-pressed="false">
               <div class="ob-theme-preview ob-preview-dark"></div>
               <span>Dark</span>
             </button>
-            <button type="button" class="ob-theme-choice" data-setup-theme="light" aria-pressed="false">
+            <button type="button" class="ob-theme-choice" data-setup-theme="light" aria-pressed="true">
               <div class="ob-theme-preview ob-preview-light"></div>
               <span>Light</span>
             </button>

@@ -75,17 +75,15 @@
       <button class="btn btn-gold btn-sm" data-upload-btn>+ Upload</button>
     </div>
 
-    <!-- Tabs -->
-    <div class="photos-tabs">
-      <button class="photos-tab active" data-photos-tab="mine">My Photos <span class="encrypted-badge">&#128274;</span></button>
-      <button class="photos-tab" data-photos-tab="group">Group Gallery</button>
-    </div>
-
     <!-- Encryption info banner -->
-    <div class="encrypted-banner" data-encryption-banner>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <p>Your private photos are <strong>encrypted</strong> in your browser before upload. Not even the admin can see them. Share specific photos to the Group Gallery when you're ready. <a href="security.html">Learn more</a></p>
-    </div>
+    <details class="encrypted-banner" data-encryption-banner>
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>End-to-end encrypted</span>
+        <svg class="encrypted-banner-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <p>Your photos are <strong>encrypted in your browser</strong> before upload. Not even the admin can see them. If you lose your recovery phrase, encrypted photos cannot be recovered. <a href="security.html">Learn more</a></p>
+    </details>
 
     <!-- Upload area -->
     <div data-upload-area style="display:none">
@@ -112,7 +110,7 @@
     <div class="photos-guest-gate" data-photos-guest style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <h3>Sign in to use Photos</h3>
-      <p>Create an account to upload and encrypt your private photos, or browse the group gallery.</p>
+      <p>Create an account to upload and encrypt your photos.</p>
       <button class="btn btn-gold" data-auth-cta>Create Account</button>
     </div>
 
@@ -232,10 +230,8 @@
   }
 
   // State
-  let currentTab = 'mine';
   let currentPhotos = [];
   let urlCache = new Map();
-  let uploaderNames = {};
   let lightboxIndex = -1;
 
   // DOM refs
@@ -247,43 +243,23 @@
   const dropzone = document.querySelector('[data-dropzone]');
   const fileInput = document.querySelector('[data-file-input]');
   const uploadQueue = document.querySelector('[data-upload-queue]');
-  const encBanner = document.querySelector('[data-encryption-banner]');
   const lightbox = document.querySelector('[data-lightbox]');
   const lbImg = document.querySelector('[data-lightbox-img]');
   const lbCaption = document.querySelector('[data-lightbox-caption]');
   const lbMeta = document.querySelector('[data-lightbox-meta]');
   const lbActions = document.querySelector('[data-lightbox-actions]');
-  const tabs = document.querySelectorAll('[data-photos-tab]');
-
   function init() {
     // Guest gate
     if (Auth.isGuest) {
       guestEl.style.display = '';
       uploadBtn.style.display = 'none';
-      document.querySelector('.photos-tabs').style.display = 'none';
-      encBanner.style.display = 'none';
       grid.style.display = 'none';
+      document.querySelector('[data-encryption-banner]').style.display = 'none';
       guestEl.querySelector('[data-auth-cta]')?.addEventListener('click', () => {
         if (window.openAuthModal) window.openAuthModal('signup');
       });
-      // Still allow viewing group gallery for guests
       return;
     }
-
-    // Tab switching
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentTab = tab.dataset.photosTab;
-        encBanner.style.display = currentTab === 'mine' ? '' : 'none';
-        uploadBtn.style.display = currentTab === 'mine' ? '' : 'none';
-        if (currentTab !== 'mine') {
-          uploadArea.style.display = 'none';
-        }
-        loadPhotos();
-      });
-    });
 
     // Upload button
     uploadBtn.addEventListener('click', () => {
@@ -335,28 +311,14 @@
     }
 
     try {
-      const filter = currentTab === 'mine' ? 'mine' : 'group';
-      currentPhotos = await DataStore.getPhotos(filter);
-
-      // Resolve uploader names for group tab
-      if (currentTab === 'group' && currentPhotos.length) {
-        const ids = [...new Set(currentPhotos.map(p => p.user_id))];
-        uploaderNames = await DataStore.getPhotoUploaderNames(ids);
-      }
+      currentPhotos = await DataStore.getPhotos('mine');
 
       grid.innerHTML = '';
 
       if (!currentPhotos.length) {
         emptyEl.style.display = '';
-        const emptyH3 = emptyEl.querySelector('h3');
-        const emptyP = emptyEl.querySelector('p');
-        if (currentTab === 'mine') {
-          emptyH3.textContent = 'No photos yet';
-          emptyP.textContent = 'Upload your first photo to get started.';
-        } else {
-          emptyH3.textContent = 'No shared photos yet';
-          emptyP.textContent = 'Photos shared to the group will appear here.';
-        }
+        emptyEl.querySelector('h3').textContent = 'No photos yet';
+        emptyEl.querySelector('p').textContent = 'Upload your first photo to get started.';
         return;
       }
 
@@ -466,12 +428,6 @@
         // Reload if queue is now empty
         if (!uploadQueue.children.length) {
           uploadArea.style.display = 'none';
-          // Switch to My Photos tab
-          tabs.forEach(t => t.classList.remove('active'));
-          tabs[0].classList.add('active');
-          currentTab = 'mine';
-          encBanner.style.display = '';
-          uploadBtn.style.display = '';
           loadPhotos();
         }
       } catch (err) {
@@ -527,10 +483,6 @@
       const size = photo.file_size ? formatBytes(photo.file_size) : '';
       let metaText = date;
       if (size) metaText += ' · ' + size;
-      if (currentTab === 'group' && photo.user_id !== Auth.user?.id) {
-        const name = uploaderNames[photo.user_id] || 'Pilgrim';
-        metaText += ' · by ' + name;
-      }
       if (photo.encrypted) metaText += ' · Encrypted';
       lbMeta.textContent = metaText;
 
