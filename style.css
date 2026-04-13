@@ -3825,104 +3825,105 @@ html[data-theme="light"] .intentions-empty {
   .leg-num { font-size: 1.75rem; }
 }
 
-/* ---------- Guide Overlay ---------- */
+/* ---------- Guide Overlay (matches onboarding style) ---------- */
 .guide-overlay {
   position: fixed; inset: 0; z-index: 9999;
+  background: var(--ink-deep);
   display: flex; align-items: center; justify-content: center;
-  background: rgba(6, 13, 26, 0.7);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   opacity: 0; visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0.35s;
-  padding: var(--space-4);
+  transition: opacity 0.5s var(--ease-out), visibility 0.5s;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 .guide-overlay.open { opacity: 1; visibility: visible; }
+.guide-overlay.closing { animation: obFadeOut 0.5s var(--ease-out) both; }
 
 .guide-inner {
-  width: 100%; max-width: 400px;
-  max-height: calc(100dvh - 4rem);
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-  background: var(--ink-soft);
-  border: 1px solid var(--gold-soft);
-  border-radius: 20px;
-  padding: var(--space-5);
+  width: 100%; max-width: 480px;
+  padding: var(--space-6);
   text-align: center;
+  min-height: 0;
   position: relative;
-  box-shadow: 0 24px 80px -12px rgba(0,0,0,0.5);
 }
 
 /* Close X */
 .guide-close-x {
-  position: absolute; top: 12px; right: 14px;
+  position: absolute; top: 0; right: 0;
   background: none; border: none; color: var(--cream-mute);
   font-size: 1.5rem; line-height: 1; cursor: pointer;
-  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; transition: background 0.2s, color 0.2s;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: color 0.2s;
 }
-.guide-close-x:hover { background: var(--cream-line); color: var(--cream); }
+.guide-close-x:hover { color: var(--cream); }
 
-/* Progress bar */
-.guide-progress {
-  height: 3px; background: var(--cream-line); border-radius: 3px;
-  margin-bottom: var(--space-5); overflow: hidden;
+/* Progress dots (top) */
+.guide-progress { display: none; }
+.guide-dots {
+  display: flex; justify-content: center; gap: var(--space-2);
+  margin-bottom: var(--space-7);
 }
-.guide-progress-fill {
-  height: 100%; background: var(--gold); border-radius: 3px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.guide-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cream-line);
+  transition: all var(--dur-med) var(--ease-out);
+}
+.guide-dot.active {
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(201, 161, 74, 0.4);
 }
 
-/* Body area with content transition */
+/* Body area */
 .guide-body {
   min-height: 180px;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
+.guide-body.entering {
+  animation: heroRise 0.4s var(--ease-out) both;
+}
 .guide-body h2 {
-  font-family: var(--f-display); font-size: clamp(1.2rem, 3.5vw, 1.5rem);
-  color: var(--cream); margin: 0 0 var(--space-3); font-weight: 600;
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--cream);
+  margin: 0 0 var(--space-4);
+  font-weight: 600;
 }
 .guide-icon {
-  color: var(--gold); margin-bottom: var(--space-4);
   display: flex; justify-content: center;
+  margin-bottom: var(--space-4);
+  color: var(--gold); opacity: 0.85;
 }
 .guide-icon svg { width: 48px; height: 48px; }
 .guide-desc {
-  font-size: var(--fs-sm); color: var(--cream-dim);
-  line-height: 1.65; margin: 0 0 var(--space-4);
+  color: var(--cream-dim);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  margin: 0 0 var(--space-5);
 }
 
-/* Bottom nav bar */
+/* Bottom nav */
 .guide-nav {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: var(--space-5); gap: var(--space-3);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: var(--space-7); gap: var(--space-4);
 }
-.guide-nav .guide-btn-back,
-.guide-nav .guide-btn-next { min-width: 72px; }
-
-/* Dots */
-.guide-dots { display: flex; justify-content: center; gap: 6px; flex: 1; }
-.guide-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--cream-line); transition: background 0.3s, transform 0.3s;
-}
-.guide-dot.active { background: var(--gold); transform: scale(1.25); }
+.guide-nav .btn { min-width: 100px; }
 
 /* CTA actions (last step of hub tour) */
 .guide-actions {
   display: flex; flex-direction: column; align-items: center;
-  gap: var(--space-3); margin-top: var(--space-2);
+  gap: var(--space-3); margin-top: var(--space-4);
 }
 
 /* Form field */
-.guide-field { text-align: left; margin-bottom: var(--space-4); }
+.guide-field { text-align: left; margin-bottom: var(--space-5); }
 .guide-field label {
-  display: block; font-size: 0.7rem; color: var(--cream-dim);
+  display: block; font-size: var(--fs-xxs); color: var(--cream-dim);
   text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-2);
 }
 
 /* Icon picker grid */
 .guide-icon-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-2); margin-bottom: var(--space-4);
-  max-height: 220px; overflow-y: auto;
+  gap: var(--space-2); margin-bottom: var(--space-5);
+  max-height: 240px; overflow-y: auto;
 }
 .guide-icon-btn {
   display: flex; align-items: center; justify-content: center;
@@ -3939,40 +3940,34 @@ html[data-theme="light"] .intentions-empty {
 }
 
 /* Sharing toggles */
-.guide-toggles { display: flex; flex-direction: column; margin-bottom: var(--space-4); text-align: left; }
+.guide-toggles { display: flex; flex-direction: column; margin-bottom: var(--space-5); text-align: left; }
 .guide-toggle-row {
   display: flex; align-items: center; justify-content: space-between;
-  gap: var(--space-4); padding: var(--space-3) 0;
+  gap: var(--space-4); padding: var(--space-4) 0;
   border-bottom: 1px solid var(--cream-line); cursor: pointer;
 }
 .guide-toggle-row:last-child { border-bottom: none; }
 .guide-toggle-row span { display: flex; flex-direction: column; gap: 2px; }
 .guide-toggle-row strong { font-size: var(--fs-sm); color: var(--cream); font-weight: 600; }
-.guide-toggle-row small { font-size: 0.7rem; color: var(--cream-mute); }
+.guide-toggle-row small { font-size: var(--fs-xxs); color: var(--cream-mute); }
 .guide-toggle-row input[type="checkbox"] {
   width: 1.25rem; height: 1.25rem; accent-color: var(--gold); flex-shrink: 0;
 }
 
-/* Light mode */
-html[data-theme="light"] .guide-overlay { background: rgba(247, 244, 236, 0.75); }
-html[data-theme="light"] .guide-inner {
-  background: #fff; border-color: rgba(0,0,0,0.1);
-  box-shadow: 0 24px 80px -12px rgba(0,0,0,0.15);
-}
-html[data-theme="light"] .guide-close-x { color: rgba(0,0,0,0.3); }
-html[data-theme="light"] .guide-close-x:hover { background: rgba(0,0,0,0.06); color: var(--cream); }
+/* Light mode — guide takes over full screen like onboarding */
+html[data-theme="light"] .guide-overlay { background: var(--ink-deep); }
 html[data-theme="light"] .guide-body h2 { color: var(--cream); }
-html[data-theme="light"] .guide-desc { color: rgba(6, 13, 26, 0.6); }
-html[data-theme="light"] .guide-dot { background: rgba(0,0,0,0.12); }
-html[data-theme="light"] .guide-progress { background: rgba(0,0,0,0.08); }
+html[data-theme="light"] .guide-desc { color: var(--cream-dim); }
+html[data-theme="light"] .guide-dot { background: var(--cream-line); }
 html[data-theme="light"] .guide-icon { color: var(--gold); }
-html[data-theme="light"] .guide-icon-btn { border-color: rgba(0,0,0,0.1); color: var(--cream); }
+html[data-theme="light"] .guide-close-x { color: var(--cream-mute); }
+html[data-theme="light"] .guide-icon-btn { border-color: var(--cream-line); color: var(--cream-dim); }
 html[data-theme="light"] .guide-icon-btn:hover { border-color: var(--gold-dim); }
-html[data-theme="light"] .guide-icon-btn.selected { border-color: var(--gold); background: rgba(158,124,46,0.1); }
-html[data-theme="light"] .guide-toggle-row { border-color: rgba(0,0,0,0.08); }
+html[data-theme="light"] .guide-icon-btn.selected { border-color: var(--gold); background: var(--gold-soft); }
+html[data-theme="light"] .guide-toggle-row { border-color: var(--cream-line); }
 html[data-theme="light"] .guide-toggle-row strong { color: var(--cream); }
-html[data-theme="light"] .guide-toggle-row small { color: rgba(6,13,26,0.45); }
-html[data-theme="light"] .guide-field label { color: rgba(6,13,26,0.55); }
+html[data-theme="light"] .guide-toggle-row small { color: var(--cream-mute); }
+html[data-theme="light"] .guide-field label { color: var(--cream-dim); }
 
 /* ---------- Light mode: Auth modal + Recovery phrase ---------- */
 html[data-theme="light"] .auth-tab {

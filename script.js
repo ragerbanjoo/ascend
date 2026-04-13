@@ -2952,11 +2952,10 @@
     el.innerHTML = `
       <div class="guide-inner">
         <button type="button" class="guide-close-x" aria-label="Close">&times;</button>
-        <div class="guide-progress"><div class="guide-progress-fill"></div></div>
+        <div class="guide-dots">${stepsConfig.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>
         <div class="guide-body"></div>
         <div class="guide-nav">
           <button type="button" class="btn btn-ghost btn-sm guide-btn-back" style="visibility:hidden">Back</button>
-          <div class="guide-dots">${stepsConfig.map((_, i) => `<span class="guide-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>
           <button type="button" class="btn btn-primary btn-sm guide-btn-next">Next</button>
         </div>
       </div>
@@ -2966,13 +2965,11 @@
     const dots = el.querySelectorAll('.guide-dot');
     const backBtn = el.querySelector('.guide-btn-back');
     const nextBtn = el.querySelector('.guide-btn-next');
-    const progressFill = el.querySelector('.guide-progress-fill');
     const closeX = el.querySelector('.guide-close-x');
 
     function render() {
       const step = stepsConfig[current];
-      body.style.opacity = '0';
-      body.style.transform = 'translateY(8px)';
+      body.classList.remove('entering');
 
       setTimeout(() => {
         body.innerHTML = `
@@ -2980,13 +2977,12 @@
           ${step.html || `<h2>${step.title}</h2><p class="guide-desc">${step.desc}</p>`}
           ${step.extra || ''}
         `;
-        body.style.opacity = '1';
-        body.style.transform = 'translateY(0)';
+        void body.offsetWidth; // force reflow
+        body.classList.add('entering');
         if (step.onEnter) step.onEnter(el);
-      }, 150);
+      }, 50);
 
       dots.forEach((d, i) => d.classList.toggle('active', i <= current));
-      progressFill.style.width = `${((current + 1) / total) * 100}%`;
       backBtn.style.visibility = current > 0 ? 'visible' : 'hidden';
 
       if (step.nextLabel) nextBtn.textContent = step.nextLabel;
@@ -2996,7 +2992,6 @@
 
       if (step.cta) {
         nextBtn.style.display = 'none';
-        // CTA buttons are in the step's extra HTML
       } else {
         nextBtn.style.display = '';
       }
@@ -3011,7 +3006,8 @@
     function close() {
       if (storageKey) Storage._lsSet(storageKey, true);
       el.classList.remove('open');
-      setTimeout(() => el.remove(), 350);
+      el.classList.add('closing');
+      setTimeout(() => el.remove(), 500);
       if (onClose) onClose();
     }
 
