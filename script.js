@@ -848,11 +848,11 @@
       title: 'Free time — Seattle or Bellevue',
       body:  'The group decides: head to the Seattle waterfront and boardwalk area (~10 min west) or drive to downtown Bellevue and the mall area (~20 min via I-90). Enjoy the rest of the afternoon together.',
     },
-    { id: 33, day: 'sun', time: '16:30',
+    { id: 33, day: 'sun', time: '17:00',
       title: 'Depart for Yakima',
       body:  'I-90 E → I-82 E → US-12 E. ~2h 45m from Seattle, ~2h 30m from Bellevue.',
     },
-    { id: 34, day: 'sun', time: '19:15',
+    { id: 34, day: 'sun', time: '19:45',
       title: 'Arrive home — Deo gratias',
       body:  'What a weekend. See you at Sunday YAG.',
     }
