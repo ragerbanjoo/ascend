@@ -2962,10 +2962,10 @@ html[data-theme="light"] .reader-counter { color: rgba(6, 13, 26, 0.4); }
 }
 .packing-categories details[open] > summary::before { transform: rotate(90deg); }
 .packing-categories label {
-  display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0;
+  display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-1) 0;
   font-size: var(--fs-sm); color: var(--cream-dim); cursor: pointer;
 }
-.packing-categories input[type="checkbox"] { accent-color: var(--gold); }
+.packing-categories input[type="checkbox"] { accent-color: var(--gold); flex-shrink: 0; }
 
 
 /* Intentions */
