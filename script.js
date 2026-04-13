@@ -2278,8 +2278,14 @@
 
     // Get decrypted caption for a photo
     async getPhotoCaption(photo) {
-      if (!photo.encrypted || !photo.caption || !photo.caption_iv) return photo.caption || '';
-      return await Crypto.decrypt(photo.caption, photo.caption_iv);
+      if (!photo.encrypted || !photo.caption) return photo.caption || '';
+      // Caption stored as "iv:ciphertext"
+      const sep = photo.caption.indexOf(':');
+      if (sep === -1) return photo.caption;
+      const capIv = photo.caption.slice(0, sep);
+      const capCt = photo.caption.slice(sep + 1);
+      if (!capIv || !capCt) return '';
+      return await Crypto.decrypt(capCt, capIv);
     },
 
     // Upload a photo (always encrypted as private first)
@@ -2300,8 +2306,12 @@
       // Encrypt the file bytes
       const plainBytes = new Uint8Array(await file.arrayBuffer());
       const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
-      // Encrypt the caption
-      const captionEnc = caption ? await Crypto.encrypt(caption) : { ciphertext: '', iv: null };
+      // Encrypt the caption (store as "iv:ciphertext" in single column)
+      let captionField = '';
+      if (caption) {
+        const captionEnc = await Crypto.encrypt(caption);
+        captionField = captionEnc.iv + ':' + captionEnc.ciphertext;
+      }
       // Upload encrypted blob
       const path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
       const blob = new Blob([ciphertext], { type: 'application/octet-stream' });
@@ -2311,8 +2321,7 @@
       const { data, error: insertErr } = await sb.from('photos').insert({
         user_id: Auth.user.id,
         storage_path: path,
-        caption: captionEnc.ciphertext,
-        caption_iv: captionEnc.iv,
+        caption: captionField,
         visibility: 'private',
         encrypted: true,
         iv,
