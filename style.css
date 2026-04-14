@@ -2775,6 +2775,12 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 .hub-tile-links { margin-top: var(--space-3); }
 
 .encrypted-badge { font-size: 0.85rem; opacity: 0.7; }
+.hub-encrypted-tag {
+  font-size: 0.7rem; color: var(--gold); opacity: 0.8;
+  background: var(--gold-soft); border: 1px solid rgba(201,161,74,0.15);
+  padding: 2px 8px; border-radius: var(--r-pill);
+  white-space: nowrap; margin-left: auto;
+}
 
 /* ─── Daily Readings tile ─── */
 .readings-loading {
