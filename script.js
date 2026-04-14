@@ -855,7 +855,6 @@
       body:  'What a weekend. See you at Sunday YAG.',
     }
   ];
-  ];
 
   function stopDate(stop, option) {
     const dateStr = stop.day === 'sat' ? '2026-05-16' : '2026-05-17';
