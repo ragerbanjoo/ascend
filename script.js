@@ -4100,16 +4100,15 @@
       })).filter(p => p.name);
     }
 
-    // Save
-    const saveBtn = form.querySelector('[data-te-save]');
-    saveBtn.addEventListener('click', async (e) => {
+    // Save — bind all save buttons (in-form for desktop + footer for mobile)
+    const saveBtns = modalBackdrop.querySelectorAll('[data-te-save]');
+    saveBtns.forEach(btn => btn.addEventListener('click', async (e) => {
       e.preventDefault();
       if (!form.elements.title.value.trim() || !form.elements.time.value) {
         showToast('Title and time are required', 'error');
         return;
       }
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Saving...';
+      saveBtns.forEach(b => { b.disabled = true; b.textContent = 'Saving...'; });
 
       const payload = {
         day:    form.elements.day.value,
@@ -4142,10 +4141,9 @@
       } catch (err) {
         showToast('Error saving: ' + err.message);
       } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save';
+        saveBtns.forEach(b => { b.disabled = false; b.textContent = 'Save'; });
       }
-    });
+    }));
 
     // Delete
     async function deleteStop(id) {

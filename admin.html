@@ -168,6 +168,7 @@
     margin-top: 1.5rem; padding-top: 1rem;
     border-top: 1px solid var(--cream-line, rgba(245,241,232,0.08));
   }
+  .te-modal-footer { display: none; }
   .te-places-fieldset {
     border: 1px solid var(--cream-line, rgba(245,241,232,0.08));
     border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem;
@@ -182,7 +183,14 @@
     .te-modal-backdrop { padding: 0; align-items: stretch; }
     .te-modal {
       max-width: 100%; max-height: 100vh; border-radius: 0;
-      padding: 1rem; padding-bottom: 2rem;
+      padding: 0; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .te-modal-header { flex-shrink: 0; padding: 1rem 1rem 0.5rem; }
+    .te-form {
+      flex: 1; min-height: 0;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 0 1rem;
     }
     .te-form-row input,
     .te-form-row textarea,
@@ -192,12 +200,18 @@
     .te-places-fieldset { overflow: hidden; }
     .te-item { flex-wrap: wrap; }
     .te-item-actions { width: 100%; justify-content: flex-end; }
-    .te-form-actions { position: sticky; bottom: 0; background: var(--ink-soft, #0c1526); padding: 1rem 0; margin: 0; z-index: 1; }
+    .te-form-actions { display: none; }
+    .te-modal-footer {
+      flex-shrink: 0; display: flex; justify-content: flex-end; gap: 0.75rem;
+      padding: 0.75rem 1rem; background: var(--ink-soft, #0c1526);
+      border-top: 1px solid var(--cream-line, rgba(245,241,232,0.08));
+    }
   }
   html[data-theme="light"] .te-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
   html[data-theme="light"] .te-item:hover { background: rgba(0,0,0,0.06); }
   html[data-theme="light"] .te-modal { background: #f5f1e8; border-color: rgba(0,0,0,0.1); }
   html[data-theme="light"] .te-form-actions { background: #f5f1e8; }
+  html[data-theme="light"] .te-modal-footer { background: #f5f1e8; }
 </style>
 </head>
 <body>
@@ -421,6 +435,10 @@
             <button type="button" class="btn btn-gold" data-te-save>Save</button>
           </div>
         </form>
+        <div class="te-modal-footer">
+          <button type="button" class="btn btn-ghost" data-te-modal-close>Cancel</button>
+          <button type="button" class="btn btn-gold" data-te-save>Save</button>
+        </div>
       </div>
     </div>
 
