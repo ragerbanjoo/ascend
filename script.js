@@ -12,7 +12,7 @@
   // -------------------------------------------------------
   const TRIP = {
     departPT:  new Date('2026-05-16T04:00:00-07:00'),
-    returnPT:  new Date('2026-05-17T18:15:00-07:00'), // ~6:15 PM
+    returnPT:  new Date('2026-05-17T18:45:00-07:00'), // ~6:45 PM
     label:     'May 16–17, 2026'
   };
 
@@ -674,7 +674,7 @@
   // -------------------------------------------------------
   // 13. Timeline stops data (module-level)
   // -------------------------------------------------------
-  const STOPS = [
+  let STOPS = [
     // ── Saturday ──
     { id: 1,  day: 'sat', time: '03:45',
       title: 'Meet in Tieton',
@@ -797,60 +797,71 @@
       title: 'Fellowship outside church — group photo',
       body:  'Meet the second Yakima group. Group photo on the steps. Mass ends around 8:00.',
     },
-    { id: 24, day: 'sun', time: '08:45',
-      title: 'Breakfast',
-      body:  '[PLACEHOLDER: restaurant near Edmonds — Bright Minds to confirm location]',
+    { id: 24, day: 'sun', time: '08:30',
+      title: 'Head back to La Quinta',
+      body:  '~15 min back to the hotel. Lynnwood is on the way south toward Seattle.',
     },
-    { id: 25, day: 'sun', time: '09:30',
+    { id: 25, day: 'sun', time: '08:45',
+      title: 'Hotel checkout',
+      addr:  '4300 Alderwood Mall Blvd, Lynnwood, WA 98036',
+      map:   'https://www.google.com/maps/search/?api=1&query=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd',
+      body:  'Change clothes, pack up, load the vehicles, and check out. Take your time — we have a few minutes.',
+    },
+    { id: 26, day: 'sun', time: '09:15',
+      title: 'Breakfast — Lynnwood area',
+      body:  'The group will pick a spot together near the hotel.',
+      map:   'https://www.google.com/maps/search/?api=1&query=restaurants+near+La+Quinta+Inn+Lynnwood+WA',
+    },
+    { id: 27, day: 'sun', time: '10:00',
       title: 'Depart → Gas Works Park',
       body:  '~25 min south on I-5. Iconic Seattle views from the north shore of Lake Union.',
     },
-    { id: 26, day: 'sun', time: '10:00',
+    { id: 28, day: 'sun', time: '10:30',
       title: 'Gas Works Park',
       addr:  '2101 N Northlake Way, Seattle, WA 98103',
       map:   'https://www.google.com/maps/search/?api=1&query=Gas+Works+Park+Seattle+WA',
       body:  'One of the best views of the Seattle skyline. Walk around, take photos, enjoy the morning. ~30 min.',
     },
-    { id: 27, day: 'sun', time: '10:30',
+    { id: 29, day: 'sun', time: '11:00',
       title: 'Depart → St. James Cathedral',
       body:  '~15 min south via I-5.',
     },
-    { id: 28, day: 'sun', time: '10:45',
+    { id: 30, day: 'sun', time: '11:15',
       title: 'St. James Cathedral',
       addr:  '804 9th Ave, Seattle, WA 98104',
       map:   'https://www.google.com/maps/search/?api=1&query=St.+James+Cathedral+Seattle',
       body:  'Visit, prayer, light candles. Mother church of the Archdiocese of Seattle. ~30 min.',
     },
-    { id: 29, day: 'sun', time: '11:15',
+    { id: 31, day: 'sun', time: '11:45',
       title: 'Head to Pike Place',
       body:  '~10 min west from St. James to the waterfront.',
     },
-    { id: 30, day: 'sun', time: '11:30',
+    { id: 32, day: 'sun', time: '12:00',
       title: 'Pike Place Market & waterfront',
       body:  'Walk around the new Pike Place waterfront area — take photos, enjoy the views, soak it in.',
     },
-    { id: 31, day: 'sun', time: '12:30',
+    { id: 33, day: 'sun', time: '13:00',
       title: 'Head to Topgolf Renton',
       addr:  '700 SW 19th St, Renton, WA 98057',
       map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
       body:  '~20 min drive south from Pike Place. Time to have some fun.',
     },
-    { id: 32, day: 'sun', time: '13:00',
+    { id: 34, day: 'sun', time: '13:30',
       title: 'Topgolf Renton',
       addr:  '700 SW 19th St, Renton, WA 98057',
       map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
       body:  'Hit some balls, hang out, friendly competition.',
     },
-    { id: 33, day: 'sun', time: '14:30',
+    { id: 35, day: 'sun', time: '15:00',
       title: 'Lunch — Renton area',
       body:  'The group will pick a spot together near Topgolf before hitting the road.',
       map:   'https://www.google.com/maps/search/?api=1&query=restaurants+near+Topgolf+Renton+WA',
     },
-    { id: 34, day: 'sun', time: '15:30',
+    { id: 36, day: 'sun', time: '16:00',
       title: 'Depart for Yakima',
       body:  'I-405 S → I-90 E → I-82 E → US-12 E. ~2h 45m from Renton.',
     },
-    { id: 35, day: 'sun', time: '18:15',
+    { id: 37, day: 'sun', time: '18:45',
       title: 'Arrive home — Deo gratias',
       body:  'What a weekend. See you at Sunday YAG.',
     }
@@ -901,6 +912,22 @@
   async function initTimeline() {
     const root = $('[data-timeline]');
     if (!root) return;
+
+    // Fetch live stops from Supabase; fall back to hardcoded STOPS
+    try {
+      const sb = getSupabase();
+      if (sb) {
+        const { data, error } = await sb
+          .from('stops')
+          .select('*')
+          .order('sort_order', { ascending: true });
+        if (!error && data && data.length > 0) {
+          STOPS = data;
+        }
+      }
+    } catch (e) {
+      console.warn('Timeline: Supabase fetch failed, using fallback', e);
+    }
 
     const list = $('[data-timeline-list]');
     const banner = $('[data-timeline-banner]');
@@ -3921,6 +3948,229 @@
         }</tbody></table>` : '<p class="text-mute">No admin actions logged yet.</p>';
       }
     } catch (e) { console.warn('Admin audit error:', e); }
+
+    // Timeline Editor
+    initTimelineEditor(sb);
+  }
+
+  // -------------------------------------------------------
+  // Timeline Editor (admin only)
+  // -------------------------------------------------------
+  async function initTimelineEditor(sb) {
+    const listEl = document.querySelector('[data-te-list]');
+    if (!listEl || !sb) return;
+
+    let stops = [];
+    let filterDay = 'all';
+
+    async function loadStops() {
+      const { data, error } = await sb.from('stops').select('*').order('sort_order', { ascending: true });
+      if (error) { listEl.innerHTML = '<p class="text-dim">Error loading stops.</p>'; return; }
+      stops = data || [];
+      renderList();
+    }
+
+    function formatTime12(t) {
+      if (!t) return '';
+      const [h, m] = t.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return m === 0 ? `${h12} ${ampm}` : `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+    }
+
+    function renderList() {
+      const filtered = filterDay === 'all' ? stops : stops.filter(s => s.day === filterDay);
+      if (!filtered.length) {
+        listEl.innerHTML = '<p class="text-dim">No stops found.</p>';
+        return;
+      }
+      listEl.innerHTML = filtered.map(s => `
+        <div class="te-item" data-te-id="${s.id}">
+          <div class="te-item-info">
+            <span class="te-day-badge ${s.day}">${s.day === 'sat' ? 'SAT' : 'SUN'}</span>
+            <span class="te-time">${formatTime12(s.time)}</span>
+            <span class="te-title">${escapeHtml(s.title)}</span>
+          </div>
+          <div class="te-item-actions">
+            <button class="btn btn-ghost btn-sm" data-te-edit="${s.id}">Edit</button>
+            <button class="btn btn-ghost btn-sm" data-te-up="${s.id}" title="Move up">&#9650;</button>
+            <button class="btn btn-ghost btn-sm" data-te-down="${s.id}" title="Move down">&#9660;</button>
+            <button class="btn btn-ghost btn-sm te-delete" data-te-delete="${s.id}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Wire actions
+      listEl.querySelectorAll('[data-te-edit]').forEach(btn => {
+        btn.addEventListener('click', () => openModal(stops.find(s => s.id === Number(btn.dataset.teEdit))));
+      });
+      listEl.querySelectorAll('[data-te-delete]').forEach(btn => {
+        btn.addEventListener('click', () => deleteStop(Number(btn.dataset.teDelete)));
+      });
+      listEl.querySelectorAll('[data-te-up]').forEach(btn => {
+        btn.addEventListener('click', () => moveStop(Number(btn.dataset.teUp), -1));
+      });
+      listEl.querySelectorAll('[data-te-down]').forEach(btn => {
+        btn.addEventListener('click', () => moveStop(Number(btn.dataset.teDown), 1));
+      });
+    }
+
+    // Filter buttons
+    document.querySelectorAll('[data-te-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-te-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterDay = btn.dataset.teFilter;
+        renderList();
+      });
+    });
+
+    // Add button
+    const addBtn = document.querySelector('[data-te-add]');
+    if (addBtn) addBtn.addEventListener('click', () => openModal(null));
+
+    // Modal
+    const modalBackdrop = document.querySelector('[data-te-modal]');
+    const modalTitle = document.querySelector('[data-te-modal-title]');
+    const form = document.querySelector('[data-te-form]');
+    const placesContainer = document.querySelector('[data-te-places]');
+    const addPlaceBtn = document.querySelector('[data-te-add-place]');
+    let editingId = null;
+
+    function openModal(stop) {
+      editingId = stop ? stop.id : null;
+      modalTitle.textContent = stop ? 'Edit Stop' : 'Add Stop';
+      form.elements.day.value = stop ? stop.day : 'sat';
+      form.elements.time.value = stop ? stop.time : '';
+      form.elements.title.value = stop ? stop.title : '';
+      form.elements.body.value = stop ? (stop.body || '') : '';
+      form.elements.addr.value = stop ? (stop.addr || '') : '';
+      form.elements.map.value = stop ? (stop.map || '') : '';
+      form.elements.bring.value = stop ? (stop.bring || '') : '';
+      renderPlaces(stop ? (stop.places || []) : []);
+      modalBackdrop.hidden = false;
+    }
+
+    function closeModal() {
+      modalBackdrop.hidden = true;
+      editingId = null;
+    }
+
+    document.querySelectorAll('[data-te-modal-close]').forEach(el => {
+      el.addEventListener('click', closeModal);
+    });
+
+    // Places sub-editor
+    function renderPlaces(places) {
+      placesContainer.innerHTML = '';
+      places.forEach(p => addPlaceRow(p));
+    }
+
+    function addPlaceRow(place) {
+      place = place || {};
+      const row = document.createElement('div');
+      row.className = 'te-place-row';
+      row.innerHTML = `
+        <input type="text" class="field te-place-field" placeholder="Name" value="${escapeHtml(place.name || '')}" data-place="name">
+        <input type="text" class="field te-place-field" placeholder="Description" value="${escapeHtml(place.desc || '')}" data-place="desc">
+        <input type="text" class="field te-place-field" placeholder="Walk time" value="${escapeHtml(place.walk || '')}" data-place="walk">
+        <input type="url" class="field te-place-field" placeholder="Map URL" value="${escapeHtml(place.url || '')}" data-place="url">
+        <button type="button" class="btn btn-ghost btn-sm te-remove-place" title="Remove">&times;</button>
+      `;
+      row.querySelector('.te-remove-place').addEventListener('click', () => row.remove());
+      placesContainer.appendChild(row);
+    }
+
+    if (addPlaceBtn) addPlaceBtn.addEventListener('click', () => addPlaceRow());
+
+    function collectPlaces() {
+      return Array.from(placesContainer.querySelectorAll('.te-place-row')).map(row => ({
+        name: row.querySelector('[data-place="name"]').value.trim(),
+        desc: row.querySelector('[data-place="desc"]').value.trim(),
+        walk: row.querySelector('[data-place="walk"]').value.trim(),
+        url:  row.querySelector('[data-place="url"]').value.trim()
+      })).filter(p => p.name);
+    }
+
+    // Save
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = form.querySelector('[data-te-save]');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const payload = {
+        day:    form.elements.day.value,
+        time:   form.elements.time.value,
+        title:  form.elements.title.value.trim(),
+        body:   form.elements.body.value.trim(),
+        addr:   form.elements.addr.value.trim() || null,
+        map:    form.elements.map.value.trim() || null,
+        bring:  form.elements.bring.value.trim() || null,
+        places: collectPlaces(),
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        if (editingId) {
+          const { error } = await sb.from('stops').update(payload).eq('id', editingId);
+          if (error) throw error;
+          await logAdminAction('timeline_update', null, null, `Updated stop #${editingId}: ${payload.title}`);
+          showToast('Stop updated');
+        } else {
+          const maxSort = stops.length ? Math.max(...stops.map(s => s.sort_order)) : 0;
+          payload.sort_order = maxSort + 1;
+          const { error } = await sb.from('stops').insert(payload);
+          if (error) throw error;
+          await logAdminAction('timeline_add', null, null, `Added stop: ${payload.title}`);
+          showToast('Stop added');
+        }
+        closeModal();
+        await loadStops();
+      } catch (err) {
+        showToast('Error saving: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      }
+    });
+
+    // Delete
+    async function deleteStop(id) {
+      const stop = stops.find(s => s.id === id);
+      if (!stop) return;
+      if (!confirm(`Delete "${stop.title}"? This cannot be undone.`)) return;
+      try {
+        const { error } = await sb.from('stops').delete().eq('id', id);
+        if (error) throw error;
+        await logAdminAction('timeline_delete', null, null, `Deleted stop #${id}: ${stop.title}`);
+        showToast('Stop deleted');
+        await loadStops();
+      } catch (err) {
+        showToast('Error deleting: ' + err.message);
+      }
+    }
+
+    // Reorder
+    async function moveStop(id, direction) {
+      const idx = stops.findIndex(s => s.id === id);
+      if (idx < 0) return;
+      const swapIdx = idx + direction;
+      if (swapIdx < 0 || swapIdx >= stops.length) return;
+      const a = stops[idx], b = stops[swapIdx];
+      try {
+        await Promise.all([
+          sb.from('stops').update({ sort_order: b.sort_order, updated_at: new Date().toISOString() }).eq('id', a.id),
+          sb.from('stops').update({ sort_order: a.sort_order, updated_at: new Date().toISOString() }).eq('id', b.id)
+        ]);
+        await logAdminAction('timeline_reorder', null, null, `Swapped "${a.title}" and "${b.title}"`);
+        await loadStops();
+      } catch (err) {
+        showToast('Error reordering: ' + err.message);
+      }
+    }
+
+    await loadStops();
   }
 
   // ============================================

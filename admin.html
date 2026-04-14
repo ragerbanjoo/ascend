@@ -99,6 +99,93 @@
     text-align: center;
     padding: var(--space-6, 2rem);
   }
+  /* Timeline Editor */
+  .te-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: var(--space-4, 1rem); flex-wrap: wrap; gap: 0.75rem;
+  }
+  .te-day-filter { display: flex; gap: 0.5rem; }
+  .te-filter-btn.active {
+    background: var(--gold, #c9a14a); color: var(--ink, #060d1a);
+    border-color: var(--gold, #c9a14a);
+  }
+  .te-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .te-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--card-bg, rgba(255,255,255,0.06));
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 8px; transition: background 0.15s;
+  }
+  .te-item:hover { background: rgba(255,255,255,0.08); }
+  .te-item-info {
+    flex: 1; min-width: 0; display: flex; align-items: center;
+    gap: 0.5rem; flex-wrap: wrap;
+  }
+  .te-day-badge {
+    font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 0.15em 0.5em; border-radius: 4px; flex-shrink: 0;
+  }
+  .te-day-badge.sat { background: rgba(201,161,74,0.15); color: var(--gold-bright, #e4c767); }
+  .te-day-badge.sun { background: rgba(138,21,56,0.2); color: #d4637a; }
+  .te-time { font-size: 0.8rem; color: var(--cream-dim, #b0a890); white-space: nowrap; flex-shrink: 0; }
+  .te-title {
+    font-size: 0.9rem; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .te-item-actions { display: flex; gap: 0.25rem; flex-shrink: 0; }
+  .te-delete { color: #d4637a !important; }
+  /* Modal */
+  .te-modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 1000; display: flex; align-items: center;
+    justify-content: center; padding: 1rem;
+  }
+  .te-modal-backdrop[hidden] { display: none; }
+  .te-modal {
+    background: var(--ink-soft, #0c1526);
+    border: 1px solid var(--cream-line, rgba(245,241,232,0.08));
+    border-radius: 12px; width: 100%; max-width: 600px;
+    max-height: 85vh; overflow-y: auto; padding: 1.5rem;
+  }
+  .te-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .te-modal-header h3 { margin: 0; }
+  .te-modal-close {
+    background: none; border: none; color: var(--cream-dim, #b0a890);
+    font-size: 1.5rem; cursor: pointer;
+  }
+  .te-form-row { margin-bottom: 1rem; }
+  .te-label {
+    display: block; font-size: 0.75rem; font-weight: 600;
+    margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .te-form-actions {
+    display: flex; justify-content: flex-end; gap: 0.75rem;
+    margin-top: 1.5rem; padding-top: 1rem;
+    border-top: 1px solid var(--cream-line, rgba(245,241,232,0.08));
+  }
+  .te-places-fieldset {
+    border: 1px solid var(--cream-line, rgba(245,241,232,0.08));
+    border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem;
+  }
+  .te-places-fieldset legend { padding: 0 0.5rem; }
+  .te-place-row {
+    display: grid; grid-template-columns: 1fr 1fr 80px 1fr auto;
+    gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;
+  }
+  .te-place-field { font-size: 0.8rem !important; padding: 0.35rem 0.5rem !important; }
+  @media (max-width: 600px) {
+    .te-place-row { grid-template-columns: 1fr 1fr; }
+    .te-place-row .te-remove-place { grid-column: span 2; justify-self: end; }
+    .te-item { flex-wrap: wrap; }
+    .te-item-actions { width: 100%; justify-content: flex-end; }
+  }
+  html[data-theme="light"] .te-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
+  html[data-theme="light"] .te-item:hover { background: rgba(0,0,0,0.06); }
+  html[data-theme="light"] .te-modal { background: #f5f1e8; border-color: rgba(0,0,0,0.1); }
 </style>
 </head>
 <body>
@@ -252,6 +339,79 @@
       </div>
     </section>
 
+    <!-- Timeline Editor -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Timeline Editor</h2>
+          <p class="text-dim">Add, edit, reorder, and remove timeline stops. Changes appear instantly on the <a href="timeline.html" style="color:var(--gold)">timeline page</a>.</p>
+        </div>
+        <div class="te-toolbar" data-reveal>
+          <div class="te-day-filter">
+            <button type="button" class="btn btn-sm btn-outline te-filter-btn active" data-te-filter="all">All</button>
+            <button type="button" class="btn btn-sm btn-ghost te-filter-btn" data-te-filter="sat">Saturday</button>
+            <button type="button" class="btn btn-sm btn-ghost te-filter-btn" data-te-filter="sun">Sunday</button>
+          </div>
+          <button type="button" class="btn btn-gold btn-sm" data-te-add>+ Add Stop</button>
+        </div>
+        <div class="te-list" data-te-list>
+          <p class="text-dim">Loading stops...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline Editor Modal -->
+    <div class="te-modal-backdrop" data-te-modal hidden>
+      <div class="te-modal" role="dialog" aria-modal="true" aria-label="Edit stop">
+        <div class="te-modal-header">
+          <h3 data-te-modal-title>Edit Stop</h3>
+          <button type="button" class="te-modal-close" data-te-modal-close aria-label="Close">&times;</button>
+        </div>
+        <form class="te-form" data-te-form>
+          <div class="te-form-row">
+            <label class="te-label" for="te-day">Day</label>
+            <select id="te-day" class="field" name="day" required>
+              <option value="sat">Saturday</option>
+              <option value="sun">Sunday</option>
+            </select>
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-time">Time (24h)</label>
+            <input type="time" id="te-time" class="field" name="time" required>
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-title">Title</label>
+            <input type="text" id="te-title" class="field" name="title" required maxlength="120">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-body">Description</label>
+            <textarea id="te-body" class="field" name="body" rows="3"></textarea>
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-addr">Address <span class="text-mute">(optional)</span></label>
+            <input type="text" id="te-addr" class="field" name="addr">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-map">Google Maps URL <span class="text-mute">(optional)</span></label>
+            <input type="url" id="te-map" class="field" name="map">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="te-bring">What to bring <span class="text-mute">(optional)</span></label>
+            <input type="text" id="te-bring" class="field" name="bring">
+          </div>
+          <fieldset class="te-places-fieldset">
+            <legend class="te-label">Nearby Places <span class="text-mute">(optional)</span></legend>
+            <div class="te-places-list" data-te-places></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-te-add-place>+ Add Place</button>
+          </fieldset>
+          <div class="te-form-actions">
+            <button type="button" class="btn btn-ghost" data-te-modal-close>Cancel</button>
+            <button type="submit" class="btn btn-gold" data-te-save>Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Audit Log -->
     <section>
       <div class="container">
@@ -268,6 +428,10 @@
             <option value="toggle_admin">Toggle admin</option>
             <option value="delete">Delete</option>
             <option value="photo_remove">Photo remove</option>
+            <option value="timeline_add">Timeline add</option>
+            <option value="timeline_update">Timeline update</option>
+            <option value="timeline_delete">Timeline delete</option>
+            <option value="timeline_reorder">Timeline reorder</option>
           </select>
           <input type="text" class="field" placeholder="Filter by admin..." data-admin-audit-admin>
           <input type="text" class="field" placeholder="Filter by target user..." data-admin-audit-target>
@@ -390,8 +554,8 @@
     <li><a href="hotel.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Hotel</a></li>
     <li><a href="whats-included.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Costs</a></li>
     <li><a href="speakers.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> Speakers</a></li>
-  </ul>
     <li><a href="faq.html"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ</a></li>
+  </ul>
 </aside>
 
 <button type="button" class="btn-scroll-top" aria-label="Scroll to top"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>Top</button>
