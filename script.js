@@ -1322,206 +1322,19 @@
   }
 
   // -------------------------------------------------------
-  // 20. Onboarding wizard (first visit)
+  // 20. Onboarding — redirect first-time visitors to guide.html
+  //     The guide itself lives in guide.html so the copy is easy
+  //     to edit without touching JavaScript.
   // -------------------------------------------------------
   async function initOnboarding() {
     const done = await Storage.get('onboarding:complete', false);
     if (done) return;
 
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isAndroid = /Android/.test(ua);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    const path = (location.pathname || '').toLowerCase();
+    if (path.endsWith('/guide.html') || path.endsWith('guide.html')) return;
+    if (path.endsWith('/parents.html') || path.endsWith('parents.html')) return;
 
-    const wizard = document.createElement('div');
-    wizard.className = 'onboarding';
-    wizard.setAttribute('role', 'dialog');
-    wizard.setAttribute('aria-modal', 'true');
-    wizard.setAttribute('aria-label', 'Welcome setup');
-
-    // Platform-specific install instructions
-    let installHTML = '';
-    if (isIOS) {
-      installHTML = `
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">1</div>
-          <p>Tap the <span class="ob-key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><polyline points="16 8 12 4 8 8"/><line x1="12" y1="4" x2="12" y2="16"/></svg> Share</span> button in the Safari toolbar</p>
-        </div>
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">2</div>
-          <p>Scroll down and tap <strong>"Add to Home Screen"</strong></p>
-        </div>
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">3</div>
-          <p>Name it whatever you'd like, then tap <strong>"Add"</strong></p>
-        </div>`;
-    } else if (isAndroid) {
-      installHTML = `
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">1</div>
-          <p>Tap the <strong>three-dot menu</strong> <span class="ob-key">&#8942;</span> in the top right corner of your browser</p>
-        </div>
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">2</div>
-          <p>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></p>
-        </div>
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">3</div>
-          <p>Tap <strong>"Install"</strong> to confirm — it'll appear on your home screen like a regular app</p>
-        </div>`;
-    } else {
-      installHTML = `
-        <div class="ob-instruction">
-          <div class="ob-instruction-num">1</div>
-          <p>Press <strong>Ctrl+D</strong> (Windows) or <strong>Cmd+D</strong> (Mac) to bookmark this site for quick access</p>
-        </div>`;
-    }
-
-    const totalSteps = isStandalone ? 3 : 4;
-    let stepNum = 0;
-
-    const welcomeStep = `
-        <div class="ob-step active" data-ob-step="${++stepNum}">
-          <div class="ob-welcome-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z"/><path d="M12 8v4"/><path d="M9 18l3-2 3 2"/></svg>
-          </div>
-          <h2>Welcome to ASCEND 2026</h2>
-          <p class="lede">This is your personal retreat companion for the St. Juan Diego Young Adult Group Eucharistic Revival, May 16-17 in Bellevue, WA.</p>
-          <p class="ob-welcome-detail">Inside you'll find the full schedule, speaker info, a personal journal, packing list, talk notes, and more -- everything you need for the retreat, right in your pocket.</p>
-          <div class="ob-actions">
-            <button type="button" class="btn btn-primary" data-ob-next>Get Started</button>
-            <a href="parents.html" class="btn btn-ghost btn-sm" data-ob-parent>I'm a Parent</a>
-          </div>
-        </div>`;
-
-    const installStep = isStandalone ? '' : `
-        <div class="ob-step" data-ob-step="${++stepNum}">
-          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Add to your home screen</h2>
-          <p class="lede">Pin it to your home screen for quick access all weekend.</p>
-          ${installHTML}
-          <div class="ob-actions">
-            <button type="button" class="btn btn-ghost" data-ob-next>Skip</button>
-            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
-          </div>
-        </div>`;
-
-    const dotsHTML = Array.from({ length: totalSteps }, (_, i) =>
-      `<span class="ob-dot${i === 0 ? ' active' : ''}"></span>`
-    ).join('');
-
-    wizard.innerHTML = `
-      <div class="ob-inner">
-        <div class="ob-progress" aria-hidden="true">
-          ${dotsHTML}
-        </div>
-
-        ${welcomeStep}
-
-        ${installStep}
-
-        <div class="ob-step" data-ob-step="${++stepNum}">
-          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>The departure plan</h2>
-          <p class="lede">With Confession &amp; Adoration — the full experience.</p>
-          <div class="ob-time-blocks">
-            <div class="ob-time-block">
-              <span class="ob-time">3:45 AM</span>
-              <span class="ob-time-label">Meet in Tieton</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">4:00 AM</span>
-              <span class="ob-time-label">Depart for Bellevue</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">6:30 AM</span>
-              <span class="ob-time-label">Arrive at Meydenbauer Center</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">7:00 AM</span>
-              <span class="ob-time-label">Eucharistic Adoration &amp; Confession begin</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">9:00 AM</span>
-              <span class="ob-time-label">ASCEND conference opens</span>
-            </div>
-          </div>
-          <p class="ob-desc">Yes, it's early. But we arrive in time for two hours of Eucharistic Adoration, a Confession window, and praise music before the conference opens. We begin the day in the Lord's presence.</p>
-          <div class="ob-actions">
-            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
-            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
-          </div>
-        </div>
-
-        <div class="ob-step" data-ob-step="${++stepNum}">
-          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Choose your look</h2>
-          <p class="lede">Pick a theme. You can switch anytime from the menu.</p>
-          <div class="ob-theme-cards">
-            <button type="button" class="ob-theme-choice" data-ob-theme="dark" aria-pressed="false">
-              <div class="ob-theme-preview ob-preview-dark"></div>
-              <span>Dark</span>
-            </button>
-            <button type="button" class="ob-theme-choice" data-ob-theme="light" aria-pressed="true">
-              <div class="ob-theme-preview ob-preview-light"></div>
-              <span>Light</span>
-            </button>
-          </div>
-          <div class="ob-actions">
-            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
-            <button type="button" class="btn btn-primary" data-ob-finish>Get Started</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(wizard);
-
-    // Navigation
-    let currentStep = 1;
-    const steps = wizard.querySelectorAll('.ob-step');
-    const dots = wizard.querySelectorAll('.ob-dot');
-
-    function goTo(n) {
-      if (n < 1 || n > totalSteps) return;
-      steps.forEach(s => s.classList.remove('active'));
-      dots.forEach((d, i) => d.classList.toggle('active', i < n));
-      wizard.querySelector(`[data-ob-step="${n}"]`).classList.add('active');
-      currentStep = n;
-    }
-
-    wizard.querySelectorAll('[data-ob-next]').forEach(btn =>
-      btn.addEventListener('click', () => goTo(currentStep + 1))
-    );
-    wizard.querySelectorAll('[data-ob-prev]').forEach(btn =>
-      btn.addEventListener('click', () => goTo(currentStep - 1))
-    );
-    const parentLink = wizard.querySelector('[data-ob-parent]');
-    if (parentLink) {
-      parentLink.addEventListener('click', async () => {
-        await Storage.set('onboarding:complete', true, { shared: false });
-      });
-    }
-
-    // Theme selection (live preview)
-    wizard.querySelectorAll('[data-ob-theme]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        wizard.querySelectorAll('[data-ob-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
-        btn.setAttribute('aria-pressed', 'true');
-        Theme.apply(btn.dataset.obTheme);
-      });
-    });
-
-    // Finish
-    return new Promise(resolve => {
-      wizard.querySelector('[data-ob-finish]').addEventListener('click', async () => {
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
-        await Theme.set(theme);
-        await Storage.set('onboarding:complete', true, { shared: false });
-        wizard.classList.add('closing');
-        setTimeout(() => { wizard.remove(); resolve(); }, 500);
-      });
-    });
+    location.replace('guide.html');
   }
 
   // ============================================
@@ -4416,6 +4229,7 @@
   // Expose modules for sub-pages (journal.html, rosary.html, etc.)
   window.DataStore = DataStore;
   window.Storage = Storage;
+  window.Theme = Theme;
   window.Auth = Auth;
   window.Crypto = Crypto;
   window.showToast = showToast;

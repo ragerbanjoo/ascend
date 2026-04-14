@@ -3526,7 +3526,8 @@ html[data-theme="light"] .intentions-empty {
 }
 
 /* ---------- 19. Onboarding wizard ---------- */
-.onboarding {
+.onboarding,
+body.guide-page {
   position: fixed;
   inset: 0;
   z-index: var(--z-onboarding);
@@ -3534,16 +3535,75 @@ html[data-theme="light"] .intentions-empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.5s var(--ease-out) both;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+.onboarding { animation: fadeIn 0.5s var(--ease-out) both; }
 .onboarding.closing {
   animation: obFadeOut 0.5s var(--ease-out) both;
 }
 @keyframes obFadeOut {
   to { opacity: 0; transform: scale(0.97); }
 }
+body.guide-page { margin: 0; padding: var(--space-6) 0; min-height: 100dvh; }
+body.guide-page .ob-inner { animation: heroRise 0.5s var(--ease-out) both; }
+
+/* Pulse animation for onboarding primary CTAs */
+@keyframes obPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,161,74,0.55); transform: scale(1); }
+  50%      { box-shadow: 0 0 0 12px rgba(201,161,74,0); transform: scale(1.03); }
+}
+.ob-pulse { animation: obPulse 1.8s var(--ease-out) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ob-pulse { animation: none; }
+}
+.ob-next-hint {
+  font-size: var(--fs-xs);
+  color: var(--cream-mute);
+  margin: var(--space-2) 0 0;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Platform-specific install instructions on guide.html */
+.ob-platform[hidden] { display: none; }
+.ob-platform-toggle {
+  display: block;
+  margin: var(--space-4) auto 0;
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  color: var(--cream-mute);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ob-platform-toggle:hover { color: var(--cream-dim); }
+.ob-value-callout {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--r-md);
+  background: rgba(201,161,74,0.06);
+  margin-bottom: var(--space-5);
+  text-align: left;
+}
+.ob-value-callout svg {
+  flex-shrink: 0;
+  color: var(--gold-bright);
+  margin-top: 2px;
+}
+.ob-value-callout p {
+  margin: 0;
+  color: var(--cream);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+.ob-value-callout strong { color: var(--gold-bright); }
 
 .ob-inner {
   width: 100%;
