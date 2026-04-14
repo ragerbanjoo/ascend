@@ -1018,6 +1018,10 @@ html[data-theme="light"] .theme-icon-moon { display: block; }
   grid-template-columns: repeat(2, 1fr);
   gap: 2px;
 }
+.sheet-links li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
 .sheet-links a {
   display: flex;
   flex-direction: column;
