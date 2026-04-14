@@ -4059,6 +4059,14 @@
     document.querySelectorAll('[data-te-modal-close]').forEach(el => {
       el.addEventListener('click', closeModal);
     });
+    // Close on backdrop click
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modalBackdrop.hidden) closeModal();
+    });
 
     // Places sub-editor
     function renderPlaces(places) {
@@ -4093,9 +4101,13 @@
     }
 
     // Save
-    form.addEventListener('submit', async (e) => {
+    const saveBtn = form.querySelector('[data-te-save]');
+    saveBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const saveBtn = form.querySelector('[data-te-save]');
+      if (!form.elements.title.value.trim() || !form.elements.time.value) {
+        showToast('Title and time are required', 'error');
+        return;
+      }
       saveBtn.disabled = true;
       saveBtn.textContent = 'Saving...';
 

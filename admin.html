@@ -146,7 +146,8 @@
     background: var(--ink-soft, #0c1526);
     border: 1px solid var(--cream-line, rgba(245,241,232,0.08));
     border-radius: 12px; width: 100%; max-width: 600px;
-    max-height: 85vh; overflow-y: auto; padding: 1.5rem;
+    max-height: 85vh; overflow-y: auto; overflow-x: hidden;
+    padding: 1.5rem; -webkit-overflow-scrolling: touch;
   }
   .te-modal-header {
     display: flex; justify-content: space-between; align-items: center;
@@ -178,14 +179,25 @@
   }
   .te-place-field { font-size: 0.8rem !important; padding: 0.35rem 0.5rem !important; }
   @media (max-width: 600px) {
-    .te-place-row { grid-template-columns: 1fr 1fr; }
-    .te-place-row .te-remove-place { grid-column: span 2; justify-self: end; }
+    .te-modal-backdrop { padding: 0; align-items: stretch; }
+    .te-modal {
+      max-width: 100%; max-height: 100vh; border-radius: 0;
+      padding: 1rem; padding-bottom: 2rem;
+    }
+    .te-form-row input,
+    .te-form-row textarea,
+    .te-form-row select { font-size: 16px !important; }
+    .te-place-row { grid-template-columns: 1fr; }
+    .te-place-row .te-remove-place { justify-self: end; }
+    .te-places-fieldset { overflow: hidden; }
     .te-item { flex-wrap: wrap; }
     .te-item-actions { width: 100%; justify-content: flex-end; }
+    .te-form-actions { position: sticky; bottom: 0; background: var(--ink-soft, #0c1526); padding: 1rem 0; margin: 0; z-index: 1; }
   }
   html[data-theme="light"] .te-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
   html[data-theme="light"] .te-item:hover { background: rgba(0,0,0,0.06); }
   html[data-theme="light"] .te-modal { background: #f5f1e8; border-color: rgba(0,0,0,0.1); }
+  html[data-theme="light"] .te-form-actions { background: #f5f1e8; }
 </style>
 </head>
 <body>
@@ -406,7 +418,7 @@
           </fieldset>
           <div class="te-form-actions">
             <button type="button" class="btn btn-ghost" data-te-modal-close>Cancel</button>
-            <button type="submit" class="btn btn-gold" data-te-save>Save</button>
+            <button type="button" class="btn btn-gold" data-te-save>Save</button>
           </div>
         </form>
       </div>
