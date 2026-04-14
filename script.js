@@ -11,8 +11,8 @@
   // 1. Trip constants (all times Pacific — PDT in May 2026)
   // -------------------------------------------------------
   const TRIP = {
-    departPT:  new Date('2026-05-16T04:00:00-07:00'), // Option A recommended default
-    returnPT:  new Date('2026-05-17T20:00:00-07:00'),
+    departPT:  new Date('2026-05-16T04:00:00-07:00'),
+    returnPT:  new Date('2026-05-17T18:45:00-07:00'),
     label:     'May 16–17, 2026'
   };
 
@@ -676,30 +676,30 @@
   // -------------------------------------------------------
   const STOPS = [
     // ── Saturday ──
-    { id: 1,  day: 'sat', timeA: '03:45', timeB: '05:30',
+    { id: 1,  day: 'sat', time: '03:45',
       title: 'Meet in Tieton',
       addr:  'Tieton, WA (exact location TBA)',
       map:   'https://www.google.com/maps/search/?api=1&query=Tieton+WA',
       body:  'Morning prayer, roll call, load vehicles, final restroom break before the road. Please arrive on time — we leave together.',
       bring: 'Everything you packed. Coffee optional but recommended.'
     },
-    { id: 2,  day: 'sat', timeA: '04:00', timeB: '05:45',
+    { id: 2,  day: 'sat', time: '04:00',
       title: 'Depart Tieton',
       body:  'Route: US-12 W → I-82 W → I-90 W → I-405 N → Meydenbauer Center. Approximately 142 miles, ~2h 25m clean drive time.',
     },
-    { id: 3,  day: 'sat', timeA: '05:00', timeB: '06:50',
+    { id: 3,  day: 'sat', time: '05:00',
       title: 'Rest stop — Pilot Travel Center, Ellensburg',
       addr:  '1307 N Dolarway Rd, Ellensburg, WA 98926',
       map:   'https://www.google.com/maps/search/?api=1&query=Pilot+Travel+Center+1307+N+Dolarway+Rd+Ellensburg+WA',
       body:  '15 minutes — restroom, gas, coffee, stretch, regroup the caravan before Snoqualmie Pass.',
     },
-    { id: 4,  day: 'sat', timeA: '06:30', timeB: '08:15',
+    { id: 4,  day: 'sat', time: '06:30',
       title: 'Arrive Meydenbauer Center',
       addr:  '11100 NE 6th St, Bellevue, WA',
       map:   'https://www.google.com/maps/search/?api=1&query=Meydenbauer+Center+Bellevue+WA',
       body:  'Park in the underground garage. Walk in together, check in, find seats as a group near the front if possible.',
     },
-    { id: 5,  day: 'sat', timeA: '07:00', optionOnly: 'A',
+    { id: 5,  day: 'sat', time: '07:00',
       title: 'Eucharistic Adoration · Confession · Praise Music',
       body:  'Early arrival perk — two hours of Adoration, a confession window, and praise music before the main program begins.',
     },
@@ -843,14 +843,26 @@
       map:   'https://www.google.com/maps/search/?api=1&query=restaurants+Capitol+Hill+Seattle+WA',
     },
     { id: 32, day: 'sun', time: '13:00',
-      title: 'Free time — Seattle or Bellevue',
-      body:  'The group decides: head to the Seattle waterfront and boardwalk area (~10 min west) or drive to downtown Bellevue and the mall area (~20 min via I-90). Enjoy the rest of the afternoon together.',
+      title: 'Pike Place Market & waterfront',
+      body:  'Walk around the new Pike Place waterfront area — take photos, enjoy the views, soak it in.',
     },
-    { id: 33, day: 'sun', time: '17:00',
+    { id: 33, day: 'sun', time: '14:00',
+      title: 'Head to Topgolf Renton',
+      addr:  '700 SW 19th St, Renton, WA 98057',
+      map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
+      body:  '~20 min drive south from Pike Place. Time to have some fun.',
+    },
+    { id: 34, day: 'sun', time: '14:30',
+      title: 'Topgolf Renton',
+      addr:  '700 SW 19th St, Renton, WA 98057',
+      map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
+      body:  'Hit some balls, hang out, friendly competition. Enjoy the last activity before the drive home.',
+    },
+    { id: 35, day: 'sun', time: '16:00',
       title: 'Depart for Yakima',
-      body:  'I-90 E → I-82 E → US-12 E. ~2h 45m from Seattle, ~2h 30m from Bellevue.',
+      body:  'I-405 S → I-90 E → I-82 E → US-12 E. ~2h 45m from Renton.',
     },
-    { id: 34, day: 'sun', time: '19:45',
+    { id: 36, day: 'sun', time: '18:45',
       title: 'Arrive home — Deo gratias',
       body:  'What a weekend. See you at Sunday YAG.',
     }
@@ -905,21 +917,7 @@
     const list = $('[data-timeline-list]');
     const banner = $('[data-timeline-banner]');
     const bannerCountdown = $('[data-banner-countdown]');
-    const toggleA = $('[data-option="A"]');
-    const toggleB = $('[data-option="B"]');
-
-    let option = (await Storage.get('user:departureOption', 'A')) || 'A';
-
-    function setOption(newOption, persist = true) {
-      option = newOption;
-      toggleA.setAttribute('aria-pressed', option === 'A' ? 'true' : 'false');
-      toggleB.setAttribute('aria-pressed', option === 'B' ? 'true' : 'false');
-      if (persist) Storage.set('user:departureOption', option, { shared: false });
-      render();
-    }
-
-    toggleA.addEventListener('click', () => setOption('A'));
-    toggleB.addEventListener('click', () => setOption('B'));
+    const option = 'A'; // Option A is confirmed
 
     const openIds = new Set();
 
@@ -1364,7 +1362,7 @@
         </div>`;
     }
 
-    const totalSteps = isStandalone ? 5 : 6;
+    const totalSteps = isStandalone ? 3 : 4;
     let stepNum = 0;
 
     const welcomeStep = `
@@ -1409,15 +1407,20 @@
 
         <div class="ob-step" data-ob-step="${++stepNum}">
           <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Option A: With Confession &amp; Adoration</h2>
+          <h2>The departure plan</h2>
+          <p class="lede">With Confession &amp; Adoration — the full experience.</p>
           <div class="ob-time-blocks">
             <div class="ob-time-block">
               <span class="ob-time">3:45 AM</span>
-              <span class="ob-time-label">Depart from Tieton</span>
+              <span class="ob-time-label">Meet in Tieton</span>
+            </div>
+            <div class="ob-time-block">
+              <span class="ob-time">4:00 AM</span>
+              <span class="ob-time-label">Depart for Bellevue</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">6:30 AM</span>
-              <span class="ob-time-label">Arrive at Meydenbauer Center, Bellevue</span>
+              <span class="ob-time-label">Arrive at Meydenbauer Center</span>
             </div>
             <div class="ob-time-block">
               <span class="ob-time">7:00 AM</span>
@@ -1428,56 +1431,10 @@
               <span class="ob-time-label">ASCEND conference opens</span>
             </div>
           </div>
-          <p class="ob-desc">Arrive early for two hours of Eucharistic Adoration, a Confession window, and praise music before the main program begins. It means a very early start, but you begin the day in the Lord's presence.</p>
+          <p class="ob-desc">Yes, it's early. But we arrive in time for two hours of Eucharistic Adoration, a Confession window, and praise music before the conference opens. We begin the day in the Lord's presence.</p>
           <div class="ob-actions">
             <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
             <button type="button" class="btn btn-primary" data-ob-next>Next</button>
-          </div>
-        </div>
-
-        <div class="ob-step" data-ob-step="${++stepNum}">
-          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Option B: Without Confession &amp; Adoration</h2>
-          <div class="ob-time-blocks">
-            <div class="ob-time-block">
-              <span class="ob-time">5:30 AM</span>
-              <span class="ob-time-label">Depart from Tieton</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">8:15 AM</span>
-              <span class="ob-time-label">Arrive at Meydenbauer Center, Bellevue</span>
-            </div>
-            <div class="ob-time-block">
-              <span class="ob-time">9:00 AM</span>
-              <span class="ob-time-label">ASCEND conference opens</span>
-            </div>
-          </div>
-          <p class="ob-desc">Sleep a bit more and head straight to the conference. You'll arrive with time to settle in before the opening session. The day is still packed with powerful speakers, worship, and Holy Mass — just without the early Adoration and Confession window.</p>
-          <div class="ob-actions">
-            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
-            <button type="button" class="btn btn-primary" data-ob-next>Next</button>
-          </div>
-        </div>
-
-        <div class="ob-step" data-ob-step="${++stepNum}">
-          <span class="eyebrow">Step ${stepNum} of ${totalSteps}</span>
-          <h2>Choose your departure</h2>
-          <p class="lede">Which option works best for you?</p>
-          <div class="ob-choices">
-            <button type="button" class="ob-choice" data-ob-option="A" aria-pressed="false">
-              <h3>Option A — With Confession &amp; Adoration</h3>
-              <p class="ob-choice-sub">Depart 3:45 AM &middot; Adoration + Confession + ASCEND</p>
-              <span class="ob-choice-tag">Recommended</span>
-            </button>
-            <button type="button" class="ob-choice" data-ob-option="B" aria-pressed="false">
-              <h3>Option B — Without Confession &amp; Adoration</h3>
-              <p class="ob-choice-sub">Depart 5:30 AM &middot; Conference only</p>
-            </button>
-          </div>
-          <p class="ob-note">You can change this anytime on the Timeline page.</p>
-          <div class="ob-actions">
-            <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
-            <button type="button" class="btn btn-primary" data-ob-next data-ob-require-option disabled>Next</button>
           </div>
         </div>
 
@@ -1507,7 +1464,6 @@
 
     // Navigation
     let currentStep = 1;
-    let selectedOption = null;
     const steps = wizard.querySelectorAll('.ob-step');
     const dots = wizard.querySelectorAll('.ob-dot');
 
@@ -1532,18 +1488,7 @@
       });
     }
 
-    // Step 4: option selection
-    wizard.querySelectorAll('[data-ob-option]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        wizard.querySelectorAll('[data-ob-option]').forEach(b => b.setAttribute('aria-pressed', 'false'));
-        btn.setAttribute('aria-pressed', 'true');
-        selectedOption = btn.dataset.obOption;
-        const nextBtn = wizard.querySelector('[data-ob-require-option]');
-        if (nextBtn) nextBtn.disabled = false;
-      });
-    });
-
-    // Step 5: theme selection (live preview)
+    // Theme selection (live preview)
     wizard.querySelectorAll('[data-ob-theme]').forEach(btn => {
       btn.addEventListener('click', () => {
         wizard.querySelectorAll('[data-ob-theme]').forEach(b => b.setAttribute('aria-pressed', 'false'));
@@ -1555,9 +1500,6 @@
     // Finish
     return new Promise(resolve => {
       wizard.querySelector('[data-ob-finish]').addEventListener('click', async () => {
-        if (selectedOption) {
-          await Storage.set('user:departureOption', selectedOption, { shared: false });
-        }
         const theme = document.documentElement.getAttribute('data-theme') || 'light';
         await Theme.set(theme);
         await Storage.set('onboarding:complete', true, { shared: false });
