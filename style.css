@@ -3043,7 +3043,7 @@ html[data-theme="light"] .reader-counter { color: rgba(6, 13, 26, 0.4); }
   display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0;
   font-size: var(--fs-sm); color: var(--cream-dim); cursor: pointer;
 }
-.packing-categories label span { flex: 1; min-width: 0; }
+.packing-categories label span { min-width: 0; }
 .packing-categories input[type="checkbox"] { accent-color: var(--gold); flex-shrink: 0; }
 .pack-remove {
   background: none; border: none; color: var(--cream-mute); cursor: pointer;

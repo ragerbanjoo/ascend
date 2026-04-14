@@ -1980,6 +1980,30 @@
           passwordKey
         );
         await Crypto.setCEK(cek);
+      } else if (this._profile && !this._profile.salt) {
+        // Profile exists but was created before encryption — set up encryption now
+        const passwordSalt = Crypto.generateSalt();
+        const passwordKey = await Crypto.deriveKey(password, passwordSalt);
+        const cek = await Crypto.generateCEK();
+        const phrase = await Crypto.generateRecoveryPhrase();
+        const phraseSalt = Crypto.generateSalt();
+        const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
+        const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
+        const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
+
+        await sb.from('profiles').update({
+          salt: Crypto._toBase64(passwordSalt),
+          cek_password_wrapped: passwordWrap.wrapped,
+          cek_password_iv: passwordWrap.iv,
+          cek_phrase_wrapped: phraseWrap.wrapped,
+          cek_phrase_iv: phraseWrap.iv,
+          phrase_salt: Crypto._toBase64(phraseSalt),
+        }).eq('id', this._user.id);
+
+        await Crypto.setCEK(cek);
+        await this._loadProfile();
+        this._notify();
+        return { user: data.user, recoveryPhrase: phrase, encryptionSetup: true };
       }
 
       await this._updateLastSeen();
@@ -3341,8 +3365,8 @@
         const user = e.target.querySelector('#login-user').value;
         const pass = e.target.querySelector('#login-pass').value;
         const result = await Auth.login(user, pass);
-        // If login repaired a broken account, show recovery phrase
-        if (result?.repaired) {
+        // If login repaired a broken account or set up encryption, show recovery phrase
+        if (result?.repaired || result?.encryptionSetup) {
           showRecoveryPhrase(result.recoveryPhrase);
         } else {
           modal.classList.remove('open');
