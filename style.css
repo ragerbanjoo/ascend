@@ -280,7 +280,7 @@ body {
   color: var(--cream);
   background: var(--ink);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -1882,14 +1882,14 @@ textarea.field {
 .day-jump {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--nav-h, 60px) + 8px);
+  top: var(--nav-h, 60px);
   z-index: 10;
   margin: 0 0 var(--space-5);
   padding: 0.75rem 0;
   background: var(--ink);
 }
 @media (max-width: 880px) {
-  .day-jump { top: calc(48px + env(safe-area-inset-top, 0px) + 8px); }
+  .day-jump { top: calc(48px + env(safe-area-inset-top, 0px)); }
 }
 .day-jump-track {
   position: relative;
