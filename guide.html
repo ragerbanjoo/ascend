@@ -27,6 +27,7 @@
     <span class="ob-dot active" data-ob-dot="1"></span>
     <span class="ob-dot" data-ob-dot="2"></span>
     <span class="ob-dot" data-ob-dot="3"></span>
+    <span class="ob-dot" data-ob-dot="4"></span>
   </div>
 
   <!-- ============================================================
@@ -54,16 +55,15 @@
   </section>
 
   <!-- ============================================================
-       STEP 2 — Add to Home Screen
-       The three .ob-platform blocks below (ios, android, desktop)
-       are shown one at a time based on the user's device. If you
-       want to update instructions, edit the matching block only.
-       The "Show all options" link lets users switch if detection
-       gets it wrong.
+       STEP 2 — Why add it?
+       Short "sales pitch" explaining the value before showing the
+       (longer) install steps. Edit the callout copy below to change
+       the pitch.
        ============================================================ -->
   <section class="ob-step" data-ob-step="2">
-    <span class="eyebrow">Step 2 of 3</span>
-    <h2>Add to your home screen</h2>
+    <span class="eyebrow">Step 2 of 4</span>
+    <h2>Make it feel like an app</h2>
+    <p class="lede">Before we get started, one quick setup.</p>
 
     <div class="ob-value-callout">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true">
@@ -73,21 +73,41 @@
       <p><strong>This is an app, not just a website.</strong> Pin it to your home screen so it opens full-screen like a real app — no browser bars, works offline during the drive, and you'll find it instantly when you need the schedule.</p>
     </div>
 
-    <p class="lede">Takes about 10 seconds. Follow the steps for your phone.</p>
+    <p class="ob-welcome-detail">Takes about 10 seconds. On the next screen we'll show you exactly how for your phone.</p>
 
-    <!-- iOS instructions -->
+    <div class="ob-actions">
+      <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
+      <button type="button" class="btn btn-primary ob-pulse" data-ob-next>Show Me How</button>
+    </div>
+    <p class="ob-next-hint" aria-hidden="true">Tap “Show Me How” to continue</p>
+  </section>
+
+  <!-- ============================================================
+       STEP 3 — Add it now
+       The three .ob-platform blocks below (ios, android, desktop)
+       are shown one at a time based on the user's device. If you
+       want to update instructions, edit the matching block only.
+       The "Show all options" link lets users switch if detection
+       gets it wrong.
+       ============================================================ -->
+  <section class="ob-step" data-ob-step="3">
+    <span class="eyebrow">Step 3 of 4</span>
+    <h2>Add to your home screen</h2>
+    <p class="lede">Follow the steps for your phone.</p>
+
+    <!-- iOS (iOS 26 Safari) instructions -->
     <div class="ob-platform" data-ob-platform="ios" hidden>
       <div class="ob-instruction">
         <div class="ob-instruction-num">1</div>
-        <p>Tap the <span class="ob-key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg> Share</span> button at the bottom of Safari (the square with an up arrow).</p>
+        <p>Tap the <strong>three-dot menu</strong> <span class="ob-key">&middot;&middot;&middot;</span> in the bottom-right corner of Safari.</p>
       </div>
       <div class="ob-instruction">
         <div class="ob-instruction-num">2</div>
-        <p>Scroll down the share sheet and tap <strong>"Add to Home Screen"</strong>.</p>
+        <p>Tap <strong>"Share"</strong> in the menu that opens.</p>
       </div>
       <div class="ob-instruction">
         <div class="ob-instruction-num">3</div>
-        <p>Tap <strong>"Add"</strong> in the top-right corner. Done — check your home screen.</p>
+        <p>Scroll down the share sheet and tap <strong>"Add to Home Screen"</strong>, then tap <strong>"Add"</strong>.</p>
       </div>
     </div>
 
@@ -121,14 +141,14 @@
       <button type="button" class="btn btn-ghost" data-ob-prev>Back</button>
       <button type="button" class="btn btn-primary ob-pulse" data-ob-next>I've added it · Next</button>
     </div>
-    <p class="ob-next-hint" aria-hidden="true">Tap “Next” to continue</p>
+    <p class="ob-next-hint" aria-hidden="true">Tap “Next” when you're done</p>
   </section>
 
   <!-- ============================================================
-       STEP 3 — Choose theme
+       STEP 4 — Choose theme
        ============================================================ -->
-  <section class="ob-step" data-ob-step="3">
-    <span class="eyebrow">Step 3 of 3</span>
+  <section class="ob-step" data-ob-step="4">
+    <span class="eyebrow">Step 4 of 4</span>
     <h2>Choose your look</h2>
     <p class="lede">Pick a theme. You can switch anytime from the menu.</p>
     <div class="ob-theme-cards">

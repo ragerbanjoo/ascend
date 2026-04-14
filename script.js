@@ -3219,8 +3219,9 @@
         <div class="guide-body"></div>
         <div class="guide-nav">
           <button type="button" class="btn btn-ghost btn-sm guide-btn-back" style="visibility:hidden">Back</button>
-          <button type="button" class="btn btn-primary btn-sm guide-btn-next">Next</button>
+          <button type="button" class="btn btn-primary btn-sm guide-btn-next ob-pulse">Next</button>
         </div>
+        <p class="ob-next-hint guide-next-hint" aria-hidden="true">Tap to continue</p>
       </div>
     `;
 
@@ -3228,6 +3229,7 @@
     const dots = el.querySelectorAll('.guide-dot');
     const backBtn = el.querySelector('.guide-btn-back');
     const nextBtn = el.querySelector('.guide-btn-next');
+    const nextHint = el.querySelector('.guide-next-hint');
     const closeX = el.querySelector('.guide-close-x');
 
     function render() {
@@ -3255,8 +3257,13 @@
 
       if (step.cta) {
         nextBtn.style.display = 'none';
+        if (nextHint) nextHint.style.display = 'none';
       } else {
         nextBtn.style.display = '';
+        if (nextHint) {
+          nextHint.style.display = '';
+          nextHint.textContent = `Tap "${nextBtn.textContent}" to continue`;
+        }
       }
     }
 
