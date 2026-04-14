@@ -12,7 +12,7 @@
   // -------------------------------------------------------
   const TRIP = {
     departPT:  new Date('2026-05-16T04:00:00-07:00'),
-    returnPT:  new Date('2026-05-17T18:45:00-07:00'),
+    returnPT:  new Date('2026-05-17T18:15:00-07:00'), // ~6:15 PM
     label:     'May 16–17, 2026'
   };
 
@@ -822,50 +822,39 @@
       body:  'Visit, prayer, light candles. Mother church of the Archdiocese of Seattle. ~30 min.',
     },
     { id: 29, day: 'sun', time: '11:15',
-      title: 'Depart → Immaculate Conception',
-      body:  '~10 min east to Capitol Hill.',
+      title: 'Head to Pike Place',
+      body:  '~10 min west from St. James to the waterfront.',
     },
-    { id: 30, day: 'sun', time: '11:25',
-      title: 'Immaculate Conception Church',
-      addr:  '820 18th Ave, Seattle, WA 98122',
-      map:   'https://maps.app.goo.gl/1kPKnmMKaVkMCWoC8',
-      body:  'Beautiful parish on Capitol Hill. Visit, pray, and take in the church. ~30 min.',
-    },
-    { id: 31, day: 'sun', time: '12:00',
-      title: 'Lunch — Capitol Hill',
-      body:  'The group will pick a spot together. All of these are right in the neighborhood — but you can always change your mind once you\'re there.',
-      places: [
-        { name: 'Fogon Cocina Mexicana', desc: 'Mexican', url: 'https://maps.app.goo.gl/vYaJJYTUHt1bgbXNA' },
-        { name: 'Kizuki Ramen & Izakaya', desc: 'Japanese ramen', url: 'https://maps.app.goo.gl/jMKkfKzJX8VLcNqC6' },
-        { name: 'Ba Bar Capitol Hill', desc: 'Vietnamese', url: 'https://maps.app.goo.gl/Vn4RoQKtXB18SHkm6' },
-        { name: 'Carmelos Tacos', desc: 'Tacos', url: 'https://maps.app.goo.gl/zW4tV5i2KAg6Wnkd8' },
-      ],
-      map:   'https://www.google.com/maps/search/?api=1&query=restaurants+Capitol+Hill+Seattle+WA',
-    },
-    { id: 32, day: 'sun', time: '13:00',
+    { id: 30, day: 'sun', time: '11:30',
       title: 'Pike Place Market & waterfront',
       body:  'Walk around the new Pike Place waterfront area — take photos, enjoy the views, soak it in.',
     },
-    { id: 33, day: 'sun', time: '14:00',
+    { id: 31, day: 'sun', time: '12:30',
       title: 'Head to Topgolf Renton',
       addr:  '700 SW 19th St, Renton, WA 98057',
       map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
       body:  '~20 min drive south from Pike Place. Time to have some fun.',
     },
-    { id: 34, day: 'sun', time: '14:30',
+    { id: 32, day: 'sun', time: '13:00',
       title: 'Topgolf Renton',
       addr:  '700 SW 19th St, Renton, WA 98057',
       map:   'https://www.google.com/maps/search/?api=1&query=Topgolf+Renton+WA',
-      body:  'Hit some balls, hang out, friendly competition. Enjoy the last activity before the drive home.',
+      body:  'Hit some balls, hang out, friendly competition.',
     },
-    { id: 35, day: 'sun', time: '16:00',
+    { id: 33, day: 'sun', time: '14:30',
+      title: 'Lunch — Renton area',
+      body:  'The group will pick a spot together near Topgolf before hitting the road.',
+      map:   'https://www.google.com/maps/search/?api=1&query=restaurants+near+Topgolf+Renton+WA',
+    },
+    { id: 34, day: 'sun', time: '15:30',
       title: 'Depart for Yakima',
       body:  'I-405 S → I-90 E → I-82 E → US-12 E. ~2h 45m from Renton.',
     },
-    { id: 36, day: 'sun', time: '18:45',
+    { id: 35, day: 'sun', time: '18:15',
       title: 'Arrive home — Deo gratias',
       body:  'What a weekend. See you at Sunday YAG.',
     }
+  ];
   ];
 
   function stopDate(stop, option) {
@@ -1035,7 +1024,7 @@
       // No auto-scroll — let users read the option cards first
     }
 
-    setOption(option, false);
+    render();
     setInterval(render, 30000); // refresh every 30s for relative labels / state transitions
 
     // live banner countdown (every second)
