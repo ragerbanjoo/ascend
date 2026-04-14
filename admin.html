@@ -189,12 +189,19 @@
     .te-modal-header { flex-shrink: 0; padding: 1rem 1rem 0.5rem; }
     .te-form {
       flex: 1; min-height: 0;
-      overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 0 1rem;
+      overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 1rem 1rem;
     }
     .te-form-row input,
     .te-form-row textarea,
-    .te-form-row select { font-size: 16px !important; }
+    .te-form-row select {
+      font-size: 16px !important;
+      width: 100%; box-sizing: border-box;
+    }
+    .te-form-row input[type="time"] {
+      height: 44px;
+    }
     .te-place-row { grid-template-columns: 1fr; }
     .te-place-row .te-remove-place { justify-self: end; }
     .te-places-fieldset { overflow: hidden; }

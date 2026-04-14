@@ -4102,8 +4102,7 @@
 
     // Save — bind all save buttons (in-form for desktop + footer for mobile)
     const saveBtns = modalBackdrop.querySelectorAll('[data-te-save]');
-    saveBtns.forEach(btn => btn.addEventListener('click', async (e) => {
-      e.preventDefault();
+    async function handleSave() {
       if (!form.elements.title.value.trim() || !form.elements.time.value) {
         showToast('Title and time are required', 'error');
         return;
@@ -4126,23 +4125,27 @@
         if (editingId) {
           const { error } = await sb.from('stops').update(payload).eq('id', editingId);
           if (error) throw error;
-          await logAdminAction('timeline_update', null, null, `Updated stop #${editingId}: ${payload.title}`);
           showToast('Stop updated');
         } else {
           const maxSort = stops.length ? Math.max(...stops.map(s => s.sort_order)) : 0;
           payload.sort_order = maxSort + 1;
           const { error } = await sb.from('stops').insert(payload);
           if (error) throw error;
-          await logAdminAction('timeline_add', null, null, `Added stop: ${payload.title}`);
           showToast('Stop added');
         }
+        logAdminAction(editingId ? 'timeline_update' : 'timeline_add', null, null,
+          `${editingId ? 'Updated' : 'Added'} stop: ${payload.title}`).catch(() => {});
         closeModal();
         await loadStops();
       } catch (err) {
-        showToast('Error saving: ' + err.message);
+        showToast('Error saving: ' + (err.message || err), 'error');
       } finally {
         saveBtns.forEach(b => { b.disabled = false; b.textContent = 'Save'; });
       }
+    }
+    saveBtns.forEach(btn => btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      handleSave();
     }));
 
     // Delete
