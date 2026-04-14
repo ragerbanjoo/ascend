@@ -910,7 +910,7 @@
   // 14. Timeline page
   // -------------------------------------------------------
   async function initTimeline() {
-    const root = $('[data-timeline]');
+    const root = $('[data-timeline-list]');
     if (!root) return;
 
     // Fetch live stops from Supabase; fall back to hardcoded STOPS
