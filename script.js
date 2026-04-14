@@ -3941,6 +3941,8 @@
               await sb.from('sharing_preferences').delete().eq('user_id', uid);
               await sb.from('scheduled_deletions').delete().eq('user_id', uid);
               await sb.from('profiles').delete().eq('id', uid);
+              // Delete the auth user so the username can be reused
+              await sb.rpc('admin_delete_auth_user', { target_user_id: uid }).catch(() => {});
               await logAdminAction('delete_user', uid, btn.dataset.username, 'Account deleted by admin');
               // Remove the row from the table
               btn.closest('tr').remove();
