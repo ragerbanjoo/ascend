@@ -1575,9 +1575,21 @@ textarea.field {
   font-size: 1.1rem;
   animation: wallRise 0.9s var(--ease-out) both;
 }
-.wall-item .icon { display: flex; align-items: center; }
+.wall-item .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--gold-soft);
+  background: rgba(245,241,232,0.06);
+  padding: 3px;
+  flex-shrink: 0;
+}
 .wall-item .icon svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.wall-item .icon img { width: 1.25rem; height: 1.25rem; object-fit: contain; }
+.wall-item .icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
 .wall-empty {
   font-style: italic;
   color: var(--cream-mute);
