@@ -2737,7 +2737,7 @@ html[data-theme="light"] .group-rules li:hover { background: rgba(158,124,46,0.0
 /* ---------- 15c. Hub ---------- */
 .hub-topbar { padding: var(--space-6) 0 var(--space-4); }
 .hub-topbar-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
-.hub-welcome { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; color: var(--cream); display: inline-flex; align-items: center; gap: var(--space-2); }
+.hub-welcome { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; color: var(--cream); display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1); }
 .hub-welcome-icon { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; overflow: hidden; border: 1px solid var(--gold-soft); background: rgba(245,241,232,0.06); padding: 3px; flex-shrink: 0; }
 .hub-welcome-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
 .hub-account-pill {
