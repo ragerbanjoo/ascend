@@ -3428,6 +3428,32 @@ html[data-theme="light"] .hub-jumpnav-menu a:hover {
   color: var(--gold);
 }
 
+/* Quick-link chip rows (cross-page nav) */
+.quicklinks { margin: 0 0 var(--space-5); }
+.quicklinks + .quicklinks { margin-top: calc(-1 * var(--space-3)); }
+.quicklinks-label {
+  display: block; font-size: var(--fs-xxs); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: var(--space-2);
+}
+.quicklinks-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.quicklink {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.35rem; flex: 1 1 5.5rem; min-width: 5.5rem; max-width: 8rem;
+  padding: var(--space-3) var(--space-2);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--r-md);
+  background: rgba(245,241,232,0.04);
+  color: var(--cream);
+  text-decoration: none; text-align: center;
+  font-size: var(--fs-xs); font-weight: 600;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.quicklink:hover { background: rgba(201,161,74,0.10); border-color: var(--gold-dim); transform: translateY(-1px); }
+.quicklink .si { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+html[data-theme="light"] .quicklink { background: rgba(26,26,46,0.04); border-color: rgba(26,26,46,0.14); color: #1a1a2e; }
+html[data-theme="light"] .quicklink:hover { background: rgba(201,161,74,0.12); border-color: var(--gold); }
+
 /* Intentions stage — light mode */
 html[data-theme="light"] .intentions-stage {
   background: radial-gradient(ellipse at 50% 35%, rgba(245,235,210,0.9) 0%, rgba(240,230,215,1) 70%);
