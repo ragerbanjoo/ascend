@@ -2453,7 +2453,15 @@
     // Update welcome text
     const welcomeEl = hubEl.querySelector('[data-hub-welcome]');
     if (welcomeEl) {
-      welcomeEl.textContent = Auth.isGuest ? 'Welcome' : `Welcome, ${Auth.displayName}`;
+      if (Auth.isGuest) {
+        welcomeEl.textContent = 'Welcome';
+      } else {
+        const iconKey = Auth.profile?.saint_icon;
+        const iconHtml = iconKey && PROFILE_ICONS[iconKey]
+          ? `<span class="hub-welcome-icon">${renderProfileIcon(iconKey, 36)}</span>`
+          : '';
+        welcomeEl.innerHTML = `${iconHtml}<span>Welcome, ${escapeHtml(Auth.displayName)}</span>`;
+      }
     }
 
     // Account pill
@@ -2890,8 +2898,6 @@
       const items = await DataStore.getIntentions();
       const list = container.querySelector('[data-intentions-list]');
       if (!list) return;
-      const count = container.querySelector('[data-intentions-count]');
-      if (count) count.textContent = items.length;
 
       list.innerHTML = items.length ? items.map(i => `
         <div class="intention-item ${i.answered ? 'answered' : ''}">
