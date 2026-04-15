@@ -93,16 +93,16 @@
 
     <!-- Upload area -->
     <div data-upload-area style="display:none">
+      <label class="photos-share-toggle" data-share-toggle>
+        <input type="checkbox" data-share-to-group>
+        <span><strong>Share to Group Gallery</strong> — uncheck to keep photos private &amp; encrypted</span>
+      </label>
       <div class="photos-dropzone" data-dropzone>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <p>Drag photos here or tap to browse</p>
         <input type="file" accept="image/*" multiple hidden data-file-input>
         <p class="text-mute" style="font-size:0.8rem">Max 10 MB per photo</p>
       </div>
-      <label class="photos-share-toggle" data-share-toggle>
-        <input type="checkbox" data-share-to-group>
-        <span><strong>Share to Group Gallery</strong> — uncheck to keep photos private &amp; encrypted</span>
-      </label>
       <div class="photos-upload-progress" data-upload-progress style="display:none">
         <div class="spinner"></div>
         <span data-upload-status>Uploading...</span>

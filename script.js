@@ -278,7 +278,10 @@
       backdrop.classList.remove('open');
       sheet.setAttribute('aria-hidden', 'true');
     }
-    openBtn.addEventListener('click', open);
+    openBtn.addEventListener('click', () => {
+      if (sheet.classList.contains('open')) close();
+      else open();
+    });
     closeBtns.forEach(btn => btn.addEventListener('click', close));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { close(); closeSched(); }
@@ -2960,7 +2963,8 @@
     const previews = container.querySelector('[data-photo-previews]');
     const countEl = container.querySelector('[data-photo-count]');
     const photos = await DataStore.getPhotos('mine');
-    if (countEl) countEl.textContent = photos.length + ' private photo' + (photos.length === 1 ? '' : 's');
+    const privatePhotos = photos.filter(p => p.visibility === 'private');
+    if (countEl) countEl.textContent = privatePhotos.length + ' private photo' + (privatePhotos.length === 1 ? '' : 's');
     const show = photos.slice(0, 4);
     if (previews && show.length) {
       for (const photo of show) {
@@ -3196,6 +3200,9 @@
       try {
         const user = e.target.querySelector('#signup-user').value;
         const { recoveryPhrase } = await Auth.signup(user, pass);
+        // Brand-new account: ensure the setup guide fires after reload,
+        // even if a prior account on this device already dismissed it.
+        try { localStorage.removeItem('acct:setup-seen'); } catch (e) {}
         showRecoveryPhrase(recoveryPhrase);
       } catch (err) {
         errEl.textContent = err.message;
@@ -3758,7 +3765,7 @@
               await sb.from('scheduled_deletions').delete().eq('user_id', uid);
               await sb.from('profiles').delete().eq('id', uid);
               // Delete the auth user so the username can be reused
-              await sb.rpc('admin_delete_auth_user', { target_user_id: uid }).catch(() => {});
+              try { await sb.rpc('admin_delete_auth_user', { target_user_id: uid }); } catch (e) {}
               await logAdminAction('delete_user', uid, btn.dataset.username, 'Account deleted by admin');
               // Remove the row from the table
               btn.closest('tr').remove();
