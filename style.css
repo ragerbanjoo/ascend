@@ -3480,6 +3480,18 @@ html[data-theme="light"] .quicklinks-toggle:hover { background: rgba(201,161,74,
   .quicklinks-toggle .quicklinks-chevron { transition: none; }
 }
 
+/* Hub quick-nav bar: keep jumpnav + collapsible chip toggles on one row */
+.hub-quicknav-bar {
+  display: flex; flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
+.hub-quicknav-bar .hub-jumpnav { margin: 0; }
+.hub-quicknav-bar .quicklinks { display: contents; }
+.hub-quicknav-bar .quicklinks-toggle { margin-bottom: 0; }
+.hub-quicknav-bar .quicklinks-row { order: 1; flex-basis: 100%; }
+
 .quicklink {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 0.35rem; flex: 1 1 5.5rem; min-width: 5.5rem; max-width: 8rem;
