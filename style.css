@@ -3562,15 +3562,10 @@ html[data-theme="light"] .room-card {
   background: rgba(255,255,255,0.7);
   border-color: rgba(26,26,46,0.08);
 }
-html[data-theme="light"] .vehicle-label,
-html[data-theme="light"] .room-label { color: var(--ink); }
-html[data-theme="light"] .vehicle-note,
-html[data-theme="light"] .room-note { color: rgba(26,26,46,0.65); }
 html[data-theme="light"] .rider-chip,
 html[data-theme="light"] .occupant-chip {
   background: rgba(158,124,46,0.08);
   border-color: rgba(158,124,46,0.22);
-  color: var(--ink);
 }
 
 /* Intentions stage — light mode */
