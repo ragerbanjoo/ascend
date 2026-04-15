@@ -174,6 +174,28 @@
 (function() {
   'use strict';
 
+  // ---- Already installed? Skip install steps. ----
+  // If the user previously opened the site as a standalone PWA, script.js
+  // persists "app:installed". Also re-check standalone here in case the
+  // guide itself was opened from the home-screen icon.
+  try {
+    const standaloneNow = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+      || window.navigator.standalone === true;
+    if (standaloneNow) localStorage.setItem('app:installed', 'true');
+  } catch (e) {}
+  let alreadyInstalled = false;
+  try { alreadyInstalled = localStorage.getItem('app:installed') === 'true'; } catch (e) {}
+
+  if (alreadyInstalled) {
+    // Drop the two install-related steps and renumber the remaining ones.
+    document.querySelectorAll('.ob-step[data-ob-step="2"], .ob-step[data-ob-step="3"]').forEach(el => el.remove());
+    document.querySelectorAll('.ob-dot[data-ob-dot="3"], .ob-dot[data-ob-dot="4"]').forEach(el => el.remove());
+    const remaining = document.querySelectorAll('.ob-step');
+    remaining.forEach((step, i) => step.setAttribute('data-ob-step', String(i + 1)));
+    const eyebrow = document.querySelector('.ob-step[data-ob-step="2"] .eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Step 2 of 2';
+  }
+
   // ---- Platform detection ----
   const ua = navigator.userAgent || '';
   const isIOS = /iPad|iPhone|iPod/.test(ua) ||

@@ -1326,7 +1326,16 @@
   //     The guide itself lives in guide.html so the copy is easy
   //     to edit without touching JavaScript.
   // -------------------------------------------------------
+  function detectStandaloneInstall() {
+    try {
+      const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+        || window.navigator.standalone === true;
+      if (standalone) localStorage.setItem('app:installed', 'true');
+    } catch (e) { /* no-op */ }
+  }
+
   async function initOnboarding() {
+    detectStandaloneInstall();
     const done = await Storage.get('onboarding:complete', false);
     if (done) return;
 
