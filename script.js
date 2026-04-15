@@ -3366,7 +3366,7 @@
       {
         icon: `<svg ${svgAttrs}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
         title: 'Create an Account',
-        desc: 'Save your data across devices with a free account. Just a username and password — no email needed. Your journal and intentions stay encrypted. <a href="security.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:2px">Learn how we keep your data safe</a>',
+        desc: 'Unlock the journal, photo gallery, packing checklist, and private intentions. Just a username and password — no email needed. Your data stays end-to-end encrypted. <a href="security.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:2px">How we keep it safe</a>',
         cta: true,
         extra: `<div class="guide-actions">
           <button type="button" class="btn btn-primary" data-guide-advance>Create Account</button>
