@@ -300,6 +300,28 @@
       </div>
     </section>
 
+    <!-- Jump to section -->
+    <section style="padding:0">
+      <div class="container-narrow">
+        <div class="hub-jumpnav" data-reveal>
+          <button type="button" class="hub-jumpnav-btn" aria-expanded="false" aria-controls="admin-jumpnav-menu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Jump to section
+            <svg class="hub-jumpnav-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <nav class="hub-jumpnav-menu" id="admin-jumpnav-menu" aria-label="Jump to section">
+            <a href="#activity"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><polyline points="7 14 11 10 15 13 21 7"/></svg> Activity</a>
+            <a href="#users"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Users</a>
+            <a href="#moderation"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Moderation</a>
+            <a href="#timeline"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Timeline</a>
+            <a href="#carpool"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/><path d="M15 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/><path d="M3 17h2M19 17h2M5 13l2-7h10l2 7"/></svg> Carpool</a>
+            <a href="#rooms"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg> Rooms</a>
+            <a href="#audit"><svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Audit Log</a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
     <!-- Activity Dashboard -->
     <section style="padding-top: 0;">
       <div class="container">
@@ -336,7 +358,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>User Management</h2>
+          <h2 id="users">User Management</h2>
           <p class="text-dim">View and manage all registered users.</p>
         </div>
         <div class="admin-search" data-reveal>
@@ -367,7 +389,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>Moderation</h2>
+          <h2 id="moderation">Moderation</h2>
           <p class="text-dim">Review and remove group photos.</p>
         </div>
         <div data-admin-photos class="admin-photos-grid" data-reveal>
@@ -380,7 +402,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>Timeline Editor</h2>
+          <h2 id="timeline">Timeline Editor</h2>
           <p class="text-dim">Add, edit, reorder, and remove timeline stops. Changes appear instantly on the <a href="timeline.html" style="color:var(--gold)">timeline page</a>.</p>
         </div>
         <div class="te-toolbar" data-reveal>
@@ -457,7 +479,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>Carpool Editor</h2>
+          <h2 id="carpool">Carpool Editor</h2>
           <p class="text-dim">Add, edit, and reorder vehicles and riders. Changes appear on the <a href="travel.html#travel-carpool" style="color:var(--gold)">travel page</a>.</p>
         </div>
         <div class="te-toolbar" data-reveal>
@@ -515,7 +537,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>Room Assignments Editor</h2>
+          <h2 id="rooms">Room Assignments Editor</h2>
           <p class="text-dim">Add, edit, and reorder hotel rooms and occupants. Changes appear on the <a href="hotel.html#hotel-rooms" style="color:var(--gold)">hotel page</a>.</p>
         </div>
         <div class="te-toolbar" data-reveal>
@@ -565,7 +587,7 @@
     <section>
       <div class="container">
         <div class="section-header" data-reveal>
-          <h2>Audit Log</h2>
+          <h2 id="audit">Audit Log</h2>
           <p class="text-dim">Full admin access log.</p>
         </div>
         <div class="admin-filter-row" data-reveal>
