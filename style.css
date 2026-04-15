@@ -4333,6 +4333,18 @@ html[data-theme="light"] .scroll-list { background: rgba(255, 255, 255, 0.5); }
 .lightbox-caption { color: #f5f1e8; font-size: var(--fs-base); margin: 0 0 var(--space-1); }
 .lightbox-meta { color: rgba(255,255,255,0.5); font-size: var(--fs-xs); margin: 0; }
 .lightbox-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); justify-content: center; }
+/* Lightbox always sits on a near-black backdrop, even in light theme.
+   Force button text/border colors so ghost buttons stay readable. */
+.photo-lightbox .btn-ghost {
+  color: #f5f1e8;
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+}
+.photo-lightbox .btn-ghost:hover {
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.1);
+}
 .lightbox-uploader {
   display: flex; align-items: center; justify-content: center; gap: var(--space-2);
   margin-top: var(--space-3);
