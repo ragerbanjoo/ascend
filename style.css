@@ -3493,7 +3493,7 @@ html[data-theme="light"] .quicklinks-toggle:hover { background: rgba(201,161,74,
 .hub-quicknav-bar .quicklinks-toggle { margin-bottom: 0; }
 .hub-quicknav-bar .quicklinks-row { order: 1; flex-basis: 100%; }
 
-.quicklink {
+.quicklinks-row .quicklink {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 0.35rem; flex: 1 1 5.5rem; min-width: 5.5rem; max-width: 8rem;
   padding: var(--space-3) var(--space-2);
@@ -3505,10 +3505,10 @@ html[data-theme="light"] .quicklinks-toggle:hover { background: rgba(201,161,74,
   font-size: var(--fs-xs); font-weight: 600;
   transition: background .15s, border-color .15s, transform .15s;
 }
-.quicklink:hover { background: rgba(201,161,74,0.10); border-color: var(--gold-dim); transform: translateY(-1px); }
-.quicklink .si { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-html[data-theme="light"] .quicklink { background: rgba(26,26,46,0.04); border-color: rgba(26,26,46,0.14); color: #1a1a2e; }
-html[data-theme="light"] .quicklink:hover { background: rgba(201,161,74,0.12); border-color: var(--gold); }
+.quicklinks-row .quicklink:hover { background: rgba(201,161,74,0.10); border-color: var(--gold-dim); transform: translateY(-1px); }
+.quicklinks-row .quicklink .si { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+html[data-theme="light"] .quicklinks-row .quicklink { background: rgba(26,26,46,0.04); border-color: rgba(26,26,46,0.14); color: #1a1a2e; }
+html[data-theme="light"] .quicklinks-row .quicklink:hover { background: rgba(201,161,74,0.12); border-color: var(--gold); }
 
 /* Intentions stage — light mode */
 html[data-theme="light"] .intentions-stage {
