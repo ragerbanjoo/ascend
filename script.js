@@ -4155,7 +4155,7 @@
       ]);
       if (gErr || iErr) {
         const err = gErr || iErr;
-        const missing = err && (err.code === '42P01' || /does not exist|relation .* does not exist/i.test(err.message || ''));
+        const missing = err && (err.code === '42P01' || err.code === 'PGRST205' || /does not exist|could not find the table|schema cache/i.test(err.message || ''));
         listEl.innerHTML = missing
           ? `<p class="text-dim">Database tables are missing. Run <code>supabase-carpool-rooms-setup.sql</code> in the Supabase SQL editor, then reload this page.</p>`
           : `<p class="text-dim">Error loading ${cfg.nounPlural}: ${escapeHtml(err.message || 'unknown error')}</p>`;
