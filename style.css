@@ -3510,6 +3510,69 @@ html[data-theme="light"] .quicklinks-toggle:hover { background: rgba(201,161,74,
 html[data-theme="light"] .quicklinks-row .quicklink { background: rgba(26,26,46,0.04); border-color: rgba(26,26,46,0.14); color: #1a1a2e; }
 html[data-theme="light"] .quicklinks-row .quicklink:hover { background: rgba(201,161,74,0.12); border-color: var(--gold); }
 
+/* ---------- Carpool & Room list cards ---------- */
+.carpool-list, .rooms-list { display: grid; gap: var(--space-4); }
+.vehicle-card, .room-card {
+  background: linear-gradient(180deg, rgba(245,241,232,0.06), rgba(245,241,232,0.015));
+  border: 1px solid var(--cream-line);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: var(--r-lg);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  transition: border-color var(--dur-med) var(--ease-out);
+}
+.vehicle-card:hover, .room-card:hover { border-left-color: var(--gold); }
+.vehicle-head, .room-head {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3);
+}
+.vehicle-label, .room-label {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--cream);
+  margin: 0;
+}
+.vehicle-driver {
+  font-size: var(--fs-sm);
+  color: var(--gold);
+  font-weight: 600;
+}
+.vehicle-note, .room-note {
+  font-size: var(--fs-sm);
+  color: var(--cream-dim);
+  margin: 0 0 var(--space-3);
+  font-style: italic;
+}
+.rider-list, .occupant-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+}
+.rider-chip, .occupant-chip {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(201,161,74,0.08);
+  border: 1px solid var(--gold-soft);
+  color: var(--cream);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+html[data-theme="light"] .vehicle-card,
+html[data-theme="light"] .room-card {
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(26,26,46,0.08);
+}
+html[data-theme="light"] .vehicle-label,
+html[data-theme="light"] .room-label { color: var(--ink); }
+html[data-theme="light"] .vehicle-note,
+html[data-theme="light"] .room-note { color: rgba(26,26,46,0.65); }
+html[data-theme="light"] .rider-chip,
+html[data-theme="light"] .occupant-chip {
+  background: rgba(158,124,46,0.08);
+  border-color: rgba(158,124,46,0.22);
+  color: var(--ink);
+}
+
 /* Intentions stage — light mode */
 html[data-theme="light"] .intentions-stage {
   background: radial-gradient(ellipse at 50% 35%, rgba(245,235,210,0.9) 0%, rgba(240,230,215,1) 70%);

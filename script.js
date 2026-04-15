@@ -3647,6 +3647,8 @@
     initTimeline().catch(console.warn);
     initPacking().catch(console.warn);
     initSpeakers();
+    initCarpoolPublic().catch(console.warn);
+    initHotelRoomsPublic().catch(console.warn);
 
     // Hub page
     initHubFirstVisit();
@@ -3793,6 +3795,9 @@
 
     // Timeline Editor
     initTimelineEditor(sb);
+    // Carpool + Room Assignments editors
+    initCarpoolEditor(sb).catch(console.warn);
+    initHotelRoomsEditor(sb).catch(console.warn);
   }
 
   // -------------------------------------------------------
@@ -4026,6 +4031,316 @@
     }
 
     await loadStops();
+  }
+
+  // =====================================================================
+  // CARPOOL + HOTEL ROOMS — public rendering + admin editors
+  // Data tables: carpool_vehicles / carpool_riders / hotel_rooms /
+  // hotel_room_occupants (see supabase-carpool-rooms-setup.sql).
+  // Falls back to hardcoded seed so the pages still render if Supabase
+  // is down or the tables haven't been created yet.
+  // =====================================================================
+
+  const CARPOOL_FALLBACK = [
+    {
+      id: 'v1', label: 'First vehicle', driver: 'Deacon Alex', co_driver: 'Patricia (wife)',
+      notes: 'Leaves Tieton Saturday morning with the main group.',
+      riders: ['Johana','Gaby','Shayla','Lupita','Gali','Meli','Sophia','Diana','Rubi','Angie','Kole','Kevin','Diego']
+    },
+    {
+      id: 'v2', label: 'Saturday night pickup', driver: 'Alex', co_driver: 'Edgar',
+      notes: 'Picks the guys up from their parents in Ellensburg Saturday night.',
+      riders: ['Alex','Edgar','Sebastian','Kaiser']
+    }
+  ];
+
+  const ROOMS_FALLBACK = [
+    { id: 'r1', label: 'Room 1 · Deacon & wife', notes: 'Married couple (exception to co-ed rule).',
+      occupants: ['Deacon Alex','Patricia'] },
+    { id: 'r2', label: 'Room 2 · Women', notes: '',
+      occupants: ['Johana','Gaby','Shayla','Lupita','Gali'] },
+    { id: 'r3', label: 'Room 3 · Women', notes: '',
+      occupants: ['Meli','Sophia','Diana','Rubi','Angie'] },
+    { id: 'r4', label: 'Room 4 · Men (main group)', notes: '',
+      occupants: ['Kole','Kevin','Diego'] },
+    { id: 'r5', label: 'Room 5 · Men (Saturday night arrivals)',
+      notes: 'Guys arriving Saturday evening from Ellensburg.',
+      occupants: ['Alex','Edgar','Sebastian','Kaiser'] }
+  ];
+
+  async function fetchCarpool(sb) {
+    if (!sb) return CARPOOL_FALLBACK;
+    const [{ data: vehicles, error: vErr }, { data: riders, error: rErr }] = await Promise.all([
+      sb.from('carpool_vehicles').select('*').order('sort_order', { ascending: true }),
+      sb.from('carpool_riders').select('*').order('sort_order', { ascending: true })
+    ]);
+    if (vErr || rErr || !vehicles?.length) return CARPOOL_FALLBACK;
+    return vehicles.map(v => ({
+      ...v,
+      riders: (riders || []).filter(r => r.vehicle_id === v.id).map(r => r.name)
+    }));
+  }
+
+  async function fetchRooms(sb) {
+    if (!sb) return ROOMS_FALLBACK;
+    const [{ data: rooms, error: rErr }, { data: occupants, error: oErr }] = await Promise.all([
+      sb.from('hotel_rooms').select('*').order('sort_order', { ascending: true }),
+      sb.from('hotel_room_occupants').select('*').order('sort_order', { ascending: true })
+    ]);
+    if (rErr || oErr || !rooms?.length) return ROOMS_FALLBACK;
+    return rooms.map(r => ({
+      ...r,
+      occupants: (occupants || []).filter(o => o.room_id === r.id).map(o => o.name)
+    }));
+  }
+
+  async function initCarpoolPublic() {
+    const listEl = document.querySelector('[data-carpool-list]');
+    if (!listEl) return;
+    const vehicles = await fetchCarpool(getSupabase());
+    if (!vehicles.length) {
+      listEl.innerHTML = '<p class="text-dim">No carpool assignments yet.</p>';
+      return;
+    }
+    listEl.innerHTML = vehicles.map(v => `
+      <div class="vehicle-card">
+        <div class="vehicle-head">
+          <h3 class="vehicle-label">${escapeHtml(v.label)}</h3>
+          <span class="vehicle-driver">${escapeHtml(v.driver)}${v.co_driver ? ' &amp; ' + escapeHtml(v.co_driver) : ''}</span>
+        </div>
+        ${v.notes ? `<p class="vehicle-note">${escapeHtml(v.notes)}</p>` : ''}
+        <ul class="rider-list">
+          ${(v.riders || []).map(n => `<li class="rider-chip">${escapeHtml(n)}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
+
+  async function initHotelRoomsPublic() {
+    const listEl = document.querySelector('[data-rooms-list]');
+    if (!listEl) return;
+    const rooms = await fetchRooms(getSupabase());
+    if (!rooms.length) {
+      listEl.innerHTML = '<p class="text-dim">No room assignments yet.</p>';
+      return;
+    }
+    listEl.innerHTML = rooms.map(r => `
+      <div class="room-card">
+        <div class="room-head">
+          <h3 class="room-label">${escapeHtml(r.label)}</h3>
+        </div>
+        ${r.notes ? `<p class="room-note">${escapeHtml(r.notes)}</p>` : ''}
+        <ul class="occupant-list">
+          ${(r.occupants || []).map(n => `<li class="occupant-chip">${escapeHtml(n)}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
+
+  // -------------------------------------------------------
+  // Generic admin editor for "group with named items" tables
+  // (carpool_vehicles + riders, hotel_rooms + occupants). The two editors
+  // below just configure this with the right selectors + column names.
+  // -------------------------------------------------------
+  async function initGroupEditor(sb, cfg) {
+    const listEl = document.querySelector(cfg.listSel);
+    if (!listEl || !sb) return;
+
+    let groups = [];
+
+    async function load() {
+      const [{ data: groupRows, error: gErr }, { data: itemRows, error: iErr }] = await Promise.all([
+        sb.from(cfg.groupTable).select('*').order('sort_order', { ascending: true }),
+        sb.from(cfg.itemTable).select('*').order('sort_order', { ascending: true })
+      ]);
+      if (gErr || iErr) { listEl.innerHTML = `<p class="text-dim">Error loading ${cfg.nounPlural}.</p>`; return; }
+      groups = (groupRows || []).map(g => ({
+        ...g,
+        items: (itemRows || []).filter(i => i[cfg.fkColumn] === g.id)
+      }));
+      render();
+    }
+
+    function render() {
+      if (!groups.length) {
+        listEl.innerHTML = `<p class="text-dim">No ${cfg.nounPlural} yet.</p>`;
+        return;
+      }
+      listEl.innerHTML = groups.map(g => `
+        <div class="te-item">
+          <div class="te-item-info">
+            <span class="te-title">${escapeHtml(g.label)}</span>
+            ${cfg.subtitleFor ? `<span class="te-time">${escapeHtml(cfg.subtitleFor(g))}</span>` : ''}
+            <span class="text-dim">${g.items.length} ${g.items.length === 1 ? cfg.nounItem : cfg.nounItem + 's'}</span>
+          </div>
+          <div class="te-item-actions">
+            <button class="btn btn-ghost btn-sm" data-edit="${g.id}">Edit</button>
+            <button class="btn btn-ghost btn-sm" data-up="${g.id}" title="Move up">&#9650;</button>
+            <button class="btn btn-ghost btn-sm" data-down="${g.id}" title="Move down">&#9660;</button>
+            <button class="btn btn-ghost btn-sm te-delete" data-del="${g.id}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+      listEl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => openModal(groups.find(g => String(g.id) === b.dataset.edit))));
+      listEl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => del(b.dataset.del)));
+      listEl.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => move(b.dataset.up, -1)));
+      listEl.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => move(b.dataset.down, 1)));
+    }
+
+    const addBtn = document.querySelector(cfg.addBtnSel);
+    if (addBtn) addBtn.addEventListener('click', () => openModal(null));
+
+    const modal = document.querySelector(cfg.modalSel);
+    const modalTitle = modal.querySelector('[data-modal-title]');
+    const form = modal.querySelector('form');
+    const itemsContainer = modal.querySelector('[data-items]');
+    const addItemBtn = modal.querySelector('[data-add-item]');
+    let editingId = null;
+
+    function openModal(group) {
+      editingId = group ? group.id : null;
+      modalTitle.textContent = group ? `Edit ${cfg.nounGroup}` : `Add ${cfg.nounGroup}`;
+      form.elements.label.value = group ? group.label : '';
+      if (form.elements.driver)    form.elements.driver.value    = group && group.driver    ? group.driver    : '';
+      if (form.elements.co_driver) form.elements.co_driver.value = group && group.co_driver ? group.co_driver : '';
+      if (form.elements.notes)     form.elements.notes.value     = group && group.notes     ? group.notes     : '';
+      renderItems(group ? group.items.map(i => i.name) : []);
+      modal.hidden = false;
+    }
+    function closeModal() { modal.hidden = true; editingId = null; }
+
+    modal.querySelectorAll('[data-modal-close]').forEach(el => el.addEventListener('click', closeModal));
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+    function renderItems(names) {
+      itemsContainer.innerHTML = '';
+      names.forEach(n => addItemRow(n));
+    }
+    function addItemRow(name) {
+      const row = document.createElement('div');
+      row.className = 'te-place-row';
+      row.style.gridTemplateColumns = '1fr auto';
+      row.innerHTML = `
+        <input type="text" class="field te-place-field" placeholder="${cfg.nounItem} name" value="${escapeHtml(name || '')}" data-item-name>
+        <button type="button" class="btn btn-ghost btn-sm" data-remove-item title="Remove">&times;</button>
+      `;
+      row.querySelector('[data-remove-item]').addEventListener('click', () => row.remove());
+      itemsContainer.appendChild(row);
+    }
+    if (addItemBtn) addItemBtn.addEventListener('click', () => addItemRow(''));
+
+    function collectItems() {
+      return Array.from(itemsContainer.querySelectorAll('[data-item-name]'))
+        .map(el => el.value.trim()).filter(Boolean);
+    }
+
+    const saveBtns = modal.querySelectorAll('[data-save]');
+    async function save() {
+      if (!form.elements.label.value.trim()) { showToast('Label is required', 'error'); return; }
+      saveBtns.forEach(b => { b.disabled = true; b.textContent = 'Saving...'; });
+      const payload = { label: form.elements.label.value.trim() };
+      if (form.elements.driver)    payload.driver    = form.elements.driver.value.trim();
+      if (form.elements.co_driver) payload.co_driver = form.elements.co_driver.value.trim() || null;
+      if (form.elements.notes)     payload.notes     = form.elements.notes.value.trim() || null;
+      payload.updated_at = new Date().toISOString();
+      const names = collectItems();
+
+      try {
+        let groupId = editingId;
+        if (editingId) {
+          const { error } = await sb.from(cfg.groupTable).update(payload).eq('id', editingId);
+          if (error) throw error;
+          await sb.from(cfg.itemTable).delete().eq(cfg.fkColumn, editingId);
+        } else {
+          const maxSort = groups.length ? Math.max(...groups.map(g => g.sort_order)) : 0;
+          payload.sort_order = maxSort + 1;
+          const { data, error } = await sb.from(cfg.groupTable).insert(payload).select().single();
+          if (error) throw error;
+          groupId = data.id;
+        }
+        if (names.length) {
+          const rows = names.map((n, idx) => ({ [cfg.fkColumn]: groupId, name: n, sort_order: idx + 1 }));
+          const { error } = await sb.from(cfg.itemTable).insert(rows);
+          if (error) throw error;
+        }
+        logAdminAction(cfg.actionPrefix + (editingId ? '_update' : '_add'), null, null,
+          `${editingId ? 'Updated' : 'Added'} ${cfg.nounGroup}: ${payload.label}`).catch(() => {});
+        showToast(`${cfg.nounGroup} saved`);
+        closeModal();
+        await load();
+      } catch (err) {
+        showToast('Error saving: ' + (err.message || err), 'error');
+      } finally {
+        saveBtns.forEach(b => { b.disabled = false; b.textContent = 'Save'; });
+      }
+    }
+    saveBtns.forEach(b => b.addEventListener('click', e => { e.preventDefault(); save(); }));
+
+    async function del(id) {
+      const g = groups.find(x => String(x.id) === String(id));
+      if (!g) return;
+      if (!confirm(`Delete "${g.label}"? This cannot be undone.`)) return;
+      try {
+        const { error } = await sb.from(cfg.groupTable).delete().eq('id', id);
+        if (error) throw error;
+        await logAdminAction(cfg.actionPrefix + '_delete', null, null, `Deleted ${cfg.nounGroup}: ${g.label}`);
+        showToast(`${cfg.nounGroup} deleted`);
+        await load();
+      } catch (err) {
+        showToast('Error deleting: ' + err.message);
+      }
+    }
+
+    async function move(id, dir) {
+      const idx = groups.findIndex(g => String(g.id) === String(id));
+      if (idx < 0) return;
+      const swap = idx + dir;
+      if (swap < 0 || swap >= groups.length) return;
+      const a = groups[idx], b = groups[swap];
+      try {
+        await Promise.all([
+          sb.from(cfg.groupTable).update({ sort_order: b.sort_order, updated_at: new Date().toISOString() }).eq('id', a.id),
+          sb.from(cfg.groupTable).update({ sort_order: a.sort_order, updated_at: new Date().toISOString() }).eq('id', b.id)
+        ]);
+        await load();
+      } catch (err) {
+        showToast('Error reordering: ' + err.message);
+      }
+    }
+
+    await load();
+  }
+
+  async function initCarpoolEditor(sb) {
+    return initGroupEditor(sb, {
+      listSel: '[data-cp-list]',
+      addBtnSel: '[data-cp-add]',
+      modalSel: '[data-cp-modal]',
+      groupTable: 'carpool_vehicles',
+      itemTable: 'carpool_riders',
+      fkColumn: 'vehicle_id',
+      nounGroup: 'Vehicle',
+      nounItem: 'rider',
+      nounPlural: 'vehicles',
+      actionPrefix: 'carpool',
+      subtitleFor: g => [g.driver, g.co_driver].filter(Boolean).join(' & ')
+    });
+  }
+
+  async function initHotelRoomsEditor(sb) {
+    return initGroupEditor(sb, {
+      listSel: '[data-hr-list]',
+      addBtnSel: '[data-hr-add]',
+      modalSel: '[data-hr-modal]',
+      groupTable: 'hotel_rooms',
+      itemTable: 'hotel_room_occupants',
+      fkColumn: 'room_id',
+      nounGroup: 'Room',
+      nounItem: 'occupant',
+      nounPlural: 'rooms',
+      actionPrefix: 'rooms'
+    });
   }
 
   // ============================================

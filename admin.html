@@ -453,6 +453,114 @@
       </div>
     </div>
 
+    <!-- Carpool Editor -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Carpool Editor</h2>
+          <p class="text-dim">Add, edit, and reorder vehicles and riders. Changes appear on the <a href="travel.html#travel-carpool" style="color:var(--gold)">travel page</a>.</p>
+        </div>
+        <div class="te-toolbar" data-reveal>
+          <div></div>
+          <button type="button" class="btn btn-gold btn-sm" data-cp-add>+ Add Vehicle</button>
+        </div>
+        <div class="te-list" data-cp-list>
+          <p class="text-dim">Loading vehicles...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Carpool Modal -->
+    <div class="te-modal-backdrop" data-cp-modal hidden>
+      <div class="te-modal" role="dialog" aria-modal="true" aria-label="Edit vehicle">
+        <div class="te-modal-header">
+          <h3 data-modal-title>Edit Vehicle</h3>
+          <button type="button" class="te-modal-close" data-modal-close aria-label="Close">&times;</button>
+        </div>
+        <form class="te-form">
+          <div class="te-form-row">
+            <label class="te-label" for="cp-label">Label</label>
+            <input type="text" id="cp-label" class="field" name="label" required maxlength="80" placeholder="e.g. First vehicle">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="cp-driver">Driver</label>
+            <input type="text" id="cp-driver" class="field" name="driver" required maxlength="80">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="cp-codriver">Co-driver <span class="text-mute">(optional)</span></label>
+            <input type="text" id="cp-codriver" class="field" name="co_driver" maxlength="80">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="cp-notes">Notes <span class="text-mute">(optional)</span></label>
+            <textarea id="cp-notes" class="field" name="notes" rows="2"></textarea>
+          </div>
+          <fieldset class="te-places-fieldset">
+            <legend class="te-label">Riders</legend>
+            <div class="te-places-list" data-items></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-add-item>+ Add Rider</button>
+          </fieldset>
+          <div class="te-form-actions">
+            <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+            <button type="button" class="btn btn-gold" data-save>Save</button>
+          </div>
+        </form>
+        <div class="te-modal-footer">
+          <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+          <button type="button" class="btn btn-gold" data-save>Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hotel Rooms Editor -->
+    <section>
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <h2>Room Assignments Editor</h2>
+          <p class="text-dim">Add, edit, and reorder hotel rooms and occupants. Changes appear on the <a href="hotel.html#hotel-rooms" style="color:var(--gold)">hotel page</a>.</p>
+        </div>
+        <div class="te-toolbar" data-reveal>
+          <div></div>
+          <button type="button" class="btn btn-gold btn-sm" data-hr-add>+ Add Room</button>
+        </div>
+        <div class="te-list" data-hr-list>
+          <p class="text-dim">Loading rooms...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hotel Rooms Modal -->
+    <div class="te-modal-backdrop" data-hr-modal hidden>
+      <div class="te-modal" role="dialog" aria-modal="true" aria-label="Edit room">
+        <div class="te-modal-header">
+          <h3 data-modal-title>Edit Room</h3>
+          <button type="button" class="te-modal-close" data-modal-close aria-label="Close">&times;</button>
+        </div>
+        <form class="te-form">
+          <div class="te-form-row">
+            <label class="te-label" for="hr-label">Label</label>
+            <input type="text" id="hr-label" class="field" name="label" required maxlength="80" placeholder="e.g. Room 1 · Women">
+          </div>
+          <div class="te-form-row">
+            <label class="te-label" for="hr-notes">Notes <span class="text-mute">(optional)</span></label>
+            <textarea id="hr-notes" class="field" name="notes" rows="2"></textarea>
+          </div>
+          <fieldset class="te-places-fieldset">
+            <legend class="te-label">Occupants</legend>
+            <div class="te-places-list" data-items></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-add-item>+ Add Occupant</button>
+          </fieldset>
+          <div class="te-form-actions">
+            <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+            <button type="button" class="btn btn-gold" data-save>Save</button>
+          </div>
+        </form>
+        <div class="te-modal-footer">
+          <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+          <button type="button" class="btn btn-gold" data-save>Save</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Audit Log -->
     <section>
       <div class="container">
@@ -473,6 +581,12 @@
             <option value="timeline_update">Timeline update</option>
             <option value="timeline_delete">Timeline delete</option>
             <option value="timeline_reorder">Timeline reorder</option>
+            <option value="carpool_add">Carpool add</option>
+            <option value="carpool_update">Carpool update</option>
+            <option value="carpool_delete">Carpool delete</option>
+            <option value="rooms_add">Room add</option>
+            <option value="rooms_update">Room update</option>
+            <option value="rooms_delete">Room delete</option>
           </select>
           <input type="text" class="field" placeholder="Filter by admin..." data-admin-audit-admin>
           <input type="text" class="field" placeholder="Filter by target user..." data-admin-audit-target>
