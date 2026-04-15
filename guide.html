@@ -270,17 +270,21 @@
   }
 
   // ---- Parent escape hatch ----
+  // Don't skip the guide entirely — jump straight to the theme step
+  // so parents still get to pick light/dark before they head over.
+  let parentMode = false;
   const parentLink = document.querySelector('[data-ob-parent]');
+  const finishBtn = document.querySelector('[data-ob-finish]');
   if (parentLink) {
     parentLink.addEventListener('click', (e) => {
-      // Fire-and-forget: mark onboarding complete, then let the link navigate.
-      try { localStorage.setItem('onboarding:complete', 'true'); } catch (err) {}
-      storageSet('onboarding:complete', true);
+      e.preventDefault();
+      parentMode = true;
+      if (finishBtn) finishBtn.textContent = 'Continue to Parents';
+      goTo(steps.length);
     });
   }
 
   // ---- Finish ----
-  const finishBtn = document.querySelector('[data-ob-finish]');
   if (finishBtn) {
     finishBtn.addEventListener('click', async () => {
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -288,7 +292,7 @@
       try { localStorage.setItem('onboarding:complete', 'true'); } catch (e) {}
       await storageSet('user:theme', theme);
       await storageSet('onboarding:complete', true);
-      location.replace('index.html');
+      location.replace(parentMode ? 'parents.html' : 'index.html');
     });
   }
 })();
