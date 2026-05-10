@@ -20,7 +20,7 @@ After reading, plan the full system before coding.
 ## Contacts
 
 - **Alex** (lead, admin) — +1 (509) 306-0440 — alex@sjdyoungadults.com
-- **Johana** — +1 (509) 388-5123 — johana@sjdyoungadults.com
+- **Gaby** — +1 (509) 823-9987 — gaby@sjdyoungadults.com
 - **Bright Minds** — [PLACEHOLDER: phone] — [PLACEHOLDER: email]
 
 All phones tappable (`tel:`), all emails tappable (`mailto:`).
@@ -517,7 +517,7 @@ Examination of conscience (Ten Commandments). Act of Contrition. Confession time
 
 ### 9 — 🆘 Emergency Info
 - Alex — +1 (509) 306-0440 — alex@sjdyoungadults.com
-- Johana — +1 (509) 388-5123 — johana@sjdyoungadults.com
+- Gaby — +1 (509) 823-9987 — gaby@sjdyoungadults.com
 - Bright Minds — [PLACEHOLDER]
 - Hotel: La Quinta Lynnwood — (425) 775-7447
 - "I'm lost" → timeline.html
@@ -939,7 +939,7 @@ Run immediately after successful signup, after encryption key derivation.
 - `style.css` — hub, modals, tile grid, admin panel, privacy page, restyled rosary
 - All HTML files — nav "Packing" → "Hub" (grid icon)
 - All HTML files — footer: "made with ♥ by alex" + open source link
-- `parents.html` — add Alex + Johana, add group rules
+- `parents.html` — add Alex + Gaby, add group rules
 - `index.html` — add group rules strip before footer
 
 ## Delete

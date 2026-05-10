@@ -105,19 +105,19 @@ truncate table public.carpool_vehicles     restart identity cascade;
 truncate table public.hotel_room_occupants restart identity cascade;
 truncate table public.hotel_rooms          restart identity cascade;
 
--- Vehicle 1 — Saturday morning, Tieton → Bellevue
+-- Vehicle 1 — Saturday morning, Cowiche (St. Juan Diego) → Bellevue
 with v as (
   insert into public.carpool_vehicles (label, driver, co_driver, notes, sort_order)
   values ('First vehicle', 'Deacon Alex', 'Patricia (wife)',
-          'Leaves Tieton Saturday morning with the main group.', 1)
+          'Leaves St. Juan Diego (Cowiche) Saturday morning with the main group.', 1)
   returning id
 )
 insert into public.carpool_riders (vehicle_id, name, sort_order)
 select v.id, r.name, r.ord
 from v, (values
-  ('Johana', 1), ('Gaby', 2), ('Shayla', 3), ('Lupita', 4), ('Gali', 5),
-  ('Meli', 6), ('Sophia', 7), ('Diana', 8), ('Rubi', 9), ('Angie', 10),
-  ('Kole', 11), ('Kevin', 12), ('Diego', 13)
+  ('Gaby', 1), ('Shayla', 2), ('Lupita', 3), ('Gali', 4),
+  ('Meli', 5), ('Sophia', 6), ('Diana', 7), ('Rubi', 8), ('Angie', 9),
+  ('Kole', 10), ('Kevin', 11), ('Diego', 12)
 ) as r(name, ord);
 
 -- Vehicle 2 — Saturday evening, Ellensburg pickup
@@ -152,7 +152,7 @@ with r as (
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
 from r, (values
-  ('Johana', 1), ('Gaby', 2), ('Shayla', 3), ('Lupita', 4), ('Gali', 5)
+  ('Gaby', 1), ('Shayla', 2), ('Lupita', 3), ('Gali', 4)
 ) as o(name, ord);
 
 with r as (
