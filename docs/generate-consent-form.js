@@ -324,7 +324,7 @@ children.push(para([
 ]));
 children.push(para([
   t('Sunday venues: ', { bold: true }),
-  t('North American Martyrs Parish (Edmonds, WA) for 7:00 AM Traditional Latin Mass; Kona Kitchen (Lynnwood) for breakfast; Gas Works Park (Seattle); St. James Cathedral (Seattle); Pike Place Market and the Seattle waterfront; Din Tai Fung at Pacific Place (Seattle) for late lunch'),
+  t('North American Martyrs Parish (Edmonds, WA) for 7:00 AM Traditional Latin Mass; Kona Kitchen (Lynnwood) for breakfast; Gas Works Park (Seattle); St. James Cathedral (Seattle); Pike Place Market and the Seattle waterfront (small-group exploring with lunch on the participant)'),
 ]));
 children.push(para([
   t('Lodging: ', { bold: true }),
@@ -340,15 +340,15 @@ children.push(para([
 ]));
 children.push(para([
   t('Cost: ', { bold: true }),
-  t('Registration, hotel, gas, and three meals (Saturday lunch at Sizzle & Crunch, Saturday dinner at Chick-fil-A Alderwood, Sunday breakfast at Kona Kitchen) are covered by the group. Sunday lunch at Din Tai Fung (Pacific Place) is on the participant; ~$25–$35. Participants should bring $40–$60 in total personal spending money for Sunday lunch, snacks, merchandise, and offerings.'),
+  t('Registration, hotel, gas, and three meals (Saturday lunch at Sizzle & Crunch, Saturday dinner at Chick-fil-A Alderwood, Sunday breakfast at Kona Kitchen) are covered by the group. Sunday lunch is on the participant — each small group picks where to eat near Pike Place. Participants should bring $40–$60 in total personal spending money for Sunday lunch, snacks, merchandise, and offerings.'),
 ]));
 children.push(para([
   t('Lead organizer / 24-hour emergency contact: ', { bold: true }),
   t('Gaby — (509) 823-9987 — gaby@sjdyoungadults.com'),
 ]));
 children.push(para([
-  t('Secondary contact: ', { bold: true }),
-  t('Alex (Sunday YAG) — (509) 306-0440'),
+  t('Secondary contacts: ', { bold: true }),
+  t('Alex — (509) 306-0440  ·  Deacon Alex (driver) — (509) 901-3126'),
 ]));
 
 // --- 2. Participant information -------------------------------------------
