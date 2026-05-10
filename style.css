@@ -3381,6 +3381,8 @@ html[data-theme="light"] .hub-guest-banner {
   z-index: 20;
 }
 .hub-jumpnav.open .hub-jumpnav-menu { display: block; }
+.hub-jumpnav.center { text-align: center; }
+.hub-jumpnav.center .hub-jumpnav-menu { left: 50%; transform: translateX(-50%); }
 .hub-jumpnav-menu a {
   display: flex;
   align-items: center;
