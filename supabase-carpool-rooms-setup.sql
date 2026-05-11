@@ -31,7 +31,7 @@ create table if not exists public.carpool_riders (
 create table if not exists public.hotel_rooms (
   id           bigserial primary key,
   label        text not null,           -- e.g. "Room 2 · Women"
-  notes        text,                    -- e.g. "Deacon Alex & wife Patricia — married couple"
+  notes        text,                    -- e.g. "Deacon Enrique & wife Patricia Galeana — married couple"
   sort_order   int not null default 0,
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
@@ -105,32 +105,45 @@ truncate table public.carpool_vehicles     restart identity cascade;
 truncate table public.hotel_room_occupants restart identity cascade;
 truncate table public.hotel_rooms          restart identity cascade;
 
--- Vehicle 1 — Saturday morning, Cowiche (St. Juan Diego) → Bellevue
+-- Car 1 — Saturday morning, Cowiche (St. Juan Diego) → Bellevue
 with v as (
   insert into public.carpool_vehicles (label, driver, co_driver, notes, sort_order)
-  values ('First vehicle', 'Deacon Alex', 'Patricia (wife)',
-          'Leaves St. Juan Diego (Cowiche) Saturday morning with the main group.', 1)
+  values ('Car 1', 'Deacon Enrique Galeana', '',
+          'Leaves St. Juan Diego (Cowiche) Saturday morning. Minors on board.', 1)
   returning id
 )
 insert into public.carpool_riders (vehicle_id, name, sort_order)
 select v.id, r.name, r.ord
 from v, (values
-  ('Gaby', 1), ('Shayla', 2), ('Lupita', 3), ('Gali', 4),
-  ('Meli', 5), ('Sophia', 6), ('Diana', 7), ('Rubi', 8), ('Angie', 9),
-  ('Kole', 10), ('Kevin', 11), ('Diego', 12)
+  ('Lucas', 1), ('Kevin', 2), ('Sebastian', 3), ('Kaiser', 4),
+  ('Luisa', 5), ('Ruben', 6)
 ) as r(name, ord);
 
--- Vehicle 2 — Saturday evening, Ellensburg pickup
+-- Car 2 — Saturday morning, Cowiche → Bellevue
 with v as (
   insert into public.carpool_vehicles (label, driver, co_driver, notes, sort_order)
-  values ('Saturday night pickup', 'Alex', 'Edgar',
-          'Picks the guys up from their parents in Ellensburg Saturday night.', 2)
+  values ('Car 2', 'Patricia Galeana', '',
+          'Leaves St. Juan Diego (Cowiche) Saturday morning. Minors on board.', 2)
   returning id
 )
 insert into public.carpool_riders (vehicle_id, name, sort_order)
 select v.id, r.name, r.ord
 from v, (values
-  ('Alex', 1), ('Edgar', 2), ('Sebastian', 3), ('Kaiser', 4)
+  ('Diana', 1), ('Sofi', 2), ('Lupita', 3), ('Meli', 4),
+  ('Angie', 5), ('Gali', 6)
+) as r(name, ord);
+
+-- Car 3 — Saturday morning, Cowiche → Bellevue (adults)
+with v as (
+  insert into public.carpool_vehicles (label, driver, co_driver, notes, sort_order)
+  values ('Car 3', 'Shayla', '',
+          'Leaves St. Juan Diego (Cowiche) Saturday morning. All passengers are 18+.', 3)
+  returning id
+)
+insert into public.carpool_riders (vehicle_id, name, sort_order)
+select v.id, r.name, r.ord
+from v, (values
+  ('Mary', 1), ('Lydia', 2), ('Gaby', 3), ('Kole', 4)
 ) as r(name, ord);
 
 -- Rooms — 5 total, gender-separated (married-couple exception for room 1)
@@ -142,45 +155,45 @@ with r as (
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
-from r, (values ('Deacon Alex', 1), ('Patricia', 2)) as o(name, ord);
+from r, (values ('Deacon Enrique', 1), ('Patricia Galeana', 2)) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 2 · Women', null, 2)
+  values ('Room 2 · Women (18+)', null, 2)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
 from r, (values
-  ('Gaby', 1), ('Shayla', 2), ('Lupita', 3), ('Gali', 4)
+  ('Mary', 1), ('Lydia', 2), ('Gaby', 3), ('Shayla', 4)
 ) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 3 · Women', null, 3)
+  values ('Room 3 · Women (minors)', null, 3)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
 from r, (values
-  ('Meli', 1), ('Sophia', 2), ('Diana', 3), ('Rubi', 4), ('Angie', 5)
+  ('Diana', 1), ('Sofi', 2), ('Lupita', 3), ('Meli', 4)
 ) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 4 · Men (main group)', null, 4)
+  values ('Room 4 · Women (minors)', null, 4)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
-from r, (values ('Kole', 1), ('Kevin', 2), ('Diego', 3)) as o(name, ord);
+from r, (values ('Angie', 1), ('Gali', 2), ('Luisa', 3)) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 5 · Men (Saturday night arrivals)',
-          'Guys arriving Saturday evening from Ellensburg.', 5)
+  values ('Room 5 · Men',
+          'Kole (18+) plus minors.', 5)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
 select r.id, o.name, o.ord
-from r, (values ('Alex', 1), ('Edgar', 2), ('Sebastian', 3), ('Kaiser', 4)) as o(name, ord);
+from r, (values ('Kole', 1), ('Lucas', 2), ('Kevin', 3), ('Sebastian', 4), ('Kaiser', 5), ('Ruben', 6)) as o(name, ord);

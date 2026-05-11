@@ -4028,29 +4028,33 @@
 
   const CARPOOL_FALLBACK = [
     {
-      id: 'v1', label: 'First vehicle', driver: 'Deacon Alex', co_driver: 'Patricia (wife)',
-      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning with the main group.',
-      riders: ['Gaby','Shayla','Lupita','Gali','Meli','Sophia','Diana','Rubi','Angie','Kole','Kevin','Diego']
+      id: 'v1', label: 'Car 1', driver: 'Deacon Enrique Galeana', co_driver: '',
+      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning. Minors on board.',
+      riders: ['Lucas','Kevin','Sebastian','Kaiser','Luisa','Ruben']
     },
     {
-      id: 'v2', label: 'Saturday night pickup', driver: 'Alex', co_driver: 'Edgar',
-      notes: 'Picks the guys up from their parents in Ellensburg Saturday night.',
-      riders: ['Alex','Edgar','Sebastian','Kaiser']
+      id: 'v2', label: 'Car 2', driver: 'Patricia Galeana', co_driver: '',
+      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning. Minors on board.',
+      riders: ['Diana','Sofi','Lupita','Meli','Angie','Gali']
+    },
+    {
+      id: 'v3', label: 'Car 3', driver: 'Shayla', co_driver: '',
+      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning. All passengers are 18+.',
+      riders: ['Mary','Lydia','Gaby','Kole']
     }
   ];
 
   const ROOMS_FALLBACK = [
     { id: 'r1', label: 'Room 1 · Deacon & wife', notes: 'Married couple (exception to co-ed rule).',
-      occupants: ['Deacon Alex','Patricia'] },
-    { id: 'r2', label: 'Room 2 · Women', notes: '',
-      occupants: ['Gaby','Shayla','Lupita','Gali'] },
-    { id: 'r3', label: 'Room 3 · Women', notes: '',
-      occupants: ['Meli','Sophia','Diana','Rubi','Angie'] },
-    { id: 'r4', label: 'Room 4 · Men (main group)', notes: '',
-      occupants: ['Kole','Kevin','Diego'] },
-    { id: 'r5', label: 'Room 5 · Men (Saturday night arrivals)',
-      notes: 'Guys arriving Saturday evening from Ellensburg.',
-      occupants: ['Alex','Edgar','Sebastian','Kaiser'] }
+      occupants: ['Deacon Enrique','Patricia Galeana'] },
+    { id: 'r2', label: 'Room 2 · Women (18+)', notes: '',
+      occupants: ['Mary','Lydia','Gaby','Shayla'] },
+    { id: 'r3', label: 'Room 3 · Women (minors)', notes: '',
+      occupants: ['Diana','Sofi','Lupita','Meli'] },
+    { id: 'r4', label: 'Room 4 · Women (minors)', notes: '',
+      occupants: ['Angie','Gali','Luisa'] },
+    { id: 'r5', label: 'Room 5 · Men', notes: 'Kole (18+) plus minors.',
+      occupants: ['Kole','Lucas','Kevin','Sebastian','Kaiser','Ruben'] }
   ];
 
   async function fetchCarpool(sb) {
