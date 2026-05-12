@@ -108,7 +108,7 @@ truncate table public.hotel_rooms          restart identity cascade;
 -- Car 1 — Saturday morning, Cowiche (St. Juan Diego) → Bellevue
 with v as (
   insert into public.carpool_vehicles (label, driver, co_driver, notes, sort_order)
-  values ('Car 1', 'Deacon Enrique Galeana', '',
+  values ('Car 1', 'Deacon Enrique Alejandro Galeana', '',
           'Leaves St. Juan Diego (Cowiche) Saturday morning. Minors on board.', 1)
   returning id
 )
