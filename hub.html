@@ -194,7 +194,7 @@
           <div class="hub-tile-header">
             <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
             <h3>Journal</h3>
-            <span class="hub-encrypted-tag" title="End-to-end encrypted">&#128274; Encrypted &middot; only you can read</span>
+            <span class="hub-encrypted-tag" title="Private to you">Only you can read</span>
           </div>
           <p class="text-mute" style="font-size:1rem;" data-journal-count>0 entries</p>
           <a href="journal.html" class="btn btn-primary btn-sm">Open Journal</a>
@@ -215,7 +215,7 @@
           <div class="hub-tile-header">
             <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <h3>Private Intentions</h3>
-            <span class="hub-encrypted-tag" title="End-to-end encrypted">&#128274; Encrypted &middot; only you can read</span>
+            <span class="hub-encrypted-tag" title="Private to you">Only you can read</span>
           </div>
           <div class="intention-input-row">
             <input type="text" class="field" placeholder="Add an intention..." data-intention-input>
@@ -240,30 +240,23 @@
               <div data-pack-cat="essentials">
                 <label data-pack-item="id"><input type="checkbox" data-pack-key="id"><span>Photo ID</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="insurance-card"><input type="checkbox" data-pack-key="insurance-card"><span>Health insurance card (or a photo of it on your phone)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="consent-form"><input type="checkbox" data-pack-key="consent-form"><span>Signed consent form (if you haven&rsquo;t turned it in to Gaby yet)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="cash"><input type="checkbox" data-pack-key="cash"><span>$40&ndash;60 cash/card for Sunday lunch + extras (snacks, merch, offering)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="phone-charger"><input type="checkbox" data-pack-key="phone-charger"><span>Phone + charger cable</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="power-bank"><input type="checkbox" data-pack-key="power-bank"><span>Portable battery / power bank (Saturday is a long day with no time to recharge)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="day-bag"><input type="checkbox" data-pack-key="day-bag"><span>Small day backpack (for Sunday walking around Seattle)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="cash"><input type="checkbox" data-pack-key="cash"><span>$40&ndash;60 cash/card (Sunday lunch + extras)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="phone-charger"><input type="checkbox" data-pack-key="phone-charger"><span>Phone + charger</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="water-bottle"><input type="checkbox" data-pack-key="water-bottle"><span>Refillable water bottle</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="snacks"><input type="checkbox" data-pack-key="snacks"><span>Snacks for the 4 AM drive</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="watch"><input type="checkbox" data-pack-key="watch"><span>Wrist watch (optional &mdash; phones away during group activities)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
               </div>
               <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="essentials"><button type="button" data-pack-add-btn="essentials" aria-label="Add">+</button></div>
             </details>
             <details>
               <summary>Clothing</summary>
               <div data-pack-cat="clothing">
-                <label data-pack-item="conference-outfit"><input type="checkbox" data-pack-key="conference-outfit"><span>Saturday conference outfit (casual, comfortable &mdash; you&rsquo;ll be sitting all day)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="sweater"><input type="checkbox" data-pack-key="sweater"><span>Sweater or hoodie (Meydenbauer is air-conditioned)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="jacket"><input type="checkbox" data-pack-key="jacket"><span>Light jacket / layers (Seattle is cool in May, ~50&ndash;65&deg;F)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="rain-jacket"><input type="checkbox" data-pack-key="rain-jacket"><span>Rain jacket or compact umbrella (Sunday is mostly outdoors in Seattle)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="mass-outfit"><input type="checkbox" data-pack-key="mass-outfit"><span>Sunday Latin Mass attire &mdash; <strong>modest</strong>: collared shirt + slacks for guys; dress or skirt past the knee with shoulders covered for girls</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="comfortable-shoes"><input type="checkbox" data-pack-key="comfortable-shoes"><span>Comfortable walking shoes (lots of walking Sunday)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="conference-outfit"><input type="checkbox" data-pack-key="conference-outfit"><span>Saturday outfit (casual, comfortable for talks)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="mass-outfit"><input type="checkbox" data-pack-key="mass-outfit"><span>Sunday Mass attire &mdash; modest (collared shirt + slacks / dress past the knee, shoulders covered)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="change-clothes"><input type="checkbox" data-pack-key="change-clothes"><span>Sunday-afternoon change of clothes (after Mass)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="extra-socks"><input type="checkbox" data-pack-key="extra-socks"><span>Extra underwear and socks (1 spare set)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="pajamas"><input type="checkbox" data-pack-key="pajamas"><span>Pajamas / sleepwear</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="sunglasses"><input type="checkbox" data-pack-key="sunglasses"><span>Sunglasses (optional)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="jacket"><input type="checkbox" data-pack-key="jacket"><span>Light jacket / layers (Seattle is 50&ndash;65&deg;F)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="comfortable-shoes"><input type="checkbox" data-pack-key="comfortable-shoes"><span>Comfortable walking shoes</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="pajamas"><input type="checkbox" data-pack-key="pajamas"><span>Pajamas</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="extra-socks"><input type="checkbox" data-pack-key="extra-socks"><span>Extra underwear and socks</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
               </div>
               <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="clothing"><button type="button" data-pack-add-btn="clothing" aria-label="Add">+</button></div>
             </details>
@@ -272,37 +265,26 @@
               <div data-pack-cat="spiritual">
                 <label data-pack-item="rosary"><input type="checkbox" data-pack-key="rosary"><span>Rosary</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="bible"><input type="checkbox" data-pack-key="bible"><span>Bible / prayer book</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="journal-physical"><input type="checkbox" data-pack-key="journal-physical"><span>Journal / notebook + pen &mdash; or use the <a href="journal.html" style="color:var(--gold)">built-in journal</a></span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="chapel-veil"><input type="checkbox" data-pack-key="chapel-veil"><span>Chapel veil (optional &mdash; women, Latin Mass tradition; not required)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="latin-missal"><input type="checkbox" data-pack-key="latin-missal"><span>Latin-English Mass booklet (optional &mdash; NAM provides booklets)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="offering"><input type="checkbox" data-pack-key="offering"><span>A few dollars for the collection basket (Latin Mass + St. James)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="journal-physical"><input type="checkbox" data-pack-key="journal-physical"><span>Notebook + pen (or use the <a href="journal.html" style="color:var(--gold)">built-in journal</a>)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
               </div>
               <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="spiritual"><button type="button" data-pack-add-btn="spiritual" aria-label="Add">+</button></div>
             </details>
             <details>
-              <summary>Health &amp; first aid</summary>
+              <summary>Health</summary>
               <div data-pack-cat="health">
-                <label data-pack-item="meds"><input type="checkbox" data-pack-key="meds"><span><strong>Prescription medications</strong> &mdash; labeled, in your carry bag (not luggage)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="meds"><input type="checkbox" data-pack-key="meds"><span><strong>Prescription medications</strong> &mdash; labeled, in your carry bag</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
                 <label data-pack-item="allergy-meds"><input type="checkbox" data-pack-key="allergy-meds"><span>Allergy meds / inhaler / EpiPen (if you carry one)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="motion-sickness"><input type="checkbox" data-pack-key="motion-sickness"><span>Motion sickness meds (Dramamine, ginger chews) &mdash; we cross Snoqualmie Pass</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="pain-reliever"><input type="checkbox" data-pack-key="pain-reliever"><span>Tylenol or ibuprofen for headaches</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="bandaids"><input type="checkbox" data-pack-key="bandaids"><span>A few band-aids</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="hand-sanitizer"><input type="checkbox" data-pack-key="hand-sanitizer"><span>Hand sanitizer</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="lip-balm"><input type="checkbox" data-pack-key="lip-balm"><span>Lip balm (dry venue air)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="motion-sickness"><input type="checkbox" data-pack-key="motion-sickness"><span>Motion sickness meds (optional &mdash; for Snoqualmie Pass)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
               </div>
               <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="health"><button type="button" data-pack-add-btn="health" aria-label="Add">+</button></div>
             </details>
             <details>
-              <summary>Overnight &amp; hygiene</summary>
+              <summary>Overnight</summary>
               <div data-pack-cat="overnight">
-                <label data-pack-item="toiletries"><input type="checkbox" data-pack-key="toiletries"><span>Toothbrush, toothpaste, deodorant, soap, shampoo</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="hairbrush"><input type="checkbox" data-pack-key="hairbrush"><span>Hairbrush / comb + hair ties</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="skincare"><input type="checkbox" data-pack-key="skincare"><span>Skincare basics (face wash, moisturizer)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="feminine-hygiene"><input type="checkbox" data-pack-key="feminine-hygiene"><span>Feminine hygiene products (if needed)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="towel"><input type="checkbox" data-pack-key="towel"><span>Towel (hotel provides, but pack one if you prefer your own)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="pillow"><input type="checkbox" data-pack-key="pillow"><span>Pillow / blanket for the car (4 AM departure &mdash; sleep on the drive)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="earplugs"><input type="checkbox" data-pack-key="earplugs"><span>Earplugs / sleep mask (sharing a room)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
-                <label data-pack-item="overnight-bag"><input type="checkbox" data-pack-key="overnight-bag"><span>Single overnight bag (we&rsquo;re only one night)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="toiletries"><input type="checkbox" data-pack-key="toiletries"><span>Toiletries (toothbrush, toothpaste, deodorant, soap)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="overnight-bag"><input type="checkbox" data-pack-key="overnight-bag"><span>Overnight bag (one night)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="pillow"><input type="checkbox" data-pack-key="pillow"><span>Pillow / blanket for the car (4 AM departure)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
+                <label data-pack-item="consent-form"><input type="checkbox" data-pack-key="consent-form"><span>Signed consent form (if not already turned in)</span><button type="button" class="pack-remove" aria-label="Remove">&times;</button></label>
               </div>
               <div class="pack-add-row"><input type="text" placeholder="Add item..." maxlength="60" data-pack-add="overnight"><button type="button" data-pack-add-btn="overnight" aria-label="Add">+</button></div>
             </details>
@@ -310,13 +292,12 @@
         </div>
 
         <!-- 6. Photo Gallery (ENCRYPTED private, plain group) -->
-        <div id="hub-photos" class="hub-tile hub-tile-encrypted" data-hub-photos data-reveal>
+        <div id="hub-photos" class="hub-tile" data-hub-photos data-reveal>
           <div class="hub-tile-header">
             <svg class="si" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <h3>Photos</h3>
-            <span class="encrypted-badge" title="Private photos are end-to-end encrypted">&#128274;</span>
           </div>
-          <p class="hub-tile-desc">Your private encrypted gallery + shared group photos.</p>
+          <p class="hub-tile-desc">Shared group photo gallery — upload and view everyone's photos from the trip.</p>
           <div class="hub-photo-previews" data-photo-previews></div>
           <p class="text-mute" style="font-size:0.85rem" data-photo-count></p>
           <a href="photos.html" class="btn btn-gold btn-sm" style="margin-top:var(--space-3)">Open Gallery</a>
@@ -356,9 +337,9 @@
             <h3 id="hub-emergency">Emergency Info</h3>
           </div>
           <dl>
-            <div class="label-row"><dt>Gaby (lead, emergency)</dt><dd><a href="tel:+15098239987">+1 (509) 823-9987</a></dd></div>
+            <div class="label-row"><dt>Deacon Enrique (emergency)</dt><dd><a href="tel:+15099013126">+1 (509) 901-3126</a></dd></div>
+            <div class="label-row"><dt>Gaby (lead)</dt><dd><a href="tel:+15098239987">+1 (509) 823-9987</a></dd></div>
             <div class="label-row"><dt>Alex</dt><dd><a href="tel:+15093060440">+1 (509) 306-0440</a></dd></div>
-            <div class="label-row"><dt>Deacon Enrique (driver)</dt><dd><a href="tel:+15099013126">+1 (509) 901-3126</a></dd></div>
             <div class="label-row"><dt>Hotel</dt><dd><a href="tel:+14257757447">(425) 775-7447</a> — La Quinta Lynnwood</dd></div>
           </dl>
           <div class="hub-tile-links">
@@ -434,10 +415,10 @@
     <div>
       <h5>Contact</h5>
       <ul>
-        <li><strong>Gaby</strong> (lead, emergency) — <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
+        <li><strong>Gaby</strong> (lead) — <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
         <li><a href="mailto:gaby@sjdyoungadults.com">gaby@sjdyoungadults.com</a></li>
         <li><strong>Alex</strong> — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
-        <li><strong>Deacon Enrique</strong> — <a href="tel:+15099013126">+1 (509) 901-3126</a></li>
+        <li><strong>Deacon Enrique</strong> (emergency) — <a href="tel:+15099013126">+1 (509) 901-3126</a></li>
       </ul>
     </div>
   </div>

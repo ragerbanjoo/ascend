@@ -5,7 +5,12 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(ls *.html)",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(curl -s \"https://cpbjr.github.io/catholic-readings-api/readings/2026/04-09.json\")",
+      "Bash(curl -s \"https://bible.usccb.org/bible/readings/040926.cfm\")",
+      "Bash(curl -s \"https://bible.usccb.org/bible/readings/040926.cfm.md\")",
+      "Bash(curl -s \"https://bible.usccb.org/bible/readings/041226.cfm.md\")",
+      "Bash(ls supabase-*.sql)"
     ]
   }
 }

@@ -72,44 +72,9 @@
         <span class="eyebrow">How we protect you</span>
         <h1>Security Measures</h1>
         <p class="lede">We take security seriously because you're trusting us with personal, spiritual content. Here's exactly what protects you — every layer, in plain English. You can verify all of this in our open source code.</p>
+        <p class="text-mute" style="margin-top: var(--space-3);">Earlier versions of the site used client-side encryption and a 12-word recovery phrase. That approach locked too many people out of their own journals. We've replaced it with the simpler model below — privacy comes from row-level security and a small, trusted admin (Alex), not from each user managing a private key.</p>
         <div class="gold-rule center"></div>
       </div>
-    </div>
-  </section>
-
-  <section style="padding-top: 0;">
-    <div class="container-narrow">
-      <div class="section-header center" data-reveal>
-        <span class="eyebrow">Industry-standard protection</span>
-        <h2>Built on the same standards as</h2>
-      </div>
-      <div class="trust-grid" data-reveal>
-        <div class="trust-card">
-          <strong>Apple</strong>
-          <span>AES-256, PBKDF2 key derivation</span>
-        </div>
-        <div class="trust-card">
-          <strong>Signal</strong>
-          <span>E2E encryption, open source</span>
-        </div>
-        <div class="trust-card">
-          <strong>1Password</strong>
-          <span>AES-GCM 256-bit, PBKDF2, recovery keys</span>
-        </div>
-        <div class="trust-card">
-          <strong>ProtonMail</strong>
-          <span>Client-side encryption, zero-access</span>
-        </div>
-        <div class="trust-card">
-          <strong>WhatsApp</strong>
-          <span>AES-256 end-to-end encryption</span>
-        </div>
-        <div class="trust-card">
-          <strong>Bitwarden</strong>
-          <span>AES-256, PBKDF2, open source</span>
-        </div>
-      </div>
-      <p class="text-mute center" style="font-size: var(--fs-xs); margin-top: var(--space-4);" data-reveal>The cryptographic methods protecting your data here are the same ones trusted by billions of users worldwide.</p>
     </div>
   </section>
 
@@ -121,10 +86,11 @@
       <div class="info-card" data-reveal>
         <ul>
           <li>Username + password (no email required)</li>
-          <li>Passwords hashed with <strong class="text-gold">bcrypt</strong> (never stored in plaintext)</li>
+          <li>Passwords hashed by Supabase Auth with <strong class="text-gold">bcrypt</strong> (never stored in plaintext)</li>
           <li>Minimum password strength enforced using <strong class="text-gold">zxcvbn</strong></li>
           <li>Account lockout after <strong class="text-gold">5 failed attempts</strong> in 10 minutes</li>
           <li>Generic error messages (no username enumeration)</li>
+          <li>Forgot your password? Message Alex — he can reset it from the Supabase admin dashboard. Your journal entries stay tied to your account through the reset.</li>
         </ul>
       </div>
     </div>
@@ -133,19 +99,15 @@
   <section style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header" data-reveal>
-        <h2>End-to-end encryption</h2>
+        <h2>How journal &amp; intentions privacy works</h2>
       </div>
       <div class="info-card" data-reveal>
         <ul>
-          <li>Journal entries, talk notes, private intentions, and <strong class="text-gold">private photos</strong> encrypted in your browser before being sent</li>
-          <li>Journal supports rich text and embedded drawings — all encrypted as HTML before storage</li>
-          <li>Private photos are encrypted as binary blobs — the server stores ciphertext, not images</li>
-          <li>Photo captions are also encrypted when photos are private</li>
-          <li><strong class="text-gold">AES-GCM 256-bit</strong> encryption (same standard used by banks and governments)</li>
-          <li>Encryption key derived from password using <strong class="text-gold">PBKDF2 with 250,000 iterations</strong></li>
-          <li>Encryption key lives only in browser memory during session — never stored on disk, never sent to server</li>
-          <li>Even the database admin sees only ciphertext</li>
-          <li>Verify in browser dev tools — network requests show encrypted blobs</li>
+          <li>Journal entries, talk notes, and private intentions are stored in Supabase Postgres tables.</li>
+          <li><strong class="text-gold">Row-Level Security (RLS)</strong> on every table restricts reads/writes to <code>auth.uid() = user_id</code> — through the app, <strong>nobody else in the group can see your entries</strong>.</li>
+          <li>HTTPS-only transport encryption between your browser and Supabase, and encryption at rest on the underlying AWS storage.</li>
+          <li>There is no client-side encryption. Earlier versions of the site encrypted journal content with a password-derived key, and the resulting lockouts when people forgot their passwords or recovery phrases caused more harm than the encryption prevented.</li>
+          <li>The database admin (Alex) has technical access to the underlying tables and could read content with effort. The trust commitment in <a href="privacy.html">Privacy</a> is that he won't — and every admin action is logged in an immutable audit table you can review.</li>
         </ul>
       </div>
     </div>
@@ -154,13 +116,13 @@
   <section style="padding-top: 0;">
     <div class="container-narrow">
       <div class="section-header" data-reveal>
-        <h2>Recovery phrase</h2>
+        <h2>How photos work</h2>
       </div>
       <div class="info-card" data-reveal>
         <ul>
-          <li><strong class="text-gold">12-word BIP39</strong> recovery phrase on signup (crypto-secure RNG)</li>
-          <li>Secondary way to unlock encryption key if password forgotten</li>
-          <li>If you lose <strong class="text-gold">both</strong> password and phrase, encrypted content is mathematically unrecoverable</li>
+          <li>All photos are uploaded to the <strong class="text-gold">shared group gallery</strong>. There is no private-photo mode.</li>
+          <li>Photos are stored in Supabase Storage. The bucket is private; the app generates short-lived signed URLs (1 hour) for authenticated members to view photos.</li>
+          <li>If you don't want a photo seen by the rest of the group, don't upload it here.</li>
         </ul>
       </div>
     </div>
@@ -266,10 +228,10 @@
       </div>
       <div class="info-card" data-reveal>
         <ul>
-          <li>No 2FA (adds friction for group reluctant about email)</li>
+          <li>No 2FA (adds friction for a group reluctant about email)</li>
           <li>No full security team (built by one person for a small group)</li>
-          <li>Client-side encryption for journal, intentions, and private photos (not packing list or profile)</li>
-          <li>Session keys in browser memory (lock your phone)</li>
+          <li>No client-side encryption (removed after real-world lockouts made the tradeoff unworkable for this group)</li>
+          <li>No private-photo mode — everything in the gallery is shared with the group</li>
         </ul>
       </div>
     </div>
@@ -295,8 +257,8 @@
         <p>All verifiable in source code: <a href="https://github.com/ragerbanjoo/ascend" target="_blank" rel="noopener">github.com/ragerbanjoo/ascend</a></p>
         <p class="text-dim">Files to check:</p>
         <ul>
-          <li><strong class="text-gold">script.js</strong> — auth flow, encryption module, rate limiting</li>
-          <li><strong class="text-gold">supabase/migrations/001_hub_schema.sql</strong> — RLS policies</li>
+          <li><strong class="text-gold">script.js</strong> — auth flow, signed-URL handling, rate limiting</li>
+          <li><strong class="text-gold">supabase/migrations/*.sql</strong> — RLS policies (see migration 013 for the journal-plaintext switch)</li>
           <li><strong class="text-gold">_headers</strong> — security headers</li>
           <li><strong class="text-gold">hub.html</strong> — how user input is rendered (plain text only)</li>
         </ul>
@@ -325,10 +287,10 @@
     <div>
       <h5>Contact</h5>
       <ul>
-        <li><strong>Gaby</strong> (lead, emergency) — <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
+        <li><strong>Gaby</strong> (lead) — <a href="tel:+15098239987">+1 (509) 823-9987</a></li>
         <li><a href="mailto:gaby@sjdyoungadults.com">gaby@sjdyoungadults.com</a></li>
         <li><strong>Alex</strong> — <a href="tel:+15093060440">+1 (509) 306-0440</a></li>
-        <li><strong>Deacon Enrique</strong> — <a href="tel:+15099013126">+1 (509) 901-3126</a></li>
+        <li><strong>Deacon Enrique</strong> (emergency) — <a href="tel:+15099013126">+1 (509) 901-3126</a></li>
       </ul>
     </div>
   </div>

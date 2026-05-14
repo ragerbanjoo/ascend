@@ -1342,7 +1342,7 @@
   const TURNSTILE_SITE_KEY = '0x4AAAAAAC3B7AbNZ6C3qQ-9';
   const BOOTSTRAP_ADMIN_USERNAME = 'alex';
   const SOURCE_CODE_URL = 'https://github.com/ragerbanjoo/ascend';
-  const PBKDF2_ITERATIONS = 250000;
+  const PBKDF2_ITERATIONS = 250000; // (unused — legacy)
 
   // Supabase client (lazy-loaded)
   let _supabase = null;
@@ -1354,167 +1354,16 @@
   }
 
   // ============================================
-  // CRYPTO MODULE — AES-GCM + PBKDF2
+  // CRYPTO MODULE — retained as a no-op shim.
+  // The site used to client-side-encrypt journal, intentions, and private
+  // photos. Those flows are gone (privacy is now enforced by Supabase RLS).
+  // The shim keeps any stray references compiling without re-introducing
+  // crypto state, recovery phrases, or session keys.
   // ============================================
   const Crypto = {
-    _cek: null, // Content Encryption Key — MEMORY ONLY
-
-    get hasCEK() { return !!this._cek; },
-
-    async deriveKey(password, salt) {
-      const enc = new TextEncoder();
-      const keyMaterial = await crypto.subtle.importKey(
-        'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
-      );
-      return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
-        keyMaterial,
-        { name: 'AES-GCM', length: 256 },
-        true,
-        ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']
-      );
-    },
-
-    generateSalt() {
-      const salt = new Uint8Array(16);
-      crypto.getRandomValues(salt);
-      return salt;
-    },
-
-    async generateCEK() {
-      return crypto.subtle.generateKey(
-        { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']
-      );
-    },
-
-    async wrapCEK(cek, wrappingKey) {
-      const iv = new Uint8Array(12);
-      crypto.getRandomValues(iv);
-      const wrapped = await crypto.subtle.wrapKey('raw', cek, wrappingKey, { name: 'AES-GCM', iv });
-      return { wrapped: this._toBase64(new Uint8Array(wrapped)), iv: this._toBase64(iv) };
-    },
-
-    async unwrapCEK(wrappedB64, ivB64, unwrappingKey) {
-      const wrapped = this._fromBase64(wrappedB64);
-      const iv = this._fromBase64(ivB64);
-      return crypto.subtle.unwrapKey(
-        'raw', wrapped, unwrappingKey,
-        { name: 'AES-GCM', iv },
-        { name: 'AES-GCM', length: 256 },
-        true, ['encrypt', 'decrypt']
-      );
-    },
-
-    async encrypt(plaintext) {
-      if (!this._cek) throw new Error('No encryption key loaded');
-      const enc = new TextEncoder();
-      const iv = new Uint8Array(12);
-      crypto.getRandomValues(iv);
-      const ct = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv }, this._cek, enc.encode(plaintext)
-      );
-      return { ciphertext: this._toBase64(new Uint8Array(ct)), iv: this._toBase64(iv) };
-    },
-
-    async decrypt(ciphertextB64, ivB64) {
-      if (!this._cek) throw new Error('No encryption key loaded');
-      const ct = this._fromBase64(ciphertextB64);
-      const iv = this._fromBase64(ivB64);
-      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, this._cek, ct);
-      return new TextDecoder().decode(pt);
-    },
-
-    // Binary encryption for photos — works on ArrayBuffer/Uint8Array
-    async encryptBytes(buffer) {
-      if (!this._cek) throw new Error('No encryption key loaded');
-      const iv = new Uint8Array(12);
-      crypto.getRandomValues(iv);
-      const ct = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv }, this._cek, buffer
-      );
-      return { ciphertext: new Uint8Array(ct), iv: this._toBase64(iv) };
-    },
-
-    async decryptBytes(cipherBuffer, ivB64) {
-      if (!this._cek) throw new Error('No encryption key loaded');
-      const iv = this._fromBase64(ivB64);
-      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, this._cek, cipherBuffer);
-      return new Uint8Array(pt);
-    },
-
-    async setCEK(key) {
-      this._cek = key;
-      try {
-        const raw = await crypto.subtle.exportKey('raw', key);
-        sessionStorage.setItem('_cek', this._toBase64(new Uint8Array(raw)));
-      } catch (e) { /* best-effort */ }
-    },
-    clearCEK() {
-      this._cek = null;
-      try { sessionStorage.removeItem('_cek'); } catch (e) {}
-    },
-    async restoreCEK() {
-      if (this._cek) return true;
-      try {
-        const stored = sessionStorage.getItem('_cek');
-        if (!stored) return false;
-        const raw = this._fromBase64(stored);
-        this._cek = await crypto.subtle.importKey(
-          'raw', raw, { name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']
-        );
-        return true;
-      } catch (e) { return false; }
-    },
-
-    _toBase64(buf) { return btoa(String.fromCharCode(...buf)); },
-    _fromBase64(str) { return Uint8Array.from(atob(str), c => c.charCodeAt(0)); },
-
-    // BIP39 word list (embedded subset — 2048 words)
-    _bip39Words: null,
-    async getBip39Words() {
-      if (this._bip39Words) return this._bip39Words;
-      // Load from CDN
-      try {
-        const resp = await fetch('https://cdn.jsdelivr.net/npm/bip39@3.1.0/src/wordlists/english.json');
-        this._bip39Words = await resp.json();
-      } catch (e) {
-        // Fallback: generate random words (not true BIP39 but functional)
-        console.warn('Could not load BIP39 wordlist, using fallback');
-        this._bip39Words = [];
-      }
-      return this._bip39Words;
-    },
-
-    async generateRecoveryPhrase() {
-      const words = await this.getBip39Words();
-      if (words.length < 2048) {
-        // Fallback: generate hex string split into 12 chunks
-        const bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-        const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-        return Array.from({ length: 12 }, (_, i) => hex.slice(i * 2, i * 2 + 3) || 'word').join(' ');
-      }
-      const entropy = new Uint8Array(16); // 128 bits = 12 words
-      crypto.getRandomValues(entropy);
-      const phrase = [];
-      // Convert 128 bits to 12 11-bit indices
-      let bits = '';
-      for (const byte of entropy) bits += byte.toString(2).padStart(8, '0');
-      // Add 4-bit checksum (simplified — just use first 4 bits of SHA hash)
-      const hashBuf = await crypto.subtle.digest('SHA-256', entropy);
-      const hashBits = new Uint8Array(hashBuf)[0].toString(2).padStart(8, '0');
-      bits += hashBits.slice(0, 4);
-      for (let i = 0; i < 12; i++) {
-        const idx = parseInt(bits.slice(i * 11, (i + 1) * 11), 2);
-        phrase.push(words[idx % 2048]);
-      }
-      return phrase.join(' ');
-    },
-
-    async deriveKeyFromPhrase(phrase, salt) {
-      // Use the phrase as the "password" for PBKDF2
-      return this.deriveKey(phrase, salt);
-    }
+    get hasCEK() { return false; },
+    clearCEK() {},
+    async restoreCEK() { return false; }
   };
 
   // ============================================
@@ -1611,35 +1460,15 @@
       const sb = getSupabase();
       if (!sb) throw new Error('Supabase not configured');
 
-      // 1. Validate username
       const uname = username.toLowerCase().trim();
       if (!/^[a-z0-9_]{3,20}$/.test(uname)) throw new Error('Username must be 3-20 chars, lowercase letters, numbers, and underscores only');
-
-      // 2. Check uniqueness
       if (await this.checkUsernameTaken(uname)) throw new Error('Username is already taken');
 
-      // 3. Derive encryption keys
-      const passwordSalt = Crypto.generateSalt();
-      const phraseSalt = Crypto.generateSalt();
-      const passwordKey = await Crypto.deriveKey(password, passwordSalt);
-
-      // 4. Generate CEK
-      const cek = await Crypto.generateCEK();
-
-      // 5. Generate recovery phrase
-      const phrase = await Crypto.generateRecoveryPhrase();
-      const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
-
-      // 6. Wrap CEK with both keys
-      const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
-      const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
-
-      // 7. Sign up with Supabase (handle ghost auth users from admin deletion)
+      // Supabase auth requires an email; we synthesize one from the username.
       const email = `${uname}@pilgrim.sjdyag.com`;
       let authData;
       const { data: signUpData, error: authError } = await sb.auth.signUp({ email, password });
       if (authError) {
-        // If auth user exists but profile was deleted by admin, sign in instead
         if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
           const { data: signInData, error: signInErr } = await sb.auth.signInWithPassword({ email, password });
           if (signInErr) throw new Error('Username was previously used. Please choose a different username.');
@@ -1651,34 +1480,23 @@
         authData = signUpData;
       }
 
-      // 8. Insert profile
       const { error: profileError } = await sb.from('profiles').insert({
         id: authData.user.id,
         username: uname,
-        display_name: uname,
-        salt: Crypto._toBase64(passwordSalt),
-        cek_password_wrapped: passwordWrap.wrapped,
-        cek_password_iv: passwordWrap.iv,
-        cek_phrase_wrapped: phraseWrap.wrapped,
-        cek_phrase_iv: phraseWrap.iv,
-        phrase_salt: Crypto._toBase64(phraseSalt),
+        display_name: uname
       });
       if (profileError) {
-        // Clean up: sign out so user isn't stuck with auth but no profile
         await sb.auth.signOut();
         throw new Error(profileError.message);
       }
 
-      // 9. Insert default sharing prefs
       await sb.from('sharing_preferences').insert({ user_id: authData.user.id });
 
-      // 10. Set CEK in memory + sessionStorage
-      await Crypto.setCEK(cek);
       this._user = authData.user;
       await this._loadProfile();
       this._notify();
 
-      return { user: authData.user, recoveryPhrase: phrase };
+      return { user: authData.user };
     },
 
     async login(username, password) {
@@ -1687,7 +1505,6 @@
 
       const uname = username.toLowerCase().trim();
 
-      // Check rate limiting
       if (await this.checkRateLimited(uname)) {
         throw new Error('Account temporarily locked. Try again in 15 minutes.');
       }
@@ -1699,78 +1516,21 @@
         throw new Error('Invalid username or password');
       }
 
-      // Derive CEK from password
       this._user = data.user;
       await this._loadProfile();
 
-      // Repair broken signup: auth exists but profile was never created
+      // Repair broken signup: auth exists but profile was never created.
       if (!this._profile) {
-        const passwordSalt = Crypto.generateSalt();
-        const passwordKey = await Crypto.deriveKey(password, passwordSalt);
-        const cek = await Crypto.generateCEK();
-        const phrase = await Crypto.generateRecoveryPhrase();
-        const phraseSalt = Crypto.generateSalt();
-        const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
-        const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
-        const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
-
-        // Try insert first, fall back to upsert if row already exists
-        const profileData = {
-          id: data.user.id,
-          username: uname,
-          display_name: uname,
-          salt: Crypto._toBase64(passwordSalt),
-          cek_password_wrapped: passwordWrap.wrapped,
-          cek_password_iv: passwordWrap.iv,
-          cek_phrase_wrapped: phraseWrap.wrapped,
-          cek_phrase_iv: phraseWrap.iv,
-          phrase_salt: Crypto._toBase64(phraseSalt),
-        };
-        const { error: insertErr } = await sb.from('profiles').upsert(profileData, { onConflict: 'id' });
+        const { error: insertErr } = await sb.from('profiles').upsert({
+          id: data.user.id, username: uname, display_name: uname
+        }, { onConflict: 'id' });
         if (insertErr) {
-          console.error('Profile repair failed:', insertErr);
-          throw new Error('Account repair failed: ' + insertErr.message + ' (code: ' + insertErr.code + '). Delete this user from Supabase Auth and sign up again.');
+          throw new Error('Account repair failed: ' + insertErr.message + '. Message Alex to reset this account.');
         }
         await sb.from('sharing_preferences').upsert({ user_id: data.user.id }, { onConflict: 'user_id' });
-        await Crypto.setCEK(cek);
         await this._loadProfile();
         this._notify();
-        return { user: data.user, recoveryPhrase: phrase, repaired: true };
-      }
-
-      if (this._profile?.salt && this._profile?.cek_password_wrapped) {
-        const salt = Crypto._fromBase64(this._profile.salt);
-        const passwordKey = await Crypto.deriveKey(password, salt);
-        const cek = await Crypto.unwrapCEK(
-          this._profile.cek_password_wrapped,
-          this._profile.cek_password_iv,
-          passwordKey
-        );
-        await Crypto.setCEK(cek);
-      } else if (this._profile && !this._profile.salt) {
-        // Profile exists but was created before encryption — set up encryption now
-        const passwordSalt = Crypto.generateSalt();
-        const passwordKey = await Crypto.deriveKey(password, passwordSalt);
-        const cek = await Crypto.generateCEK();
-        const phrase = await Crypto.generateRecoveryPhrase();
-        const phraseSalt = Crypto.generateSalt();
-        const phraseKey = await Crypto.deriveKeyFromPhrase(phrase, phraseSalt);
-        const passwordWrap = await Crypto.wrapCEK(cek, passwordKey);
-        const phraseWrap = await Crypto.wrapCEK(cek, phraseKey);
-
-        await sb.from('profiles').update({
-          salt: Crypto._toBase64(passwordSalt),
-          cek_password_wrapped: passwordWrap.wrapped,
-          cek_password_iv: passwordWrap.iv,
-          cek_phrase_wrapped: phraseWrap.wrapped,
-          cek_phrase_iv: phraseWrap.iv,
-          phrase_salt: Crypto._toBase64(phraseSalt),
-        }).eq('id', this._user.id);
-
-        await Crypto.setCEK(cek);
-        await this._loadProfile();
-        this._notify();
-        return { user: data.user, recoveryPhrase: phrase, encryptionSetup: true };
+        return { user: data.user, repaired: true };
       }
 
       await this._updateLastSeen();
@@ -1778,34 +1538,11 @@
       return data.user;
     },
 
-    async recoverWithPhrase(username, phrase, newPassword) {
-      const sb = getSupabase();
-      if (!sb) throw new Error('Supabase not configured');
-
-      // First login with any method to get session — use admin reset or
-      // we need a different approach. Since we can't login without password,
-      // we use a Supabase edge function or the user must already be logged in.
-      // For now: the recovery phrase flow works when user is NOT logged in
-      // by looking up the profile by username (public) and using the phrase
-      // to unwrap the CEK locally.
-      // Then we call auth.updateUser to set the new password.
-
-      // This requires a special flow — the user enters username + phrase,
-      // we look up their public encryption metadata, unwrap CEK with phrase,
-      // re-wrap with new password, then update via Supabase password reset.
-      // Note: updateUser requires an active session. So recovery requires
-      // an admin-assisted password reset first, then the user re-wraps.
-      // For simplicity: show instructions to contact Alex for password reset,
-      // then on next login with temp password, re-wrap with new password.
-      throw new Error('Contact Alex (alex@sjdyoungadults.com) for password recovery. Have your recovery phrase ready.');
-    },
-
     async logout() {
       const sb = getSupabase();
       if (sb) await sb.auth.signOut();
       this._user = null;
       this._profile = null;
-      Crypto.clearCEK();
       this._notify();
     },
 
@@ -1813,32 +1550,13 @@
       const sb = getSupabase();
       if (!sb || !this._user) throw new Error('Not authenticated');
 
-      // Re-derive old key to verify, then re-wrap CEK with new key
-      const salt = Crypto._fromBase64(this._profile.salt);
-      const oldKey = await Crypto.deriveKey(currentPassword, salt);
+      // Verify current password by re-signing in.
+      const email = `${this._profile.username}@pilgrim.sjdyag.com`;
+      const { error: verifyErr } = await sb.auth.signInWithPassword({ email, password: currentPassword });
+      if (verifyErr) throw new Error('Current password is incorrect');
 
-      // Verify by unwrapping
-      try {
-        await Crypto.unwrapCEK(this._profile.cek_password_wrapped, this._profile.cek_password_iv, oldKey);
-      } catch (e) {
-        throw new Error('Current password is incorrect');
-      }
-
-      // Generate new salt, derive new key, re-wrap CEK
-      const newSalt = Crypto.generateSalt();
-      const newKey = await Crypto.deriveKey(newPassword, newSalt);
-      const newWrap = await Crypto.wrapCEK(Crypto._cek, newKey);
-
-      // Update Supabase auth password
       const { error } = await sb.auth.updateUser({ password: newPassword });
       if (error) throw new Error(error.message);
-
-      // Update profile with new wrap
-      await sb.from('profiles').update({
-        salt: Crypto._toBase64(newSalt),
-        cek_password_wrapped: newWrap.wrapped,
-        cek_password_iv: newWrap.iv,
-      }).eq('id', this._user.id);
 
       await this._loadProfile();
     },
@@ -1855,20 +1573,6 @@
   // ============================================
   // DATASTORE — Unified interface (guest=localStorage, auth=Supabase)
   // ============================================
-
-  // Pack encrypted data as "iv:ciphertext" in a single DB column
-  async function _encryptPacked(text) {
-    if (!text) return '';
-    const enc = await Crypto.encrypt(text);
-    return enc.iv + ':' + enc.ciphertext;
-  }
-  // Unpack "iv:ciphertext" from a single DB column and decrypt
-  async function _decryptPacked(packed) {
-    if (!packed) return '';
-    const sep = packed.indexOf(':');
-    if (sep <= 0) return packed; // plain text (not encrypted)
-    return await Crypto.decrypt(packed.slice(sep + 1), packed.slice(0, sep));
-  }
 
   const DataStore = {
     // Packing items
@@ -1896,7 +1600,7 @@
       }, { onConflict: 'user_id,item_key' });
     },
 
-    // Journal entries (ENCRYPTED)
+    // Journal entries — stored as plaintext; privacy enforced by RLS.
     async getJournalEntries(filter) {
       if (Auth.isGuest) {
         let entries = Storage._lsGet('hub:journal', []);
@@ -1904,33 +1608,24 @@
         return entries;
       }
       const sb = getSupabase();
-      const query = sb.from('journal_entries').select('*')
+      const { data } = await sb.from('journal_entries').select('*')
         .eq('user_id', Auth.user.id).order('created_at', { ascending: false });
-      const { data } = await query;
-      if (!data || !Crypto.hasCEK) return data || [];
-      const decrypted = [];
-      for (const entry of data) {
+      const rows = (data || []).map(entry => {
+        // Body stores JSON: {"body":"...","type":"journal","speaker":"...","talkTitle":"..."}
+        let body = entry.body || '', entryType = 'journal', speaker = '', talkTitle = '';
         try {
-          const title = await _decryptPacked(entry.title);
-          // Body stores JSON: {"body":"...","type":"journal","speaker":"...","talkTitle":"..."}
-          const bodyRaw = await _decryptPacked(entry.body);
-          let body = bodyRaw, entryType = 'journal', speaker = '', talkTitle = '';
-          try {
-            const parsed = JSON.parse(bodyRaw);
-            if (parsed && typeof parsed.body === 'string') {
-              body = parsed.body;
-              entryType = parsed.type || 'journal';
-              speaker = parsed.speaker || '';
-              talkTitle = parsed.talkTitle || '';
-            }
-          } catch (_) { /* plain text body, not JSON */ }
-          decrypted.push({ ...entry, title, body, entry_type: entryType, speaker, talkTitle });
-        } catch (e) {
-          decrypted.push({ ...entry, title: '[Encrypted]', body: '[Could not decrypt]', speaker: '', talkTitle: '' });
-        }
-      }
-      if (filter) return decrypted.filter(e => (e.entry_type || 'journal') === filter);
-      return decrypted;
+          const parsed = JSON.parse(entry.body || '');
+          if (parsed && typeof parsed.body === 'string') {
+            body = parsed.body;
+            entryType = parsed.type || 'journal';
+            speaker = parsed.speaker || '';
+            talkTitle = parsed.talkTitle || '';
+          }
+        } catch (_) { /* plain text body, not JSON */ }
+        return { ...entry, body, entry_type: entryType, speaker, talkTitle };
+      });
+      if (filter) return rows.filter(e => (e.entry_type || 'journal') === filter);
+      return rows;
     },
 
     async saveJournalEntry(id, title, body, opts) {
@@ -1951,12 +1646,8 @@
         return;
       }
       const sb = getSupabase();
-      // Pack all fields into body as JSON, then encrypt title and body separately
       const bodyJson = JSON.stringify({ body, type: entryType, speaker, talkTitle });
-      const row = {
-        title: await _encryptPacked(title),
-        body: await _encryptPacked(bodyJson),
-      };
+      const row = { title: title || '', body: bodyJson };
       if (id) {
         row.updated_at = new Date().toISOString();
         const { error } = await sb.from('journal_entries').update(row).eq('id', id).eq('user_id', Auth.user.id);
@@ -2015,28 +1706,13 @@
       Storage._lsSet('hub:prayerlog', log);
     },
 
-    // Private intentions (ENCRYPTED)
+    // Private intentions — stored as plaintext; privacy enforced by RLS.
     async getIntentions() {
       if (Auth.isGuest) return Storage._lsGet('hub:intentions', []);
       const sb = getSupabase();
       const { data } = await sb.from('private_intentions').select('*')
         .eq('user_id', Auth.user.id).order('created_at', { ascending: false });
-      if (!data || !Crypto.hasCEK) return data || [];
-      const decrypted = [];
-      for (const item of data) {
-        try {
-          const sep = (item.text || '').indexOf(':');
-          if (sep > 0) {
-            const plaintext = await Crypto.decrypt(item.text.slice(sep + 1), item.text.slice(0, sep));
-            decrypted.push({ ...item, text: plaintext });
-          } else {
-            decrypted.push(item);
-          }
-        } catch (e) {
-          decrypted.push({ ...item, text: '[Could not decrypt]' });
-        }
-      }
-      return decrypted;
+      return data || [];
     },
 
     async saveIntention(text) {
@@ -2047,10 +1723,8 @@
         return;
       }
       const sb = getSupabase();
-      const enc = await Crypto.encrypt(text);
-      const packed = enc.iv + ':' + enc.ciphertext;
       const { error } = await sb.from('private_intentions').insert({
-        user_id: Auth.user.id, text: packed
+        user_id: Auth.user.id, text: text || ''
       });
       if (error) throw new Error('Failed to save intention: ' + error.message);
     },
@@ -2088,40 +1762,28 @@
       return data || [];
     },
 
-    // Get a displayable URL for a photo (handles decryption for private photos)
+    // Get a displayable URL for a photo (all photos are group-shared now)
     async getPhotoUrl(photo) {
       if (photo.dataUrl) return photo.dataUrl; // guest localStorage
       const sb = getSupabase();
-      // Private bucket — must use signed URL
       const { data: signedData, error: signErr } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
       if (signErr || !signedData?.signedUrl) throw new Error('Could not get photo URL');
-      const signedUrl = signedData.signedUrl;
-      if (photo.visibility === 'group') return signedUrl;
-      // Decrypt private photo — IV is prepended (first 12 bytes) to the blob
-      const resp = await fetch(signedUrl);
-      const raw = new Uint8Array(await resp.arrayBuffer());
-      const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
-      const encBytes = raw.slice(12);
-      const plainBytes = await Crypto.decryptBytes(encBytes, iv);
-      const blob = new Blob([plainBytes], { type: 'image/jpeg' });
-      return URL.createObjectURL(blob);
+      return signedData.signedUrl;
     },
 
-    // Get decrypted caption for a photo
+    // Get caption for a photo (plain text — no decryption)
     async getPhotoCaption(photo) {
-      if (photo.visibility === 'group' || !photo.caption) return photo.caption || '';
-      return await _decryptPacked(photo.caption);
+      return photo.caption || '';
     },
 
-    // Upload a photo — visibility: 'private' (encrypted) or 'group' (plain)
-    async uploadPhoto(file, caption, visibility) {
-      visibility = visibility || 'private';
+    // Upload a photo — always added to the group gallery
+    async uploadPhoto(file, caption, _visibility) {
       if (Auth.isGuest) {
         const photos = Storage._lsGet('hub:photos', []);
         const reader = new FileReader();
         return new Promise((resolve) => {
           reader.onload = () => {
-            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility, created_at: new Date().toISOString() });
+            photos.unshift({ id: crypto.randomUUID(), dataUrl: reader.result, caption, visibility: 'group', created_at: new Date().toISOString() });
             Storage._lsSet('hub:photos', photos);
             resolve();
           };
@@ -2129,100 +1791,23 @@
         });
       }
       const sb = getSupabase();
-      let path, blob, captionField = caption || '';
-      if (visibility === 'group') {
-        // Group: upload plain (no encryption)
-        path = `${Auth.user.id}/public/${crypto.randomUUID()}.${file.name.split('.').pop() || 'jpg'}`;
-        blob = file;
-      } else {
-        // Private: encrypt file bytes, prepend IV
-        const plainBytes = new Uint8Array(await file.arrayBuffer());
-        const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
-        const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
-        const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
-        combined.set(ivBytes, 0);
-        combined.set(ciphertext, ivBytes.length);
-        path = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
-        blob = new Blob([combined], { type: 'application/octet-stream' });
-        captionField = caption ? await _encryptPacked(caption) : '';
-      }
-      const { error: uploadErr } = await sb.storage.from('photos').upload(path, blob);
+      const path = `${Auth.user.id}/public/${crypto.randomUUID()}.${file.name.split('.').pop() || 'jpg'}`;
+      const { error: uploadErr } = await sb.storage.from('photos').upload(path, file);
       if (uploadErr) throw new Error(uploadErr.message);
       const { data, error: insertErr } = await sb.from('photos').insert({
         user_id: Auth.user.id,
         storage_path: path,
-        caption: captionField,
-        visibility
+        caption: caption || '',
+        visibility: 'group'
       }).select().single();
       if (insertErr) throw new Error(insertErr.message);
       return data;
     },
 
-    // Share a private photo to the group (decrypt + re-upload plain)
-    async sharePhoto(photoId) {
-      if (Auth.isGuest) return;
-      const sb = getSupabase();
-      const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
-      if (!photo || photo.visibility !== 'private') return;
-      // Decrypt the file — IV is prepended (first 12 bytes)
-      const { data: signedData } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
-      const resp = await fetch(signedData.signedUrl);
-      const raw = new Uint8Array(await resp.arrayBuffer());
-      const iv = btoa(String.fromCharCode(...raw.slice(0, 12)));
-      const plainBytes = await Crypto.decryptBytes(raw.slice(12), iv);
-      // Decrypt caption
-      const caption = photo.caption ? await _decryptPacked(photo.caption) : '';
-      // Upload plain copy
-      const publicPath = `${Auth.user.id}/public/${crypto.randomUUID()}.jpg`;
-      const plainBlob = new Blob([plainBytes], { type: 'image/jpeg' });
-      const { error: uploadErr } = await sb.storage.from('photos').upload(publicPath, plainBlob);
-      if (uploadErr) throw new Error(uploadErr.message);
-      // Delete the old encrypted file + row (no need for both copies)
-      await sb.storage.from('photos').remove([photo.storage_path]);
-      await sb.from('photos').delete().eq('id', photo.id);
-      // Insert group row
-      await sb.from('photos').insert({
-        user_id: Auth.user.id,
-        storage_path: publicPath,
-        caption,
-        visibility: 'group'
-      });
-    },
-
-    // Un-share a photo: re-encrypt it and move back to private
-    async unsharePhoto(photoId) {
-      if (Auth.isGuest) return;
-      const sb = getSupabase();
-      const { data: photo } = await sb.from('photos').select('*').eq('id', photoId).eq('user_id', Auth.user.id).single();
-      if (!photo || photo.visibility !== 'group') return;
-      // Download the plain file
-      const { data: signedData } = await sb.storage.from('photos').createSignedUrl(photo.storage_path, 3600);
-      const resp = await fetch(signedData.signedUrl);
-      const plainBytes = new Uint8Array(await resp.arrayBuffer());
-      // Re-encrypt: prepend IV to ciphertext
-      const { ciphertext, iv } = await Crypto.encryptBytes(plainBytes);
-      const ivBytes = Uint8Array.from(atob(iv), c => c.charCodeAt(0));
-      const combined = new Uint8Array(ivBytes.length + ciphertext.byteLength);
-      combined.set(ivBytes, 0);
-      combined.set(ciphertext, ivBytes.length);
-      // Upload encrypted copy
-      const encPath = `${Auth.user.id}/${crypto.randomUUID()}.enc`;
-      const blob = new Blob([combined], { type: 'application/octet-stream' });
-      const { error: uploadErr } = await sb.storage.from('photos').upload(encPath, blob);
-      if (uploadErr) throw new Error(uploadErr.message);
-      // Encrypt caption if present
-      const captionField = photo.caption ? await _encryptPacked(photo.caption) : '';
-      // Delete old group file + row
-      await sb.storage.from('photos').remove([photo.storage_path]);
-      await sb.from('photos').delete().eq('id', photo.id);
-      // Insert private row
-      await sb.from('photos').insert({
-        user_id: Auth.user.id,
-        storage_path: encPath,
-        caption: captionField,
-        visibility: 'private'
-      });
-    },
+    // Photos are always group-shared now; share/unshare are no-ops kept for any
+    // legacy UI references.
+    async sharePhoto(_photoId) { return; },
+    async unsharePhoto(_photoId) { return; },
 
     // Resolve user IDs to display names for group gallery
     async getPhotoUploaderNames(userIds) {
@@ -2948,8 +2533,7 @@
     const previews = container.querySelector('[data-photo-previews]');
     const countEl = container.querySelector('[data-photo-count]');
     const photos = await DataStore.getPhotos('mine');
-    const privatePhotos = photos.filter(p => p.visibility === 'private');
-    if (countEl) countEl.textContent = privatePhotos.length + ' private photo' + (privatePhotos.length === 1 ? '' : 's');
+    if (countEl) countEl.textContent = photos.length + ' photo' + (photos.length === 1 ? '' : 's');
     const show = photos.slice(0, 4);
     if (previews && show.length) {
       for (const photo of show) {
@@ -3007,7 +2591,7 @@
           <p class="auth-error" data-auth-error style="display:none"></p>
           <button type="submit" class="btn btn-primary btn-full">Sign in</button>
           <p class="text-mute text-center" style="font-size:1rem;margin-top:var(--space-3)">
-            Forgot password? <a href="mailto:alex@sjdyoungadults.com">Contact Alex</a> with your recovery phrase.
+            Forgot password? <a href="mailto:alex@sjdyoungadults.com">Message Alex</a> and he'll reset it for you.
           </p>
         </form>
 
@@ -3080,52 +2664,12 @@
       });
     }
 
-    // Show recovery phrase screen (used by both signup and login-repair)
-    function showRecoveryPhrase(recoveryPhrase) {
-      modal.querySelector('.auth-modal').innerHTML = `
-        <div class="recovery-phrase-screen">
-          <h3>Your Recovery Phrase</h3>
-          <p>Your journal, private intentions, and private photos are encrypted with your password. If you forget your password, this 12-word phrase is the <strong>only way</strong> to get them back.</p>
-          <div class="recovery-words">${recoveryPhrase.split(' ').map((w, i) => `<span class="recovery-word"><em>${i + 1}</em>${escapeHtml(w)}</span>`).join('')}</div>
-          <div class="recovery-actions">
-            <button type="button" class="btn btn-ghost" data-copy-phrase>Copy to clipboard</button>
-            <button type="button" class="btn btn-ghost" data-download-phrase>Download as text</button>
-          </div>
-          <p class="recovery-warning">Write this down somewhere safe. Screenshot it. Email it to yourself. Alex cannot recover this for you. If you lose both your password AND this phrase, your journal and private photos are gone forever.</p>
-          <button type="button" class="btn btn-primary btn-full" data-phrase-continue disabled>I've saved this somewhere safe — continue</button>
-        </div>
-      `;
-      const continueBtn = modal.querySelector('[data-phrase-continue]');
-      let countdown = 3;
-      continueBtn.textContent = `Please read — continue in ${countdown}s`;
-      const countdownTimer = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-          continueBtn.textContent = `Please read — continue in ${countdown}s`;
-        } else {
-          clearInterval(countdownTimer);
-          continueBtn.disabled = false;
-          continueBtn.textContent = "I've saved this somewhere safe — continue";
-        }
-      }, 1000);
-      modal.querySelector('[data-copy-phrase]')?.addEventListener('click', () => {
-        navigator.clipboard.writeText(recoveryPhrase).then(() => showToast('Copied!'));
-      });
-      modal.querySelector('[data-download-phrase]')?.addEventListener('click', () => {
-        const blob = new Blob([`ASCEND Recovery Phrase for @${Auth.username}\n\n${recoveryPhrase}\n\nKeep this safe. Do not share it.`], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `ascend-recovery-${Auth.username}.txt`;
-        a.click();
-      });
-      continueBtn.addEventListener('click', async () => {
-        continueBtn.disabled = true;
-        continueBtn.textContent = 'Setting up your account\u2026';
-        await migrateGuestDataToAccount();
-        modal.classList.remove('open');
-        setTimeout(() => { modal.remove(); location.reload(); }, 300);
-      });
+    async function finishAccountSetup() {
+      await migrateGuestDataToAccount();
+      modal.classList.remove('open');
+      setTimeout(() => { modal.remove(); location.reload(); }, 300);
     }
+
 
     // Login form
     modal.querySelector('[data-auth-form="login"]').addEventListener('submit', async (e) => {
@@ -3138,14 +2682,9 @@
       try {
         const user = e.target.querySelector('#login-user').value;
         const pass = e.target.querySelector('#login-pass').value;
-        const result = await Auth.login(user, pass);
-        // If login repaired a broken account or set up encryption, show recovery phrase
-        if (result?.repaired || result?.encryptionSetup) {
-          showRecoveryPhrase(result.recoveryPhrase);
-        } else {
-          modal.classList.remove('open');
-          setTimeout(() => { modal.remove(); location.reload(); }, 300);
-        }
+        await Auth.login(user, pass);
+        modal.classList.remove('open');
+        setTimeout(() => { modal.remove(); location.reload(); }, 300);
       } catch (err) {
         errEl.textContent = err.message;
         errEl.style.display = '';
@@ -3184,11 +2723,11 @@
       btn.textContent = 'Creating account...';
       try {
         const user = e.target.querySelector('#signup-user').value;
-        const { recoveryPhrase } = await Auth.signup(user, pass);
+        await Auth.signup(user, pass);
         // Brand-new account: ensure the setup guide fires after reload,
         // even if a prior account on this device already dismissed it.
         try { localStorage.removeItem('acct:setup-seen'); } catch (e) {}
-        showRecoveryPhrase(recoveryPhrase);
+        await finishAccountSetup();
       } catch (err) {
         errEl.textContent = err.message;
         errEl.style.display = '';
@@ -3338,17 +2877,17 @@
       {
         icon: `<svg ${svgAttrs}><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13"/><path d="M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>`,
         title: 'Journal & Talk Notes',
-        desc: 'Write reflections, sketch drawings, and capture speaker notes with a rich text editor. Everything is encrypted — only you can read it.'
+        desc: 'Write reflections, sketch drawings, and capture speaker notes with a rich text editor. Only you can read your entries.'
       },
       {
         icon: `<svg ${svgAttrs}><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>`,
         title: 'Rosary & Intentions',
-        desc: 'Pray the Holy Rosary with a guided experience, and keep a private list of prayer intentions that are encrypted end-to-end.'
+        desc: 'Pray the Holy Rosary with a guided experience, and keep a private list of prayer intentions only you can read.'
       },
       {
         icon: `<svg ${svgAttrs}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
         title: 'Photo Gallery',
-        desc: 'Upload retreat photos to your private encrypted gallery. When you\'re ready, share specific photos to the group gallery for everyone to enjoy.'
+        desc: 'Upload retreat photos to the shared group gallery — everyone on the trip can see and enjoy them.'
       },
       {
         icon: `<svg ${svgAttrs}><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 21h16"/><rect x="9" y="14" width="6" height="3" rx=".5"/></svg>`,
@@ -3358,7 +2897,7 @@
       {
         icon: `<svg ${svgAttrs}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
         title: 'Create an Account',
-        desc: 'Unlock the journal, photo gallery, packing checklist, and private intentions. Just a username and password — no email needed. Your data stays end-to-end encrypted. <a href="security.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:2px">How we keep it safe</a>',
+        desc: 'Unlock the journal, photo gallery, packing checklist, and private intentions. Just a username and password — no email needed. Only you can read your journal and intentions. <a href="security.html" style="color:var(--gold);text-decoration:underline;text-underline-offset:2px">How we keep it safe</a>',
         cta: true,
         extra: `<div class="guide-actions">
           <button type="button" class="btn btn-primary" data-guide-advance>Create Account</button>
@@ -3543,7 +3082,7 @@
         text: i.text, answered: i.answered, created: i.created_at
       })), null, 2));
 
-      // Photos (decrypted)
+      // Photos
       try {
         const photos = await DataStore.getPhotos('mine');
         const photosFolder = zip.folder('photos');
@@ -3556,7 +3095,7 @@
             const ext = 'jpg';
             photosFolder.file(`${photo.id}.${ext}`, blob);
             if (caption) photosFolder.file(`${photo.id}.caption.txt`, caption);
-          } catch (e) { /* skip photos that fail to decrypt */ }
+          } catch (e) { /* skip photos that fail to fetch */ }
         }
       } catch (e) { /* photos export optional */ }
 
@@ -3564,7 +3103,7 @@
       zip.file('audit-log.json', JSON.stringify(await DataStore.getMyAuditLog(), null, 2));
 
       // README
-      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries (decrypted)\n- talk-notes.json — Notes from talks\n- intentions.json — Private intentions (decrypted)\n- photos/ — Your photos (decrypted) with captions\n- audit-log.json — Account activity log\n`);
+      zip.file('README.txt', `ASCEND Pilgrim Hub Export\nExported: ${new Date().toLocaleString()}\nUser: @${username}\n\nThis is your pilgrimage. Keep it forever.\n\nFiles:\n- profile.json — Your account info\n- packing.json — Packing checklist\n- journal.json — Journal entries\n- talk-notes.json — Notes from talks\n- intentions.json — Private intentions\n- photos/ — Your photos with captions\n- audit-log.json — Account activity log\n`);
 
       const blob = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');
@@ -3702,7 +3241,6 @@
             <td>${u.is_admin ? '<span class="text-gold">Admin</span>' : ''}</td>
             <td>
               <button class="btn btn-ghost btn-sm" data-admin-view="${u.id}" data-username="${u.username}">View</button>
-              <button class="btn btn-ghost btn-sm" data-admin-reset="${u.id}" data-username="${u.username}">Reset PW</button>
               <button class="btn btn-ghost btn-sm" data-admin-delete="${u.id}" data-username="${u.username}">Delete</button>
             </td>
           </tr>
@@ -3716,18 +3254,9 @@
           });
         });
 
-        // Reset password
-        tbody.querySelectorAll('[data-admin-reset]').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const confirmText = prompt('This PERMANENTLY DESTROYS the user\'s encrypted journal and private intentions. Type DELETE JOURNAL to confirm:');
-            if (confirmText !== 'DELETE JOURNAL') return;
-            await logAdminAction('reset_password', btn.dataset.adminReset, btn.dataset.username, 'Password reset — journal and intentions destroyed');
-            // Delete encrypted data
-            await sb.from('journal_entries').delete().eq('user_id', btn.dataset.adminReset);
-            await sb.from('private_intentions').delete().eq('user_id', btn.dataset.adminReset);
-            showToast(`Password reset for @${btn.dataset.username}. Encrypted data destroyed.`, 'info');
-          });
-        });
+        // Password resets are performed by Alex from the Supabase Auth
+        // dashboard — there is no in-app reset button. The user's journal,
+        // intentions, and photos are preserved across the reset.
 
         // Delete user
         tbody.querySelectorAll('[data-admin-delete]').forEach(btn => {
