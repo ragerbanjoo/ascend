@@ -3161,6 +3161,58 @@ html[data-theme="light"] .reader-counter { color: rgba(6, 13, 26, 0.4); }
 .hub-details[open] > summary::before { transform: rotate(90deg); }
 .hub-details[open] > summary::after { content: "Tap to close"; }
 .hub-details > *:not(summary) { padding-left: var(--space-3); padding-right: var(--space-3); padding-top: var(--space-2); }
+
+/* Mass Prayers — Traditional Latin Mass */
+.hub-tile-wide { grid-column: 1 / -1; }
+.prayer-section { margin-bottom: var(--space-2); }
+.prayer-rubric {
+  font-style: italic; color: var(--cream-mute); font-size: 0.85rem;
+  line-height: 1.55; margin: 0 0 var(--space-3);
+}
+.prayer {
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--cream-line);
+}
+.prayer:first-of-type { border-top: none; padding-top: var(--space-2); }
+.prayer-title {
+  font-family: var(--f-display); font-size: 1rem; font-weight: 600;
+  color: var(--gold); margin: 0 0 var(--space-1); letter-spacing: 0.01em;
+}
+.prayer-title-en {
+  font-family: var(--f-body); font-size: 0.78rem; font-weight: 500;
+  color: var(--cream-mute); letter-spacing: 0.04em;
+  text-transform: uppercase; margin-left: var(--space-2);
+}
+.prayer-pair {
+  display: grid; grid-template-columns: 1fr; gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+@media (min-width: 720px) {
+  .prayer-pair { grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+}
+.prayer-latin,
+.prayer-english {
+  font-size: 0.92rem; line-height: 1.65; color: var(--cream);
+  white-space: pre-line;
+}
+.prayer-latin { font-style: italic; }
+.prayer-latin .accent,
+.prayer-english .accent { color: var(--gold-bright); font-weight: 600; font-style: normal; }
+.prayer-stage {
+  display: block; font-style: italic; color: var(--cream-mute);
+  font-size: 0.8rem; margin-bottom: var(--space-2); line-height: 1.5;
+}
+.prayer-response {
+  display: block; margin-top: var(--space-1);
+}
+.prayer-response strong { color: var(--gold); font-style: normal; font-weight: 600; }
+
+html[data-theme="light"] .prayer-rubric { color: #5a4a2c; }
+html[data-theme="light"] .prayer-latin,
+html[data-theme="light"] .prayer-english { color: #1a1a2e; }
+html[data-theme="light"] .prayer-title-en { color: #5a4a2c; }
+html[data-theme="light"] .prayer-stage { color: #5a4a2c; }
+html[data-theme="light"] .prayer { border-top-color: rgba(26,26,46,0.12); }
 .hub-details ol { padding-left: 1.5rem; color: var(--cream-dim); font-size: 0.85rem; }
 .hub-details ol li { margin-bottom: var(--space-2); }
 .prayer-text { color: var(--cream-dim); font-size: var(--fs-sm); font-style: italic; line-height: 1.6; }
