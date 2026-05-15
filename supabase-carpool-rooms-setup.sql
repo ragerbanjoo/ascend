@@ -159,7 +159,7 @@ from r, (values ('Deacon Enrique', 1), ('Patricia Galeana', 2)) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 2 · Women (18+)', null, 2)
+  values ('Room 2 · Women', null, 2)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
@@ -170,7 +170,7 @@ from r, (values
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 3 · Women (minors)', null, 3)
+  values ('Room 3 · Women', null, 3)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
@@ -181,7 +181,7 @@ from r, (values
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 4 · Women (minors)', null, 4)
+  values ('Room 4 · Women', null, 4)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)
@@ -190,8 +190,7 @@ from r, (values ('Angie', 1), ('Gali', 2), ('Luisa', 3)) as o(name, ord);
 
 with r as (
   insert into public.hotel_rooms (label, notes, sort_order)
-  values ('Room 5 · Men',
-          'Kole (18+) plus minors.', 5)
+  values ('Room 5 · Men', null, 5)
   returning id
 )
 insert into public.hotel_room_occupants (room_id, name, sort_order)

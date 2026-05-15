@@ -72,7 +72,6 @@
         <span class="eyebrow">How we protect you</span>
         <h1>Security Measures</h1>
         <p class="lede">We take security seriously because you're trusting us with personal, spiritual content. Here's exactly what protects you — every layer, in plain English. You can verify all of this in our open source code.</p>
-        <p class="text-mute" style="margin-top: var(--space-3);">Earlier versions of the site used client-side encryption and a 12-word recovery phrase. That approach locked too many people out of their own journals. We've replaced it with the simpler model below — privacy comes from row-level security and a small, trusted admin (Alex), not from each user managing a private key.</p>
         <div class="gold-rule center"></div>
       </div>
     </div>
@@ -106,7 +105,6 @@
           <li>Journal entries, talk notes, and private intentions are stored in Supabase Postgres tables.</li>
           <li><strong class="text-gold">Row-Level Security (RLS)</strong> on every table restricts reads/writes to <code>auth.uid() = user_id</code> — through the app, <strong>nobody else in the group can see your entries</strong>.</li>
           <li>HTTPS-only transport encryption between your browser and Supabase, and encryption at rest on the underlying AWS storage.</li>
-          <li>There is no client-side encryption. Earlier versions of the site encrypted journal content with a password-derived key, and the resulting lockouts when people forgot their passwords or recovery phrases caused more harm than the encryption prevented.</li>
           <li>The database admin (Alex) has technical access to the underlying tables and could read content with effort. The trust commitment in <a href="privacy.html">Privacy</a> is that he won't — and every admin action is logged in an immutable audit table you can review.</li>
         </ul>
       </div>
@@ -230,7 +228,7 @@
         <ul>
           <li>No 2FA (adds friction for a group reluctant about email)</li>
           <li>No full security team (built by one person for a small group)</li>
-          <li>No client-side encryption (removed after real-world lockouts made the tradeoff unworkable for this group)</li>
+          <li>No client-side encryption — privacy on personal content is enforced by row-level security, not by a key only you hold</li>
           <li>No private-photo mode — everything in the gallery is shared with the group</li>
         </ul>
       </div>

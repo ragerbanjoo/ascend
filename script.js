@@ -2844,6 +2844,11 @@
       if (e.target === el) close();
       if (e.target.matches('[data-guide-advance]')) advance();
       if (e.target.matches('[data-guide-dismiss]')) close();
+      if (e.target.matches('[data-guide-signin]')) {
+        if (storageKey) Storage._lsSet(storageKey, true);
+        el.classList.remove('open');
+        setTimeout(() => { el.remove(); openAuthModal('login'); }, 350);
+      }
     });
 
     document.body.appendChild(el);
@@ -2901,6 +2906,7 @@
         cta: true,
         extra: `<div class="guide-actions">
           <button type="button" class="btn btn-primary" data-guide-advance>Create Account</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-guide-signin>Already have an account? Sign in</button>
           <button type="button" class="btn btn-ghost btn-sm" data-guide-dismiss>Continue as Guest</button>
         </div>`
       }
@@ -3184,6 +3190,12 @@
 
     // Account settings page
     initAccount().catch(console.warn);
+
+    // Deep-link to the auth modal via #signin / #login.
+    if ((location.hash === '#signin' || location.hash === '#login') && Auth.isGuest) {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+      setTimeout(() => openAuthModal('login'), 100);
+    }
   }
 
   // ============================================
@@ -3576,13 +3588,13 @@
   const ROOMS_FALLBACK = [
     { id: 'r1', label: 'Room 1 · Deacon & wife', notes: 'Married couple (exception to co-ed rule).',
       occupants: ['Deacon Enrique','Patricia Galeana'] },
-    { id: 'r2', label: 'Room 2 · Women (18+)', notes: '',
+    { id: 'r2', label: 'Room 2 · Women', notes: '',
       occupants: ['Mary','Lydia','Gaby','Shayla'] },
-    { id: 'r3', label: 'Room 3 · Women (minors)', notes: '',
+    { id: 'r3', label: 'Room 3 · Women', notes: '',
       occupants: ['Diana','Sofi','Lupita','Meli'] },
-    { id: 'r4', label: 'Room 4 · Women (minors)', notes: '',
+    { id: 'r4', label: 'Room 4 · Women', notes: '',
       occupants: ['Angie','Gali','Luisa'] },
-    { id: 'r5', label: 'Room 5 · Men', notes: 'Kole (18+) plus minors.',
+    { id: 'r5', label: 'Room 5 · Men', notes: '',
       occupants: ['Kole','Lucas','Kevin','Sebastian','Kaiser','Ruben'] }
   ];
 

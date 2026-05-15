@@ -51,6 +51,7 @@
       <a href="parents.html" class="btn btn-primary ob-pulse" data-ob-parent>I'm a Parent</a>
       <button type="button" class="btn btn-ghost btn-sm" data-ob-next>Get Started</button>
     </div>
+    <p class="ob-signin-line"><a href="index.html#signin" class="ob-signin-link" data-ob-signin>Already have an account? Sign in</a></p>
     <p class="ob-next-hint" aria-hidden="true">Tap “Get Started” to continue as an attendee</p>
   </section>
 
@@ -281,6 +282,19 @@
       parentMode = true;
       if (finishBtn) finishBtn.textContent = 'Continue to Parents';
       goTo(steps.length);
+    });
+  }
+
+  // ---- Sign-in escape hatch ----
+  // Returning users skip the install/theme steps entirely and land on the
+  // hub with the login modal already open.
+  const signinLink = document.querySelector('[data-ob-signin]');
+  if (signinLink) {
+    signinLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try { localStorage.setItem('onboarding:complete', 'true'); } catch (err) {}
+      await storageSet('onboarding:complete', true);
+      location.replace('index.html#signin');
     });
   }
 
