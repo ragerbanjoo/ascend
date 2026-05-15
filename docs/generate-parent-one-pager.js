@@ -141,11 +141,11 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
 
   // --- Who is supervising ---
   heading('Who is supervising');
-  paragraph('Gaby (lead), Deacon Enrique Alejandro Galeana and his wife Patricia Galeana, Alex, and Shayla. All chaperones have completed Diocese of Yakima Safe Environment training and a background check.', { gap: 8 });
+  paragraph('Gaby (lead), Deacon Enrique Alejandro Galeana and his wife Patricia Galeana, and Alex. All chaperones have completed Diocese of Yakima Safe Environment training and a background check.', { gap: 8 });
 
   // --- Transportation table ---
   heading('Transportation');
-  paragraph('Three private passenger vehicles drive together from Cowiche — ~290 miles round-trip via I-90 / Snoqualmie Pass, rest stop in Ellensburg.', { gap: 6 });
+  paragraph('The group drives together from Cowiche in private passenger vehicles — ~290 miles round-trip via I-90 / Snoqualmie Pass, rest stop in Ellensburg.', { gap: 6 });
   // Table
   const tCols = [38, CONTENT_W - 38 - 88, 88];
   const tBorderColor = RULE;
@@ -182,7 +182,6 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   tableRow(['Car', 'Driver', 'Riders'], { header: true });
   tableRow(['1', 'Deacon Enrique Alejandro Galeana', 'Minors']);
   tableRow(['2', 'Patricia Galeana', 'Minors']);
-  tableRow(['3', 'Shayla', 'All 18+']);
   cursorY -= 10;
 
   // --- Cost ---

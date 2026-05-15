@@ -11,17 +11,16 @@
 
 ## Who is supervising
 
-Gaby (lead), Deacon Enrique Alejandro Galeana and his wife Patricia Galeana, Alex, and Shayla. All chaperones have completed Diocese of Yakima Safe Environment training and a background check.
+Gaby (lead), Deacon Enrique Alejandro Galeana and his wife Patricia Galeana, and Alex. All chaperones have completed Diocese of Yakima Safe Environment training and a background check.
 
 ## Transportation
 
-Three private passenger vehicles drive together from Cowiche — ~290 miles round-trip via I-90 / Snoqualmie Pass, rest stop in Ellensburg.
+The group drives together from Cowiche in private passenger vehicles — ~290 miles round-trip via I-90 / Snoqualmie Pass, rest stop in Ellensburg.
 
 | Car | Driver | |
 |---|---|---|
 | 1 | Deacon Enrique Alejandro Galeana | Minors |
 | 2 | Patricia Galeana | Minors |
-| 3 | Shayla | All 18+ |
 
 ## Cost
 

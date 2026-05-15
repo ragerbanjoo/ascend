@@ -3567,8 +3567,8 @@
       riders: ['Diana','Sofi','Lupita','Meli','Angie','Gali']
     },
     {
-      id: 'v3', label: 'Car 3', driver: 'Shayla', co_driver: '',
-      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning. All passengers are 18+.',
+      id: 'v3', label: 'Car 3', driver: '', co_driver: '',
+      notes: 'Leaves St. Juan Diego (Cowiche) Saturday morning. All passengers are 18+ — driver self-assigned by the riders.',
       riders: ['Mary','Lydia','Gaby','Kole']
     }
   ];

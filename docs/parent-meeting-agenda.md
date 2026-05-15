@@ -16,7 +16,6 @@ Use this as a meeting agenda or hand it to parents before/after. Each section is
 - **Deacon Enrique Alejandro Galeana** — chaperone and driver; **24-hour emergency contact during the trip**
 - **Patricia Galeana** — chaperone and driver (Deacon Enrique's wife)
 - **Alex** — chaperone and secondary contact
-- **Shayla** — chaperone and driver
 - All adult chaperones have completed Diocese of Yakima Safe Environment training and a criminal background check, per the Bishop's Charter for the Protection of Children and Young People.
 
 ## 2. What ASCEND is
@@ -39,13 +38,12 @@ The retreat then continues Sunday with a Traditional Latin Mass at North America
 
 ## 4. Transportation
 
-Three private passenger vehicles drive together from Cowiche Saturday morning — ~290 miles round-trip via I-90 over Snoqualmie Pass, with a planned rest stop at the Pilot Travel Center in Ellensburg in both directions.
+The group drives together from Cowiche Saturday morning in private passenger vehicles — ~290 miles round-trip via I-90 over Snoqualmie Pass, with a planned rest stop at the Pilot Travel Center in Ellensburg in both directions.
 
 | Car | Driver | Notes |
 |---|---|---|
 | Car 1 | Deacon Enrique Alejandro Galeana | Minors on board |
 | Car 2 | Patricia Galeana | Minors on board |
-| Car 3 | Shayla | All passengers 18+ |
 
 Each driver has completed a Diocese of Yakima Driver Information Sheet (Section V) with their license, vehicle, and insurance details on file. Minimum liability coverage per driver is $100,000 / $300,000, per diocesan policy. We follow the diocesan distance limits (no more than 250 consecutive miles per driver without a 30-minute break; daily max 500 miles per vehicle).
 
@@ -83,7 +81,7 @@ Each driver has completed a Diocese of Yakima Driver Information Sheet (Section 
 
 - Adult-to-attendee ratio: well above the minimums set by the Diocese of Yakima
 - Group travels together at all times; no solo excursions
-- Sunday Pike Place / waterfront free time is in three smaller chaperoned groups (Deacon Enrique Galeana group · Patricia Galeana group · Gaby/Shayla group)
+- Sunday Pike Place / waterfront free time is in smaller chaperoned groups (Deacon Enrique Galeana group · Patricia Galeana group · Gaby's group)
 - A first-aid kit, attendee medical-release binder, and emergency contact list are with the lead chaperone at all times
 - Behavior expectations follow the diocesan Chaperone Guidelines (Section VIII)
 - Diocese of Yakima Safe Environment compliance for every adult
@@ -109,7 +107,7 @@ Distribute the Diocese of Yakima field trip packet (`CM-Field-Trip-Packet-ENGLIS
 - [ ] Copy of health insurance card (or insurance carrier + policy # filled into the form)
 
 Already on file (parents don't fill these out):
-- Section V Driver Information Sheets — one per driver, filled out by the three drivers and held by the lead organizer
+- Section V Driver Information Sheets — one per driver, filled out by the drivers and held by the lead organizer
 - Section VIII Chaperone Acknowledgments — one per chaperone
 
 **Deadline to return signed forms:** [pick a date; suggest 1–2 weeks before departure].
@@ -137,7 +135,7 @@ Direct parents to the packing checklist on the site (`hub.html`) and the parent 
 
 **What about Snoqualmie Pass?** We check WSDOT pass conditions the night before and adjust departure if needed. Mid-May is typically clear, but we always pad the schedule.
 
-**Can my child bring their own car?** No. The group travels together in the three pre-vetted vehicles.
+**Can my child bring their own car?** No. The group travels together in pre-vetted private vehicles.
 
 **Can my child be picked up early?** Only by a parent/guardian or an adult listed on the Section III "Authorized Early Pickup" line, coordinated with Gaby in advance by phone.
 

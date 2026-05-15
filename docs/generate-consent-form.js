@@ -38,7 +38,6 @@ const TRANSPORT = 'Two (2) private passenger vehicles: Car 1 (Deacon Enrique Ale
 const DRIVERS = [
   { car: 'Car 1', name: 'Deacon Enrique Alejandro Galeana' },
   { car: 'Car 2', name: 'Patricia Galeana' },
-  { car: 'Car 3', name: 'Shayla' },
 ];
 
 const FONT_SIZE = 9;

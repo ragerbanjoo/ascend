@@ -280,7 +280,6 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   bullet('Deacon Enrique Alejandro Galeana — chaperone and driver; 24-hour emergency contact during the trip');
   bullet('Patricia Galeana — chaperone and driver (Deacon Enrique’s wife)');
   bullet('Alex — chaperone and secondary contact');
-  bullet('Shayla — chaperone and driver');
   bullet('All adult chaperones have completed Diocese of Yakima Safe Environment training and a criminal background check, per the Bishop’s Charter for the Protection of Children and Young People.');
   cursorY -= 4;
 
@@ -308,14 +307,13 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   // 4. Transportation
   sectionHeading(4, 'Transportation');
   paragraph(
-    'Three private passenger vehicles drive together from Cowiche Saturday morning — ~290 miles round-trip via I-90 over Snoqualmie Pass, with a planned rest stop at the Pilot Travel Center in Ellensburg in both directions.',
+    'The group drives together from Cowiche Saturday morning in private passenger vehicles — ~290 miles round-trip via I-90 over Snoqualmie Pass, with a planned rest stop at the Pilot Travel Center in Ellensburg in both directions.',
   );
   table(
     ['Car', 'Driver', 'Notes'],
     [
       ['1', 'Deacon Enrique Alejandro Galeana', 'Minors on board'],
       ['2', 'Patricia Galeana', 'Minors on board'],
-      ['3', 'Shayla', 'All passengers 18+'],
     ],
     { colWidths: [36, CONTENT_W - 36 - 130, 130] },
   );
@@ -356,7 +354,7 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   sectionHeading(7, 'Safety & supervision');
   bullet('Adult-to-attendee ratio: well above the minimums set by the Diocese of Yakima');
   bullet('Group travels together at all times; no solo excursions');
-  bullet('Sunday Pike Place / waterfront free time is in three smaller chaperoned groups (Deacon Enrique Galeana group · Patricia Galeana group · Gaby/Shayla group)');
+  bullet('Sunday Pike Place / waterfront free time is in smaller chaperoned groups (Deacon Enrique Galeana group · Patricia Galeana group · Gaby’s group)');
   bullet('A first-aid kit, attendee medical-release binder, and emergency contact list are with the lead chaperone at all times');
   bullet('Behavior expectations follow the diocesan Chaperone Guidelines (Section VIII)');
   bullet('Diocese of Yakima Safe Environment compliance for every adult');
@@ -388,7 +386,7 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   checkboxItem('Copy of health insurance card (or insurance carrier + policy # filled into the form)');
   cursorY -= 2;
   paragraph(
-    'Already on file (parents don’t fill these out): Section V Driver Information Sheets — one per driver, filled out by the three drivers and held by the lead organizer. Section VIII Chaperone Acknowledgments — one per chaperone.',
+    'Already on file (parents don’t fill these out): Section V Driver Information Sheets — one per driver, filled out by the drivers and held by the lead organizer. Section VIII Chaperone Acknowledgments — one per chaperone.',
     { font: helvOblique, size: 9.5, color: SUBTLE, gap: 8 },
   );
   paragraph(
@@ -419,7 +417,7 @@ const DEEP_RED = rgb(0.55, 0.10, 0.10);
   qa('My child isn’t Catholic — can they still come?', 'Yes. ASCEND is open to everyone. During Mass, non-Catholics are invited forward for a blessing.');
   qa('What if my child has dietary restrictions?', 'Tell Gaby ahead of time. All meal stops (Sizzle & Crunch, Chick-fil-A, Kona Kitchen, anywhere they choose near Pike Place) have allergy-friendly options.');
   qa('What about Snoqualmie Pass?', 'We check WSDOT pass conditions the night before and adjust departure if needed. Mid-May is typically clear, but we always pad the schedule.');
-  qa('Can my child bring their own car?', 'No. The group travels together in the three pre-vetted vehicles.');
+  qa('Can my child bring their own car?', 'No. The group travels together in pre-vetted private vehicles.');
   qa('Can my child be picked up early?', 'Only by a parent/guardian or an adult listed on the Section III "Authorized Early Pickup" line, coordinated with Gaby in advance by phone.');
   qa('What if there’s a financial hardship?', 'Talk to Gaby — money is never the reason someone misses this trip.');
   cursorY -= 4;
