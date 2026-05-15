@@ -3278,19 +3278,19 @@ html[data-theme="light"] .hub-details summary::before {
 }
 html[data-theme="light"] .packing-categories summary,
 html[data-theme="light"] .hub-details summary {
-  background: rgba(201, 161, 74, 0.1);
-  border-color: rgba(158, 124, 46, 0.32);
-  color: var(--ink);
+  background: rgba(201, 161, 74, 0.18);
+  border-color: rgba(158, 124, 46, 0.45);
+  color: #1a1a2e;
 }
 html[data-theme="light"] .packing-categories summary:hover,
 html[data-theme="light"] .packing-categories summary:focus-visible,
 html[data-theme="light"] .hub-details summary:hover,
 html[data-theme="light"] .hub-details summary:focus-visible {
-  background: rgba(201, 161, 74, 0.2);
-  border-color: rgba(158, 124, 46, 0.55);
+  background: rgba(201, 161, 74, 0.28);
+  border-color: rgba(158, 124, 46, 0.7);
 }
 html[data-theme="light"] .packing-categories summary::after,
-html[data-theme="light"] .hub-details summary::after { color: var(--gold-dark, #9e7c2e); }
+html[data-theme="light"] .hub-details summary::after { color: #7a5e1f; }
 html[data-theme="light"] .modal {
   background: #fff;
   border-color: rgba(26,26,46,0.1);
