@@ -3213,6 +3213,44 @@ html[data-theme="light"] .prayer-english { color: #1a1a2e; }
 html[data-theme="light"] .prayer-title-en { color: #5a4a2c; }
 html[data-theme="light"] .prayer-stage { color: #5a4a2c; }
 html[data-theme="light"] .prayer { border-top-color: rgba(26,26,46,0.12); }
+
+/* One-time message from Alex */
+.alex-msg-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-4);
+  background: rgba(6,13,26,0.78); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.alex-msg-overlay.open { opacity: 1; }
+.alex-msg-card {
+  max-width: 480px; width: 100%;
+  background: var(--ink); color: var(--cream);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r-lg);
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.3s ease;
+}
+.alex-msg-overlay.open .alex-msg-card { transform: translateY(0) scale(1); }
+.alex-msg-header { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-3); }
+.alex-msg-from { font-size: var(--fs-xs); color: var(--cream-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+.alex-msg-name { font-family: var(--f-display); color: var(--gold-bright); font-size: 1.15rem; font-weight: 600; }
+.alex-msg-body { font-size: 0.95rem; line-height: 1.6; }
+.alex-msg-body p { margin: 0 0 var(--space-3); }
+.alex-msg-body strong { color: var(--gold-bright); }
+.alex-msg-foot { color: var(--cream-mute); font-size: 0.85rem; margin-top: var(--space-4) !important; }
+.alex-msg-dismiss { margin-top: var(--space-3); }
+
+html[data-theme="light"] .alex-msg-overlay { background: rgba(247,244,236,0.85); }
+html[data-theme="light"] .alex-msg-card {
+  background: #fff; color: #1a1a2e;
+  border-color: rgba(158,124,46,0.5);
+  box-shadow: 0 20px 60px rgba(26,26,46,0.2);
+}
+html[data-theme="light"] .alex-msg-from { color: #5a4a2c; }
+html[data-theme="light"] .alex-msg-foot { color: #5a4a2c; }
 .hub-details ol { padding-left: 1.5rem; color: var(--cream-dim); font-size: 0.85rem; }
 .hub-details ol li { margin-bottom: var(--space-2); }
 .prayer-text { color: var(--cream-dim); font-size: var(--fs-sm); font-style: italic; line-height: 1.6; }

@@ -784,72 +784,74 @@
       body:  'The 7:00 AM Low Mass at North American Martyrs, served by the FSSP. Please arrive by 6:40 to get booklets and find seats.',
     },
     { id: 23, day: 'sun', time: '08:15',
-      title: 'Fellowship outside church — group photo',
-      body:  'Mass ends around 8:00. Group photo on the steps before we head back to the hotel.',
+      title: 'Group photo outside church',
+      body:  'Mass ends around 8:00. Quick photo on the steps before we head back to the hotel together.',
     },
     { id: 24, day: 'sun', time: '08:30',
       title: 'Head back to La Quinta',
-      body:  '~15 min back to the hotel. Lynnwood is on the way south toward Seattle.',
+      body:  '~15 min back to the hotel together.',
     },
     { id: 25, day: 'sun', time: '08:45',
-      title: 'Hotel checkout',
+      title: 'Hotel block — breakfast or chill',
       addr:  '4300 Alderwood Mall Blvd, Lynnwood, WA 98036',
       map:   'https://www.google.com/maps/search/?api=1&query=La+Quinta+Inn+Lynnwood+4300+Alderwood+Mall+Blvd',
-      body:  'Change clothes, pack up, load the vehicles, and check out. Take your time — we have a few minutes.',
+      body:  'Two options, your call: come grab breakfast at Kona Kitchen with the group, or stay at the hotel to rest, pack, and chill until checkout. Either way we regroup at the hotel by 10:30 to load up and head out together.',
     },
-    { id: 26, day: 'sun', time: '09:15',
-      title: 'Depart hotel → Kona Kitchen',
-      body:  '~5 min, ~1.5 mi west on 196th St SW.',
-    },
-    { id: 27, day: 'sun', time: '09:30',
-      title: 'Breakfast — Kona Kitchen Lynnwood',
+    { id: 26, day: 'sun', time: '09:00',
+      title: 'Breakfast — Kona Kitchen Lynnwood (optional)',
       addr:  '3805 196th St SW, Lynnwood, WA 98036',
       map:   'https://www.google.com/maps/search/?api=1&query=Kona+Kitchen+Lynnwood+3805+196th+St+SW',
-      body:  'Hawaiian breakfast — loco moco, spam musubi, pancakes, fried rice. ~1 hour to eat together before heading into Seattle.',
+      body:  'Hawaiian breakfast — loco moco, spam musubi, pancakes, fried rice. ~5 min from the hotel. The group still covers it for anyone who comes. Back to the hotel by 10:15 to regroup.',
     },
-    { id: 28, day: 'sun', time: '10:30',
+    { id: 27, day: 'sun', time: '10:30',
+      title: 'Checkout & regroup',
+      body:  'Everyone meets back at the hotel. Final checkout, load the vehicles, head out together.',
+    },
+    { id: 28, day: 'sun', time: '10:45',
       title: 'Depart → Gas Works Park',
       body:  '~25–30 min south on I-5. Sunday morning traffic is light.',
     },
-    { id: 29, day: 'sun', time: '11:00',
+    { id: 29, day: 'sun', time: '11:15',
       title: 'Gas Works Park',
       addr:  '2101 N Northlake Way, Seattle, WA 98103',
       map:   'https://www.google.com/maps/search/?api=1&query=Gas+Works+Park+Seattle+WA',
-      body:  'Iconic Seattle skyline views from the north shore of Lake Union. Walk around, take photos. ~30 min.',
+      body:  'Iconic Seattle skyline views from the north shore of Lake Union. Walk around, take photos. ~20 min.',
     },
-    { id: 30, day: 'sun', time: '11:30',
+    { id: 30, day: 'sun', time: '11:35',
       title: 'Depart → St. James Cathedral',
       body:  '~10–15 min south via I-5. Downtown Seattle.',
     },
-    { id: 31, day: 'sun', time: '11:45',
+    { id: 31, day: 'sun', time: '11:50',
       title: 'St. James Cathedral',
       addr:  '804 9th Ave, Seattle, WA 98104',
       map:   'https://www.google.com/maps/search/?api=1&query=St.+James+Cathedral+Seattle',
       body:  'Visit, prayer, light candles. Mother church of the Archdiocese of Seattle. ~30 min.',
     },
-    { id: 32, day: 'sun', time: '12:15',
+    { id: 32, day: 'sun', time: '12:20',
       title: 'Depart → Pike Place Market PDA Garage',
-      body:  '~5–10 min west to 1531 Western Ave. Direct elevator up to MarketFront and the new Overlook Walk.',
+      body:  '~5–10 min west to 1531 Western Ave. Direct elevator up to MarketFront.',
     },
-    { id: 33, day: 'sun', time: '12:30',
-      title: 'Pike Place Market & Seattle Waterfront (with lunch on your own)',
+    { id: 33, day: 'sun', time: '12:35',
+      title: 'Pike Place — food + a walk',
       addr:  '1531 Western Ave, Seattle, WA 98101 (Pike Place Market PDA Garage)',
       map:   'https://www.google.com/maps/search/?api=1&query=Pike+Place+Market+PDA+Garage+1531+Western+Ave',
-      body:  'Park at the Pike Place Market PDA Garage — safe, well-lit, with elevators straight up to MarketFront and the new Overlook Walk down to the waterfront. Walk Pike Place itself, then take the Overlook Walk down. We split into smaller groups: Alex & Edgar group · Gaby group · adults. Each small group picks where to eat lunch near Pike Place — your meal, your call (the group is not covering Sunday lunch). Anyone who wants to check out Miner\'s Landing on Pier 57 (Great Wheel and arcades) can; just stay with your group and stay in touch. ~3h 15m of free exploring + lunch.',
+      body:  'Short visit — just enough time to grab lunch at Pike Place and take a quick walk through the Market and the Overlook Walk. Your small group picks where to eat near Pike Place; lunch is on you. Plan to be back at the garage by 1:50 so we can head over to Bellevue.',
     },
-    { id: 34, day: 'sun', time: '15:45',
-      title: 'Group photo — Seattle waterfront',
-      body:  'All three groups meet up at Pier 62 / the Overlook Walk plaza for a group photo before we head home.',
+    { id: 34, day: 'sun', time: '14:00',
+      title: 'Depart → Bellevue Square',
+      body:  '~25 min east across I-90 to Bellevue.',
     },
-    { id: 35, day: 'sun', time: '16:00',
-      title: 'Walk back to Pike Place garage',
-      body:  'Head back up the Overlook Walk to the MarketFront elevator and down to the Pike Place Market PDA Garage. Load up the vehicles.',
+    { id: 35, day: 'sun', time: '14:30',
+      title: 'Bellevue Square — own time in small groups',
+      addr:  '575 Bellevue Square, Bellevue, WA 98004',
+      map:   'https://www.google.com/maps/search/?api=1&query=Bellevue+Square+Bellevue+WA',
+      body:  'Hang out, shop, grab coffee — small groups do their own thing around Bellevue Square and the surrounding area. ~2 hours. Meet back at the cars by 4:30 sharp to head home.',
     },
-    { id: 36, day: 'sun', time: '16:15',
+    { id: 36, day: 'sun', time: '16:30',
       title: 'Depart for Cowiche',
-      body:  'I-5 S → I-90 E → I-82 E → Summitview Rd. ~2h 30m from downtown Seattle to St. Juan Diego.',
+      body:  'I-90 E → I-82 E → Summitview Rd. ~2h 30m to St. Juan Diego.',
     },
-    { id: 37, day: 'sun', time: '18:45',
+    { id: 37, day: 'sun', time: '19:00',
       title: 'Arrive home — Deo gratias',
       body:  'What a weekend. See you at Sunday YAG.',
     }
@@ -3196,6 +3198,49 @@
       try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
       setTimeout(() => openAuthModal('login'), 100);
     }
+
+    // One-time message from Alex (next-startup popup).
+    showAlexMessage();
+  }
+
+  // -------------------------------------------------------
+  // One-time message from Alex
+  // -------------------------------------------------------
+  function showAlexMessage() {
+    const KEY = 'msg:alex-2026-05-15-sunday';
+    try { if (localStorage.getItem(KEY) === 'seen') return; } catch (e) { return; }
+    if (!document.body) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'alex-msg-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Message from Alex');
+    overlay.innerHTML = `
+      <div class="alex-msg-card">
+        <div class="alex-msg-header">
+          <span class="alex-msg-from">a quick note from</span>
+          <strong class="alex-msg-name">alex</strong>
+        </div>
+        <div class="alex-msg-body">
+          <p>hey y'all — quick sunday tweak.</p>
+          <p>after mass we're heading back to the hotel together. breakfast at kona is optional now — come grab it with the group or stay at the hotel and rest / pack / chill, whatever you need.</p>
+          <p>pike place is shorter this time — just food + a quick walk — and we're ending the day at <strong>bellevue square</strong> where small groups can do their own thing before the drive home.</p>
+          <p class="alex-msg-foot">all the times are updated on the site. see y'all soon. —alex</p>
+        </div>
+        <button type="button" class="btn btn-primary btn-full alex-msg-dismiss">got it</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('open'));
+
+    const dismiss = () => {
+      try { localStorage.setItem(KEY, 'seen'); } catch (e) {}
+      overlay.classList.remove('open');
+      setTimeout(() => overlay.remove(), 300);
+    };
+    overlay.querySelector('.alex-msg-dismiss').addEventListener('click', dismiss);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
   }
 
   // ============================================
