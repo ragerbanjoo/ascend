@@ -3223,7 +3223,7 @@
           <strong class="alex-msg-name">alex</strong>
         </div>
         <div class="alex-msg-body">
-          <p>sunday tweak — back to the hotel after mass (kona breakfast optional, or stay & chill), shorter pike place, then we end the day at <strong>bellevue square</strong>. all updated on the site.</p>
+          <p>have a great trip y'all — wish i could be there. praying for an awesome weekend.</p>
           <p class="alex-msg-foot">—alex</p>
         </div>
         <button type="button" class="btn btn-primary btn-full alex-msg-dismiss">got it</button>
