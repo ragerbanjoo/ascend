@@ -3223,10 +3223,8 @@
           <strong class="alex-msg-name">alex</strong>
         </div>
         <div class="alex-msg-body">
-          <p>hey y'all — quick sunday tweak.</p>
-          <p>after mass we're heading back to the hotel together. breakfast at kona is optional now — come grab it with the group or stay at the hotel and rest / pack / chill, whatever you need.</p>
-          <p>pike place is shorter this time — just food + a quick walk — and we're ending the day at <strong>bellevue square</strong> where small groups can do their own thing before the drive home.</p>
-          <p class="alex-msg-foot">all the times are updated on the site. see y'all soon. —alex</p>
+          <p>sunday tweak — back to the hotel after mass (kona breakfast optional, or stay & chill), shorter pike place, then we end the day at <strong>bellevue square</strong>. all updated on the site.</p>
+          <p class="alex-msg-foot">—alex</p>
         </div>
         <button type="button" class="btn btn-primary btn-full alex-msg-dismiss">got it</button>
       </div>
